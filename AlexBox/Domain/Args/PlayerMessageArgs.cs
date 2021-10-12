@@ -4,22 +4,22 @@ using System.Text;
 
 namespace AlexBox
 {
-    public class PlayerSubmitArgs : EventArgs
+    public class PlayerMessageArgs : EventArgs
     {
         public Player Player
         {
             get;
         }
 
-        public string Submission
+        public string Message
         {
             get;
         }
 
-        public PlayerSubmitArgs(Player player, string submission)
+        public PlayerMessageArgs(Player player, string message)
         {
             Player = player;
-            Submission = submission;
+            Message = message;
         }
     }
 }

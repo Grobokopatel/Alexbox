@@ -28,9 +28,9 @@ namespace AlexBox
 
         public event EventHandler<PlayerLoginArgs> PlayerLogin;
 
-        public event EventHandler<PlayerSubmitArgs> PlayerSubmit;
+        public event EventHandler<PlayerMessageArgs> PlayerSubmit;
 
-        protected void OnPlayerSubmit(object sender, PlayerSubmitArgs args)
+        protected void OnPlayerSubmit(object sender, PlayerMessageArgs args)
         {
             PlayerSubmit(sender, args);
         }

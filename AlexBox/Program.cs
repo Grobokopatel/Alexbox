@@ -1,12 +1,27 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AlexBox
 {
-    static class Program
+    [Serializable]
+    public class Person
+    {
+        public string Name { get; set; }
+        public int Age { get; set; }
+
+        public Person(string name, int age)
+        {
+            Name = name;
+            Age = age;
+        }
+    }
+
+    public static class Program
     {
         /// <summary>
         ///  The main entry point for the application.
@@ -14,10 +29,13 @@ namespace AlexBox
         [STAThread]
         static void Main()
         {
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
+            var a = new BinaryFormatterSerializer();
+            var b = a.Deserialize<string>(a.Serialize("safasf"));
+
+            /*Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new TestForm1());
+            Application.Run(new TestForm1());*/
         }
     }
 }

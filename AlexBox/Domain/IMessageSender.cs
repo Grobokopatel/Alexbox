@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AlexBox.Domain
+namespace AlexBox
 {
     public interface IMessageSender
     {
-        void Send<TMessage>(TMessage bytes, string ip);
-        TMessage Recieve<TMessage>();
+        public event EventHandler<byte[]> MessageRecieved;
+        byte[] Send(string address, int port, byte[] data);
+        void StartRecievingMessages();
     }
 }

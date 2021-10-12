@@ -7,39 +7,41 @@ namespace AlexBox.Domain
     public class GarticPhoneLikeGame : GameBase
     {
         protected IMessageSender messageSender;
-        protected IConverter converter;
+        protected ISerializer serializer;
         public override int MinPlayers => 3;
-
         public override int MaxPlayers => 8;
 
-        protected Dictionary<Player, string> submissions;
+        protected Dictionary<Player, string> messages = new Dictionary<Player, string>();
 
-        protected void HandleSubmission(object sender, PlayerSubmitArgs args)
+        protected void HandleMessage(object sender, byte[] args)
         {
-            var player = (Player)sender;
-            submissions[player] += args.Submission;
+            var message = serializer.Deserialize<PlayerMessageArgs>(args);
+            OnPlayerSubmit(this, message);
         }
 
-        public void GetSubmissions<TMessage, TObject>()
+        protected void HandleSubmit(object sender, PlayerMessageArgs args)
         {
-            //В бесконечном цикле принимает сабмиты
-            var submisson = messageSender.Recieve<TMessage>();
-            var obj = converter.ToObject<TObject, TMessage>(submisson);
-              OnPlayerSubmit(new object(), new PlayerSubmitArgs(new Player("tmp"), "tmp"));
+            if(!messages.ContainsKey(args.Player))
+            {
+                messages[args.Player] += args.Message;
+            }
         }
 
         public void SendMessage<TMessage, TObject>(Player player, TObject obj)
         {
-            var convertedMessage = converter.ToMessage<TObject, TMessage>(obj);
-            messageSender.Send(convertedMessage, "123.123.214");
+            //var convertedMessage = converter.Serialize<TObject, TMessage>(obj);
+            //messageSender.Send(convertedMessage, "123.123.214");
             //player.Send()
         }
 
-        public GarticPhoneLikeGame(IMessageSender messageSender, IConverter converter)
+        public GarticPhoneLikeGame(IMessageSender messageSender, ISerializer serializer)
         {
-            this.converter = converter;
+            this.serializer = serializer;
             this.messageSender = messageSender;
-            PlayerSubmit += HandleSubmission;
+
+            messageSender.StartRecievingMessages();
+            messageSender.MessageRecieved += HandleMessage;
+            PlayerSubmit += HandleSubmit;
         }
     }
 }
