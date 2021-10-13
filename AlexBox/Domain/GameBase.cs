@@ -28,9 +28,14 @@ namespace AlexBox
 
         public event EventHandler<PlayerLoginArgs> PlayerLogin;
 
-        public event EventHandler<PlayerMessageArgs> PlayerSubmit;
+        protected event EventHandler<PlayerSubmitArgs> PlayerSubmit;
 
-        protected void OnPlayerSubmit(object sender, PlayerMessageArgs args)
+        protected void InvokePlayerLogin(object sender, PlayerLoginArgs args)
+        {
+            PlayerLogin(sender, args);
+        }
+
+        protected void InvokePlayerSubmit(object sender, PlayerSubmitArgs args)
         {
             PlayerSubmit(sender, args);
         }
@@ -68,6 +73,7 @@ namespace AlexBox
                 else
                 {
                     players.Add(player);
+                    PlayerLogin(this, new PlayerLoginArgs(player));
                     args.Result = LoginResult.Success;
                 }
             }
@@ -76,8 +82,6 @@ namespace AlexBox
         public GameBase()
         {
             State = GameState.Preparation;
-
-            PlayerLogin += TryAddPlayer;
         }
     }
 }

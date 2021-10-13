@@ -8,7 +8,7 @@ namespace AlexBox
 {
     public class BinaryFormatterSerializer : ISerializer
     {
-        private BinaryFormatter formatter = new BinaryFormatter();
+        private readonly BinaryFormatter formatter = new BinaryFormatter();
 
         public byte[] Serialize<TObject>(TObject obj)
         {
@@ -24,9 +24,9 @@ namespace AlexBox
         {
             using (var stream = new MemoryStream(bytes))
             {
-                var deserilizeObject = (TObject)formatter.Deserialize(stream);
+                var deserilizedObject = (TObject)formatter.Deserialize(stream);
 
-                return deserilizeObject;
+                return deserilizedObject;
             }
         }
 

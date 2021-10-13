@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using AlexBox.Views;
 
 namespace AlexBox
 {
@@ -29,13 +30,10 @@ namespace AlexBox
         [STAThread]
         static void Main()
         {
-            var a = new BinaryFormatterSerializer();
-            var b = a.Deserialize<string>(a.Serialize("safasf"));
-
-            /*Application.SetHighDpiMode(HighDpiMode.SystemAware);
+            Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new TestForm1());*/
+            Application.Run(new StartForm());
         }
     }
 }

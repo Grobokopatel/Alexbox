@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace AlexBox
+namespace AlexBox.Views
 {
     public partial class TestForm1 : Form
     {
@@ -31,9 +31,6 @@ namespace AlexBox
             {
                 var testForm1 = new TestForm1();
                 testForm1.Show();
-
-                var testForm2 = new TestForm2(this);
-                testForm2.Show();
             };
         }
     }

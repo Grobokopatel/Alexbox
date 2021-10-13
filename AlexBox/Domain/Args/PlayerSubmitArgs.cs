@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AlexBox
 {
-    public class PlayerMessageArgs : EventArgs
+    public class PlayerSubmitArgs : EventArgs
     {
         public Player Player
         {
@@ -16,7 +16,7 @@ namespace AlexBox
             get;
         }
 
-        public PlayerMessageArgs(Player player, string message)
+        public PlayerSubmitArgs(Player player, string message)
         {
             Player = player;
             Message = message;

@@ -6,19 +6,15 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace AlexBox
+namespace AlexBox.Views
 {
-    public partial class TestForm2 : Form
+    public partial class StartForm : Form
     {
-        public TestForm2()
+        public StartForm()
         {
             InitializeComponent();
-        }
-
-        public TestForm2(TestForm1 form1)
-        {
-            InitializeComponent();
-            form1.BackColor = Color.Yellow;
+            var hostOrPlayerControl = new HostOrPlayerControl();
+            Controls.Add(hostOrPlayerControl);
         }
     }
 }

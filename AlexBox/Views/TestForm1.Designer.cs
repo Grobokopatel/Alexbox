@@ -1,5 +1,5 @@
 ﻿
-namespace AlexBox
+namespace AlexBox.Views
 {
     partial class TestForm1
     {

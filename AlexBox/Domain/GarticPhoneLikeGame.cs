@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AlexBox.Domain
+namespace AlexBox
 {
     public class GarticPhoneLikeGame : GameBase
     {
@@ -15,15 +15,36 @@ namespace AlexBox.Domain
 
         protected void HandleMessage(object sender, byte[] args)
         {
-            var message = serializer.Deserialize<PlayerMessageArgs>(args);
-            OnPlayerSubmit(this, message);
+            try
+            {
+                var message = serializer.Deserialize<PlayerSubmitArgs>(args);
+                InvokePlayerSubmit(this, message);
+            }
+            catch
+            {
+                try
+                {
+                    var message = serializer.Deserialize<PlayerLoginArgs>(args);
+                    InvokePlayerLogin(this, message);
+                }
+                catch
+                {
+                    var name = serializer.Deserialize<string>(args);
+                    var message = new PlayerLoginArgs(new Player(name));
+                    InvokePlayerLogin(this, message);
+                }
+            }
         }
 
-        protected void HandleSubmit(object sender, PlayerMessageArgs args)
+        protected void HandleSubmit(object sender, PlayerSubmitArgs args)
         {
             if(!messages.ContainsKey(args.Player))
             {
-                messages[args.Player] += args.Message;
+                messages[args.Player] = args.Message;
+            }
+            else
+            {
+                messages[args.Player] += "===" + args.Message;
             }
         }
 
@@ -39,9 +60,13 @@ namespace AlexBox.Domain
             this.serializer = serializer;
             this.messageSender = messageSender;
 
-            messageSender.StartRecievingMessages();
+            messageSender.StartRecievingMessagesAsync();
             messageSender.MessageRecieved += HandleMessage;
             PlayerSubmit += HandleSubmit;
+
         }
+
+        public GarticPhoneLikeGame() : this(new TCPMessageSender(), new BinaryFormatterSerializer())
+        { }
     }
 }

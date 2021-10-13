@@ -4,14 +4,15 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
-namespace AlexBox.Domain
+namespace AlexBox
 {
     public class TCPMessageSender : IMessageSender
     {
         public event EventHandler<byte[]> MessageRecieved;
 
-        public void StartRecievingMessages()
+        public async void StartRecievingMessagesAsync()
         {
             var localAddr = IPAddress.Parse("127.0.0.1");
             var port = 8888;
@@ -24,25 +25,25 @@ namespace AlexBox.Domain
                 try
                 {
                     // Подключение клиента
-                    var client = server.AcceptTcpClient();
+                    var client = await server.AcceptTcpClientAsync();
                     var stream = client.GetStream();
                     // Обмен данными
                     try
                     {
                         if (stream.CanRead)
                         {
-                            byte[] myReadBuffer = new byte[1024];
+                            var myReadBuffer = new byte[1024];
                             var myCompleteMessage = new List<byte>();
-                            int numberOfBytesRead = 0;
+                            var numberOfBytesRead = 0;
                             do
                             {
-                                numberOfBytesRead = stream.Read(myReadBuffer, 0, myReadBuffer.Length);
+                                numberOfBytesRead = await stream.ReadAsync(myReadBuffer, 0, myReadBuffer.Length);
                                 myCompleteMessage.AddRange(myReadBuffer);
                             }
                             while (stream.DataAvailable);
                             MessageRecieved(this, myCompleteMessage.ToArray());
                             var responseData = Encoding.UTF8.GetBytes("УСПЕШНО!");
-                            stream.Write(responseData, 0, responseData.Length);
+                            await stream.WriteAsync(responseData, 0, responseData.Length);
                         }
                     }
                     finally
@@ -59,7 +60,7 @@ namespace AlexBox.Domain
             }
         }
 
-        public byte[] Send(string address, int port, byte[] data)
+        public async Task<byte[]> SendAsync(string address, int port, byte[] data)
         {
             // Инициализация
             var client = new TcpClient(address, port);
@@ -67,14 +68,14 @@ namespace AlexBox.Domain
             try
             {
                 // Отправка сообщения
-                stream.Write(data, 0, data.Length);
+                await stream.WriteAsync(data, 0, data.Length);
                 // Получение ответа
-                var readingData = new Byte[256];
-                var responseData = String.Empty;
+                var readingData = new byte[256];
+                var responseData = string.Empty;
                 int numberOfBytesRead = 0;
                 do
                 {
-                    numberOfBytesRead = stream.Read(readingData, 0, readingData.Length);
+                    numberOfBytesRead = await stream.ReadAsync(readingData, 0, readingData.Length);
                 }
                 while (stream.DataAvailable);
                 return readingData;
