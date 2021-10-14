@@ -15,7 +15,6 @@ namespace AlexBox
             using (var stream = new MemoryStream())
             {
                 formatter.Serialize(stream, obj);
-                stream.Position = 0;
                 return stream.ToArray();
             }
         }
@@ -25,7 +24,6 @@ namespace AlexBox
             using (var stream = new MemoryStream(bytes))
             {
                 var deserilizedObject = (TObject)formatter.Deserialize(stream);
-
                 return deserilizedObject;
             }
         }
