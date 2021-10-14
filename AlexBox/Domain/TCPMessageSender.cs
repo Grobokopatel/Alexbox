@@ -104,7 +104,7 @@ namespace AlexBox
                 // Получение ответа
                 var readingData = new byte[256];
                 var responseData = string.Empty;
-                int numberOfBytesRead = 0;
+                var numberOfBytesRead = 0;
                 do
                 {
                     numberOfBytesRead = await stream.ReadAsync(readingData, 0, readingData.Length);
