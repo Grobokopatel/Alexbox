@@ -13,23 +13,25 @@ namespace AlexBox.Views
     public partial class LobbyForm : Form
     {
         public Label[] playerLabels = new Label[8];
+        private GarticPhoneLikeGame game;
         public LobbyForm(GarticPhoneLikeGame game)
         {
             InitializeComponent();
             ClientSize = new Size(800, 450);
 
+            Text = "Лобби";
+            this.game = game;
             var table = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill
             };
-
 
             for (var i = 0; i < 10; ++i)
                 table.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
 
             var label = new Label
             {
-                Text = "Заходите. Порт: 2313.3213.12312. IP: 34.2342.23423.42",
+                Text = $"Заходите. Порт: {game.MessageSender.Port} IP: {game.MessageSender.LocalIPAddress}",
                 Dock = DockStyle.Fill,
                 TextAlign = ContentAlignment.MiddleCenter,
                 Font = new Font("Arial", 18),

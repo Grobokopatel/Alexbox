@@ -6,7 +6,11 @@ namespace AlexBox
 {
     public class GarticPhoneLikeGame : GameBase
     {
-        protected IMessageSender messageSender;
+        public IMessageSender MessageSender
+        {
+            get;
+        }
+
         protected ISerializer serializer;
         public override int MinPlayers => 3;
         public override int MaxPlayers => 8;
@@ -29,16 +33,25 @@ namespace AlexBox
                 }
                 catch
                 {
-                    var name = serializer.Deserialize<string>(args);
-                    var message = new PlayerLoginArgs(new Player(name));
-                    InvokePlayerLogin(this, message);
+                    try
+                    {
+                        var name = serializer.Deserialize<string>(args);
+                        var message = new PlayerLoginArgs(new Player(name));
+                        InvokePlayerLogin(this, message);
+                    }
+                    catch
+                    {
+                        var name = "Еблан присоединился";
+                        var message = new PlayerLoginArgs(new Player(name));
+                        InvokePlayerLogin(this, message);
+                    }
                 }
             }
         }
 
         protected void HandleSubmit(object sender, PlayerSubmitArgs args)
         {
-            if(!messages.ContainsKey(args.Player))
+            if (!messages.ContainsKey(args.Player))
             {
                 messages[args.Player] = args.Message;
             }
@@ -58,7 +71,7 @@ namespace AlexBox
         public GarticPhoneLikeGame(IMessageSender messageSender, ISerializer serializer)
         {
             this.serializer = serializer;
-            this.messageSender = messageSender;
+            this.MessageSender = messageSender;
 
             messageSender.StartRecievingMessagesAsync();
             messageSender.MessageRecieved += HandleMessage;

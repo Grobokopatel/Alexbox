@@ -12,15 +12,40 @@ namespace AlexBox
     {
         public event EventHandler<byte[]> MessageRecieved;
 
+        public int Port
+        {
+            get;
+            private set;
+        }
+
+        public IPAddress LocalIPAddress
+        {
+            get;
+            private set;
+        }
+
+        public TCPMessageSender(int port = 8888)
+        {
+            IsRunning = true;
+            Port = port;
+            LocalIPAddress = IPAddress.Parse("192.168.43.171");
+
+        }
+
+        public bool IsRunning
+        {
+            get;
+            set;
+        }
+
         public async void StartRecievingMessagesAsync()
         {
-            var localAddr = IPAddress.Parse("127.0.0.1");
-            var port = 8888;
-            var server = new TcpListener(localAddr, port);
+            var server = new TcpListener(LocalIPAddress, Port);
+
             // Запуск в работу
             server.Start();
             // Бесконечный цикл
-            while (true)
+            while (IsRunning)
             {
                 try
                 {
@@ -30,7 +55,7 @@ namespace AlexBox
                     // Обмен данными
                     try
                     {
-                        if (stream.CanRead)
+                        if (stream.CanRead && IsRunning)
                         {
                             var myReadBuffer = new byte[1024];
                             var myCompleteMessage = new List<byte>();
@@ -42,7 +67,7 @@ namespace AlexBox
                             }
                             while (stream.DataAvailable);
                             MessageRecieved(this, myCompleteMessage.ToArray());
-                            var responseData = Encoding.UTF8.GetBytes("УСПЕШНО!");
+                            var responseData = new BinaryFormatterSerializer().Serialize("УСПЕШНО!");
                             await stream.WriteAsync(responseData, 0, responseData.Length);
                         }
                     }
@@ -57,6 +82,11 @@ namespace AlexBox
                     server.Stop();
                     break;
                 }
+            }
+
+            if (!IsRunning)
+            {
+                server.Stop();
             }
         }
 

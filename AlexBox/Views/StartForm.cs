@@ -13,6 +13,7 @@ namespace AlexBox.Views
         public StartForm()
         {
             InitializeComponent();
+            Text = "AlexBox";
             var hostOrPlayerControl = new HostOrPlayerControl();
             Controls.Add(hostOrPlayerControl);
         }

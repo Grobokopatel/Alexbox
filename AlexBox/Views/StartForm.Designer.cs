@@ -37,7 +37,6 @@ namespace AlexBox.Views
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Name = "StartForm";
-            this.Text = "TestForm2";
             this.ResumeLayout(false);
 
         }
