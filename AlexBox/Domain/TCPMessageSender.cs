@@ -14,10 +14,10 @@ namespace AlexBox
     {
         public event EventHandler<byte[]> MessageRecieved;
 
+        private TcpListener server;
         public int Port
         {
-            get;
-            private set;
+            get => ((IPEndPoint)server.LocalEndpoint).Port;
         }
 
         public IPAddress LocalIPAddress
@@ -26,12 +26,10 @@ namespace AlexBox
             private set;
         }
 
-        public TCPMessageSender(int port = 8888)
+        public TCPMessageSender()
         {
             IsRunning = true;
-            Port = port;
-            LocalIPAddress = IPAddress.Parse("192.168.43.171");
-
+            LocalIPAddress = IPAddress.Any;
         }
 
         public bool IsRunning
@@ -42,8 +40,7 @@ namespace AlexBox
 
         public async void StartRecievingMessagesAsync()
         {
-            var server = new TcpListener(LocalIPAddress, Port);
-
+            server = new TcpListener(LocalIPAddress, 0);
             // Запуск в работу
             server.Start();
             // Бесконечный цикл
@@ -69,7 +66,7 @@ namespace AlexBox
                             }
                             while (stream.DataAvailable);
                             MessageRecieved(this, myCompleteMessage.ToArray());
-                            var responseData = new BinaryFormatterSerializer().Serialize("УСПЕШНО!");
+                            var responseData = new BinaryFormatter().Serialize("УСПЕШНО!");
                             await stream.WriteAsync(responseData, 0, responseData.Length);
                         }
                     }

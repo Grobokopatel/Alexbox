@@ -10,21 +10,19 @@ namespace AlexBox.Views
 {
     public partial class HostOrPlayerControl : UserControl
     {
-        public HostOrPlayerControl()
+        private GarticPhoneLikeGame game;
+        public HostOrPlayerControl(GarticPhoneLikeGame game)
         {
-            InitializeComponent( );
-
+            InitializeComponent();
+            this.game = game;
             var table = new TableLayoutPanel()
             {
                 Dock = DockStyle.Fill,
             };
-
             for (var i = 0; i < 4; ++i)
                 table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 1));
-
             for (var i = 0; i < 3; ++i)
                 table.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
-
 
             for (var i = 0; i < 4; ++i)
                 for (var j = 0; j < 3; ++j)
@@ -44,14 +42,15 @@ namespace AlexBox.Views
                 Dock = DockStyle.Fill,
                 BackColor = Color.AliceBlue
             };
-
             hostButton.Click += HostButton_Click;
+
             var playerButton = new Button()
             {
                 Text = "Игроком",
                 Dock = DockStyle.Fill,
                 BackColor = Color.AliceBlue
             };
+            playerButton.Click += PlayerButton_Click;
 
             table.Controls.Add(hostButton, 1, 1);
             table.Controls.Add(playerButton, 2, 1);
@@ -59,6 +58,13 @@ namespace AlexBox.Views
 
             Dock = DockStyle.Fill;
             Controls.Add(table);
+        }
+
+        private void PlayerButton_Click(object sender, EventArgs e)
+        {
+            var connectionForm = new ConnectionForm(game);
+
+            connectionForm.Show();
         }
 
         private void HostButton_Click(object sender, EventArgs e)

@@ -18,7 +18,6 @@ namespace AlexBox.Views
         {
             InitializeComponent();
             ClientSize = new Size(800, 450);
-
             Text = "Лобби";
             this.game = game;
             var table = new TableLayoutPanel

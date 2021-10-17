@@ -7,11 +7,9 @@ using System.Text;
 
 namespace AlexBox
 {
-    public class BinaryFormatterSerializer : ISerializer
+    public static class IFormatterExtenstion
     {
-        private readonly BinaryFormatter formatter = new BinaryFormatter();
-
-        public byte[] Serialize<TObject>(TObject obj)
+        public static byte[] Serialize<TObject>(this IFormatter formatter, TObject obj)
         {
             using (var stream = new MemoryStream())
             {
@@ -20,7 +18,7 @@ namespace AlexBox
             }
         }
 
-        public TObject Deserialize<TObject>(byte[] bytes)
+        public static TObject Deserialize<TObject>(this IFormatter formatter, byte[] bytes)
         {
             using (var stream = new MemoryStream(bytes))
             {
@@ -28,6 +26,5 @@ namespace AlexBox
                 return deserilizedObject;
             }
         }
-
     }
 }

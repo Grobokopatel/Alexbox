@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
 namespace AlexBox
@@ -11,7 +13,10 @@ namespace AlexBox
             get;
         }
 
-        protected ISerializer serializer;
+        public IFormatter Formatter
+        {
+            get;
+        }
         public override int MinPlayers => 3;
         public override int MaxPlayers => 8;
 
@@ -21,21 +26,21 @@ namespace AlexBox
         {
             try
             {
-                var message = serializer.Deserialize<PlayerSubmitArgs>(args);
+                var message = Formatter.Deserialize<PlayerSubmitArgs>(args);
                 InvokePlayerSubmit(this, message);
             }
             catch
             {
                 try
                 {
-                    var message = serializer.Deserialize<PlayerLoginArgs>(args);
+                    var message = Formatter.Deserialize<PlayerLoginArgs>(args);
                     InvokePlayerLogin(this, message);
                 }
                 catch
                 {
                     try
                     {
-                        var name = serializer.Deserialize<string>(args);
+                        var name = Formatter.Deserialize<string>(args);
                         var message = new PlayerLoginArgs(new Player(name));
                         InvokePlayerLogin(this, message);
                     }
@@ -68,18 +73,17 @@ namespace AlexBox
             //player.Send()
         }
 
-        public GarticPhoneLikeGame(IMessageSender messageSender, ISerializer serializer)
+        public GarticPhoneLikeGame(IMessageSender messageSender, IFormatter serializer)
         {
-            this.serializer = serializer;
-            this.MessageSender = messageSender;
+            Formatter = serializer;
+            MessageSender = messageSender;
 
-            messageSender.StartRecievingMessagesAsync();
             messageSender.MessageRecieved += HandleMessage;
+            messageSender.StartRecievingMessagesAsync();
             PlayerSubmit += HandleSubmit;
-
         }
 
-        public GarticPhoneLikeGame() : this(new TCPMessageSender(), new BinaryFormatterSerializer())
+        public GarticPhoneLikeGame() : this(new TCPMessageSender(), new BinaryFormatter())
         { }
     }
 }
