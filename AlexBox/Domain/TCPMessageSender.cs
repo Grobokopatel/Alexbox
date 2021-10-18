@@ -100,14 +100,17 @@ namespace AlexBox
                 await stream.WriteAsync(data, 0, data.Length);
                 // Получение ответа
                 var readingData = new byte[256];
+                var completeMessage = new List<byte>();
                 var responseData = string.Empty;
                 var numberOfBytesRead = 0;
                 do
                 {
                     numberOfBytesRead = await stream.ReadAsync(readingData, 0, readingData.Length);
+                    completeMessage.AddRange(readingData);
                 }
                 while (stream.DataAvailable);
-                return readingData;
+
+                return completeMessage.ToArray();
             }
             finally
             {

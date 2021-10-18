@@ -78,7 +78,8 @@ namespace AlexBox.Views
                 Dock = DockStyle.Top,
                 Height = 100
             };
-            connectButton.Click += ConnectButton_ClickAsync;
+            connectButton.Click += ConnectButtonAsync_Click;
+            AcceptButton = connectButton;
 
             connectionResultLabel = new Label()
             {
@@ -104,16 +105,16 @@ namespace AlexBox.Views
             Controls.Add(mainTable);
         }
 
-        private async void ConnectButton_ClickAsync(object sender, EventArgs e)
+        private async void ConnectButtonAsync_Click(object sender, EventArgs e)
         {
-            var ip = ipTextBox.Text;
-            var port = int.Parse(portTextBox.Text);
 
             var formatter = game.Formatter;
             try
             {
-                connectionResultLabel.Text = formatter.Deserialize<string>(
-                         await game.MessageSender.SendAsync(ip, port, formatter.Serialize(nameTextBox.Text)));
+                var ip = ipTextBox.Text;
+                var port = int.Parse(portTextBox.Text);
+                var result = await game.MessageSender.SendAsync(ip, port, formatter.Serialize(nameTextBox.Text));
+                connectionResultLabel.Text = formatter.Deserialize<string>(result);
             }
             catch (Exception exception)
             {
