@@ -58,10 +58,9 @@ namespace AlexBox
                         {
                             var myReadBuffer = new byte[1024];
                             var myCompleteMessage = new List<byte>();
-                            var numberOfBytesRead = 0;
                             do
                             {
-                                numberOfBytesRead = await stream.ReadAsync(myReadBuffer, 0, myReadBuffer.Length);
+                                await stream.ReadAsync(myReadBuffer, 0, myReadBuffer.Length);
                                 myCompleteMessage.AddRange(myReadBuffer);
                             }
                             while (stream.DataAvailable);
@@ -102,10 +101,9 @@ namespace AlexBox
                 var readingData = new byte[256];
                 var completeMessage = new List<byte>();
                 var responseData = string.Empty;
-                var numberOfBytesRead = 0;
                 do
                 {
-                    numberOfBytesRead = await stream.ReadAsync(readingData, 0, readingData.Length);
+                    await stream.ReadAsync(readingData, 0, readingData.Length);
                     completeMessage.AddRange(readingData);
                 }
                 while (stream.DataAvailable);
