@@ -10,8 +10,8 @@ namespace AlexBox.Views
 {
     public partial class HostOrPlayerControl : UserControl
     {
-        private GarticPhoneLikeGame game;
-        public HostOrPlayerControl(GarticPhoneLikeGame game)
+        private LocalNetworkGame game;
+        public HostOrPlayerControl(LocalNetworkGame game)
         {
             InitializeComponent();
             this.game = game;
@@ -69,7 +69,7 @@ namespace AlexBox.Views
 
         private void HostButton_Click(object sender, EventArgs e)
         {
-            var hostForm = new LobbyForm(new GarticPhoneLikeGame());
+            var hostForm = new LobbyForm(game);
 
             hostForm.Show();
         }

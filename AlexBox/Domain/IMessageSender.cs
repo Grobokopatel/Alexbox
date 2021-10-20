@@ -8,7 +8,7 @@ namespace AlexBox
 {
     public interface IMessageSender
     {
-        public event EventHandler<byte[]> MessageRecieved;
+        public event EventHandler<MessageRecievedArgs> MessageRecieved;
         Task<byte[]> SendAsync(string address, int port, byte[] data);
         void StartRecievingMessagesAsync();
         int Port

@@ -13,16 +13,17 @@ namespace AlexBox.Views
     public partial class LobbyForm : Form
     {
         public Label[] playerLabels = new Label[8];
-        private GarticPhoneLikeGame game;
-        public LobbyForm(GarticPhoneLikeGame game)
+        private LocalNetworkGame game;
+        public LobbyForm(LocalNetworkGame game)
         {
             InitializeComponent();
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(1150, 550);
             Text = "Лобби";
             this.game = game;
             var table = new TableLayoutPanel
             {
-                Dock = DockStyle.Fill
+                Dock = DockStyle.Fill,
+                AutoSize = true,
             };
 
             for (var i = 0; i < 10; ++i)
@@ -30,8 +31,10 @@ namespace AlexBox.Views
 
             var label = new Label
             {
-                Text = $"Заходите. Порт: {game.MessageSender.Port} IP: {game.MessageSender.LocalIPAddress}",
+                Text = $"Заходите. Порт: {game.MessageSender.Port} IP: в коммандной строке наберите ipconfig, найдите блок \n" +
+                $"\"Адаптер беспроводной локальной сети Беспроводная сеть\" и скопируйте IP из строки \"IPv4-адрес\"",
                 Dock = DockStyle.Fill,
+                AutoSize = true,
                 TextAlign = ContentAlignment.MiddleCenter,
                 Font = new Font("Arial", 18),
             };
@@ -72,9 +75,9 @@ namespace AlexBox.Views
 
         private void ChangeLabel(object sender, PlayerLoginArgs e)
         {
-            playerLabels
+            BeginInvoke(new Action(() => playerLabels
                 .First(label => label.Text == "Место свободно")
-                .Text = e.Player.Name;
+                .Text = e.Player.Name));
         }
     }
 }

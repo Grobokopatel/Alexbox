@@ -33,7 +33,7 @@ namespace AlexBox
             Application.SetHighDpiMode(HighDpiMode.SystemAware);
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new StartForm(new GarticPhoneLikeGame()));
+            Application.Run(new StartForm(new RymeWeaver()));
         }
     }
 }

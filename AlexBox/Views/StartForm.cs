@@ -10,7 +10,7 @@ namespace AlexBox.Views
 {
     public partial class StartForm : Form
     {
-        public StartForm(GarticPhoneLikeGame game)
+        public StartForm(LocalNetworkGame game)
         {
             InitializeComponent();
             Text = "AlexBox";

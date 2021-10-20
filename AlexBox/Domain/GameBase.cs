@@ -40,6 +40,7 @@ namespace AlexBox
             PlayerSubmit(sender, args);
         }
 
+        protected Dictionary<Player, string> messages = new Dictionary<Player, string>();
         protected List<Player> players = new List<Player>();
 
         public int PlayersNumber => players.Count;

@@ -15,8 +15,8 @@ namespace AlexBox.Views
         private TextBox ipTextBox;
         private TextBox portTextBox;
         private Label connectionResultLabel;
-        private GarticPhoneLikeGame game;
-        public ConnectionForm(GarticPhoneLikeGame game)
+        private LocalNetworkGame game;
+        public ConnectionForm(LocalNetworkGame game)
         {
             InitializeComponent();
             this.game = game;

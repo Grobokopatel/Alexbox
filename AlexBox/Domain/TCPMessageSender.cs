@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -12,7 +13,7 @@ namespace AlexBox
 {
     public class TCPMessageSender : IMessageSender
     {
-        public event EventHandler<byte[]> MessageRecieved;
+        public event EventHandler<MessageRecievedArgs> MessageRecieved;
 
         private TcpListener server;
         public int Port
@@ -56,17 +57,19 @@ namespace AlexBox
                     {
                         if (stream.CanRead && IsRunning)
                         {
-                            var myReadBuffer = new byte[1024];
-                            var myCompleteMessage = new List<byte>();
+                            var buffer = new byte[1024];
+                            var clientMessage = new List<byte>();
                             do
                             {
-                                await stream.ReadAsync(myReadBuffer, 0, myReadBuffer.Length);
-                                myCompleteMessage.AddRange(myReadBuffer);
+                                var numberOfBytesReaded = stream.Read(buffer, 0, buffer.Length);
+                                clientMessage.AddRange(buffer.Take(numberOfBytesReaded));
                             }
                             while (stream.DataAvailable);
-                            MessageRecieved(this, myCompleteMessage.ToArray());
-                            var responseData = new BinaryFormatter().Serialize("УСПЕШНО!");
-                            await stream.WriteAsync(responseData, 0, responseData.Length);
+                            var message = clientMessage.ToArray();
+                            var args = new MessageRecievedArgs(message);
+                            MessageRecieved(this, args);
+                            var responseData = new BinaryFormatter().Serialize(args.Result);
+                            stream.Write(responseData, 0, responseData.Length);
                         }
                     }
                     finally
@@ -98,17 +101,16 @@ namespace AlexBox
                 // Отправка сообщения
                 await stream.WriteAsync(data, 0, data.Length);
                 // Получение ответа
-                var readingData = new byte[256];
-                var completeMessage = new List<byte>();
-                var responseData = string.Empty;
+                var buffer = new byte[256];
+                var serverResponse = new List<byte>();
                 do
                 {
-                    await stream.ReadAsync(readingData, 0, readingData.Length);
-                    completeMessage.AddRange(readingData);
+                    var numberOfBytesReaded = await stream.ReadAsync(buffer, 0, buffer.Length);
+                    serverResponse.AddRange(buffer.Take(numberOfBytesReaded));
                 }
                 while (stream.DataAvailable);
 
-                return completeMessage.ToArray();
+                return serverResponse.ToArray();
             }
             finally
             {
