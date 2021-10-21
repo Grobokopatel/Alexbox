@@ -11,9 +11,9 @@ namespace AlexBox.Views
 {
     public partial class ConnectionForm : Form
     {
-        private TextBox nameTextBox;
-        private TextBox ipTextBox;
-        private TextBox portTextBox;
+        private MaskedTextBox nameTextBox;
+        private MaskedTextBox ipTextBox;
+        private MaskedTextBox portTextBox;
         private Label connectionResultLabel;
         private LocalNetworkGame game;
         public ConnectionForm(LocalNetworkGame game)
@@ -52,15 +52,16 @@ namespace AlexBox.Views
                 AutoSize = true,
                 TextAlign = ContentAlignment.BottomLeft
             };
-            ipTextBox = new TextBox()
+
+            ipTextBox = new MaskedTextBox()
             {
                 Dock = DockStyle.Fill,
             };
-            portTextBox = new TextBox()
+            portTextBox = new MaskedTextBox()
             {
                 Dock = DockStyle.Fill,
             };
-            nameTextBox = new TextBox()
+            nameTextBox = new MaskedTextBox()
             {
                 Dock = DockStyle.Fill
             };

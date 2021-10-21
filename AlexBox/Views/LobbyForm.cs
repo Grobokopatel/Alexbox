@@ -31,7 +31,7 @@ namespace AlexBox.Views
 
             var label = new Label
             {
-                Text = $"Заходите. Порт: {game.MessageSender.Port} IP: в коммандной строке наберите ipconfig, найдите блок \n" +
+                Text = $"Заходите. Порт: {game.MessageSender.Port}, IP: в коммандной строке наберите ipconfig, найдите блок \n" +
                 $"\"Адаптер беспроводной локальной сети Беспроводная сеть\" и скопируйте IP из строки \"IPv4-адрес\"",
                 Dock = DockStyle.Fill,
                 AutoSize = true,
