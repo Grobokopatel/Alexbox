@@ -11,7 +11,7 @@ namespace AlexBox
         SomeoneHasSameNickname = 2
     }
 
-    public class PlayerLoginArgs : EventArgs
+    public class PlayerLoginEventArgs : EventArgs
     {
         public Player Player
         {
@@ -24,7 +24,7 @@ namespace AlexBox
             set;
         }
 
-        public PlayerLoginArgs(Player player)
+        public PlayerLoginEventArgs(Player player)
         {
             Player = player;
         }

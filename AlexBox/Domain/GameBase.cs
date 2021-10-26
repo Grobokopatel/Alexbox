@@ -26,22 +26,22 @@ namespace AlexBox
             private set;
         }
 
-        public event EventHandler<PlayerLoginArgs> PlayerLogin;
+        public event EventHandler<PlayerLoginEventArgs> PlayerLogin;
 
-        protected event EventHandler<PlayerSubmitArgs> PlayerSubmit;
+        protected event EventHandler<PlayerSubmitEventArgs> PlayerSubmit;
 
-        protected void InvokePlayerLogin(object sender, PlayerLoginArgs args)
+        protected void InvokePlayerLogin(object sender, PlayerLoginEventArgs args)
         {
             PlayerLogin(sender, args);
         }
 
-        protected void InvokePlayerSubmit(object sender, PlayerSubmitArgs args)
+        protected void InvokePlayerSubmit(object sender, PlayerSubmitEventArgs args)
         {
             PlayerSubmit(sender, args);
         }
 
-        protected Dictionary<Player, string> messages = new Dictionary<Player, string>();
-        protected List<Player> players = new List<Player>();
+        protected Dictionary<Player, string> messages = new();
+        protected List<Player> players = new();
 
         public int PlayersNumber => players.Count;
 
@@ -57,7 +57,7 @@ namespace AlexBox
 
         public bool IsEnoughPlayers => PlayersNumber >= MinPlayers;
 
-        public void TryAddPlayer(object sender, PlayerLoginArgs args)
+        public void TryAddPlayer(object sender, PlayerLoginEventArgs args)
         {
             var player = args.Player; //(Player) sender        ?
 
@@ -74,7 +74,7 @@ namespace AlexBox
                 else
                 {
                     players.Add(player);
-                    PlayerLogin(this, new PlayerLoginArgs(player));
+                    PlayerLogin(this, new PlayerLoginEventArgs(player));
                     args.Result = LoginResult.Success;
                 }
             }

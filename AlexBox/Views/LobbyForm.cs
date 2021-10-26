@@ -14,10 +14,12 @@ namespace AlexBox.Views
     {
         public Label[] playerLabels = new Label[8];
         private LocalNetworkGame game;
+        private Label label;
+
         public LobbyForm(LocalNetworkGame game)
         {
             InitializeComponent();
-            ClientSize = new Size(1150, 550);
+            ClientSize = new Size(900, 550);
             Text = "Лобби";
             this.game = game;
             var table = new TableLayoutPanel
@@ -26,18 +28,22 @@ namespace AlexBox.Views
                 AutoSize = true,
             };
 
-            for (var i = 0; i < 10; ++i)
+            table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            for (var i = 0; i < 9; ++i)
                 table.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
 
-            var label = new Label
+            label = new Label
             {
-                Text = $"Заходите. Порт: {game.MessageSender.Port}, IP: в коммандной строке наберите ipconfig, найдите блок \n" +
-                $"\"Адаптер беспроводной локальной сети Беспроводная сеть\" и скопируйте IP из строки \"IPv4-адрес\"",
-                Dock = DockStyle.Fill,
+                Padding = new Padding() { Left = 5, Right = 5, Top = 2, Bottom = 2},
+                Text = $"Заходите. Порт: {game.MessageSender.Port}, IP: в коммандной строке наберите ipconfig, найдите блок " +
+                "\"Адаптер беспроводной локальной сети Беспроводная сеть\" и скопируйте IP из строки \"IPv4-адрес\"",
+                MaximumSize = new Size(Bounds.Width, 0),
                 AutoSize = true,
                 TextAlign = ContentAlignment.MiddleCenter,
                 Font = new Font("Arial", 18),
             };
+
+            Resize += LobbyForm_Resize;
             table.Controls.Add(label, 0, 0);
 
             for (var i = 0; i < 8; ++i)
@@ -68,12 +74,17 @@ namespace AlexBox.Views
             Controls.Add(table);
         }
 
-        private void Button_Click(object sender, EventArgs e) //убрать
+        private void LobbyForm_Resize(object sender, EventArgs e)
         {
-            ChangeLabel(this, new PlayerLoginArgs(new Player("Вы нажали на кнопку"))); 
+            label.MaximumSize = new Size(Bounds.Width,0);
         }
 
-        private void ChangeLabel(object sender, PlayerLoginArgs e)
+        private void Button_Click(object sender, EventArgs e) //убрать
+        {
+            ChangeLabel(this, new PlayerLoginEventArgs(new Player("Вы нажали на кнопку")));
+        }
+
+        private void ChangeLabel(object sender, PlayerLoginEventArgs e)
         {
             BeginInvoke(new Action(() => playerLabels
                 .First(label => label.Text == "Место свободно")

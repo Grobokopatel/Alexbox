@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AlexBox
 {
-    public class MessageRecievedArgs : EventArgs
+    public class MessageRecievedEventArgs : EventArgs
     {
         public string Result
         {
@@ -17,7 +17,7 @@ namespace AlexBox
             get;
         }
 
-        public MessageRecievedArgs(byte[] message)
+        public MessageRecievedEventArgs(byte[] message)
         {
             Message = message;
         }

@@ -19,19 +19,19 @@ namespace AlexBox
         }
 
 
-        protected void HandleMessage(object sender, MessageRecievedArgs args)
+        protected void HandleMessage(object sender, MessageRecievedEventArgs args)
         {
             var data = args.Message;
             try
             {
-                var message = Formatter.Deserialize<PlayerSubmitArgs>(data);
+                var message = Formatter.Deserialize<PlayerSubmitEventArgs>(data);
                 InvokePlayerSubmit(this, message);
             }
             catch
             {
                 try
                 {
-                    var message = Formatter.Deserialize<PlayerLoginArgs>(data);
+                    var message = Formatter.Deserialize<PlayerLoginEventArgs>(data);
                     TryAddPlayer(this, message);
                     args.Result = message.Result.ToString();
                 }
@@ -40,14 +40,14 @@ namespace AlexBox
                     try
                     {
                         var name = Formatter.Deserialize<string>(data);
-                        var message = new PlayerLoginArgs(new Player(name));
+                        var message = new PlayerLoginEventArgs(new Player(name));
                         TryAddPlayer(this, message);
                         args.Result = message.Result.ToString();
                     }
                     catch
                     {
                         var name = "Еблан присоединился";
-                        var message = new PlayerLoginArgs(new Player(name));
+                        var message = new PlayerLoginEventArgs(new Player(name));
                         TryAddPlayer(this, message);
                         args.Result = message.Result.ToString();
                     }
@@ -55,7 +55,7 @@ namespace AlexBox
             }
         }
 
-        protected void HandleSubmit(object sender, PlayerSubmitArgs args)
+        protected void HandleSubmit(object sender, PlayerSubmitEventArgs args)
         {
             if (!messages.ContainsKey(args.Player))
             {
@@ -74,17 +74,14 @@ namespace AlexBox
             //player.Send()
         }
 
-        public LocalNetworkGame(IMessageSender messageSender, IFormatter serializer)
+        public LocalNetworkGame(IMessageSender messageSender = null, IFormatter formatter = null)
         {
-            Formatter = serializer;
-            MessageSender = messageSender;
+            MessageSender = messageSender ?? new TCPMessageSender();
+            Formatter = formatter ?? new BinaryFormatter();
 
-            messageSender.MessageRecieved += HandleMessage;
-            messageSender.StartRecievingMessagesAsync();
+            MessageSender.MessageRecieved += HandleMessage;
+            MessageSender.StartRecievingMessagesAsync();
             PlayerSubmit += HandleSubmit;
         }
-
-        public LocalNetworkGame() : this(new TCPMessageSender(), new BinaryFormatter())
-        { }
     }
 }

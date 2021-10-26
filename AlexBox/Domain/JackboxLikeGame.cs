@@ -6,7 +6,7 @@ using System.Text;
 
 namespace AlexBox
 {
-    public abstract class GarticPhoneLikeGame : LocalNetworkGame
+    public abstract class JackBoxLikeGame : LocalNetworkGame
     {
 
     }

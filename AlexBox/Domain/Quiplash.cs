@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AlexBox
 {
-    public class RymeWeaver : GarticPhoneLikeGame
+    public class Quiplash : JackBoxLikeGame
     {
         public override int MinPlayers => 3;
 

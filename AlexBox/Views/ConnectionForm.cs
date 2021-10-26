@@ -108,7 +108,6 @@ namespace AlexBox.Views
 
         private async void ConnectButtonAsync_Click(object sender, EventArgs e)
         {
-
             var formatter = game.Formatter;
             try
             {
@@ -117,7 +116,7 @@ namespace AlexBox.Views
                 var result = await game.MessageSender.SendAsync(ip, port, formatter.Serialize(nameTextBox.Text));
                 connectionResultLabel.Text = formatter.Deserialize<string>(result);
             }
-            catch (Exception exception)
+            catch (SystemException exception)
             {
                 connectionResultLabel.Text = exception.Message;
             }
