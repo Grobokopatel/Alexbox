@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace AlexBox.Views
+namespace AlexBox.View
 {
     public partial class StartForm : Form
     {

@@ -1,5 +1,5 @@
 ﻿
-namespace AlexBox.Views
+namespace AlexBox.View
 {
     partial class StartForm
     {

@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace AlexBox.Views
+namespace AlexBox.View
 {
     public partial class LobbyForm : Form
     {

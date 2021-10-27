@@ -6,7 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AlexBox.Domain;
-using AlexBox.Views;
+using AlexBox.View;
 
 namespace AlexBox
 {
