@@ -1,4 +1,5 @@
 ﻿using AlexBox;
+using AlexBox.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 
-namespace AlexBox
+namespace AlexBox.Infrastructure
 {
     public class TCPMessageSender : IMessageSender
     {
@@ -48,10 +49,10 @@ namespace AlexBox
             server = new TcpListener(LocalIPAddress, 0);
             // Запуск в работу
             server.Start();
-            // Бесконечный цикл
 
             try
             {
+            // Бесконечный цикл
                 while (IsRunning)
                 {
                     // Подключение клиента
@@ -103,13 +104,13 @@ namespace AlexBox
                 using (var stream = client.GetStream())
                 {
                     // Отправка сообщения
-                    await stream.WriteAsync(data, 0, data.Length);
+                    stream.Write(data, 0, data.Length);
                     // Получение ответа
                     var buffer = new byte[256];
                     var serverResponse = new List<byte>();
                     do
                     {
-                        var numberOfBytesReaded = await stream.ReadAsync(buffer, 0, buffer.Length);
+                        var numberOfBytesReaded = stream.Read(buffer, 0, buffer.Length);
                         serverResponse.AddRange(buffer.Take(numberOfBytesReaded));
                     }
                     while (stream.DataAvailable);

@@ -5,23 +5,11 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using AlexBox.Domain;
 using AlexBox.Views;
 
 namespace AlexBox
 {
-    [Serializable]
-    public class Person
-    {
-        public string Name { get; set; }
-        public int Age { get; set; }
-
-        public Person(string name, int age)
-        {
-            Name = name;
-            Age = age;
-        }
-    }
-
     public static class Program
     {
         /// <summary>

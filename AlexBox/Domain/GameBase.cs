@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AlexBox
+namespace AlexBox.Domain
 {
     public enum GameState
     {
@@ -18,7 +18,7 @@ namespace AlexBox
         {
             get;
             private set;
-        }
+        } = GameState.Preparation;
 
         public int Round
         {
@@ -27,12 +27,22 @@ namespace AlexBox
         }
 
         public event EventHandler<PlayerLoginEventArgs> PlayerLogin;
-
         protected event EventHandler<PlayerSubmitEventArgs> PlayerSubmit;
 
         protected void InvokePlayerLogin(object sender, PlayerLoginEventArgs args)
         {
             PlayerLogin(sender, args);
+        }
+        protected void HandleSubmit(object sender, PlayerSubmitEventArgs args)
+        {
+            if (!submits.ContainsKey(args.Player))
+            {
+                submits[args.Player] = args.Message;
+            }
+            else
+            {
+                submits[args.Player] += "===" + args.Message;
+            }
         }
 
         protected void InvokePlayerSubmit(object sender, PlayerSubmitEventArgs args)
@@ -40,10 +50,10 @@ namespace AlexBox
             PlayerSubmit(sender, args);
         }
 
-        protected Dictionary<Player, string> messages = new();
-        protected List<Player> players = new();
+        protected Dictionary<Player, string> submits = new Dictionary<Player, string>();
+        protected List<Player> players = new List<Player>();
 
-        public int PlayersNumber => players.Count;
+        public int CurrentPlayersNumber => players.Count;
 
         public abstract int MinPlayers
         {
@@ -55,7 +65,7 @@ namespace AlexBox
             get;
         }
 
-        public bool IsEnoughPlayers => PlayersNumber >= MinPlayers;
+        public bool IsEnoughPlayers => CurrentPlayersNumber >= MinPlayers;
 
         public void TryAddPlayer(object sender, PlayerLoginEventArgs args)
         {
@@ -63,7 +73,7 @@ namespace AlexBox
 
             lock (players)
             {
-                if (PlayersNumber >= MaxPlayers)
+                if (CurrentPlayersNumber >= MaxPlayers)
                 {
                     args.Result = LoginResult.GameIsFull;
                 }
@@ -82,7 +92,6 @@ namespace AlexBox
 
         public GameBase()
         {
-            State = GameState.Preparation;
         }
     }
 }

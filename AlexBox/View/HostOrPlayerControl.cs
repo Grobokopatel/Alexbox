@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AlexBox.Domain;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -69,6 +70,7 @@ namespace AlexBox.Views
 
         private void HostButton_Click(object sender, EventArgs e)
         {
+            game.MessageSender.StartRecievingMessagesAsync();
             var hostForm = new LobbyForm(game);
 
             hostForm.Show();

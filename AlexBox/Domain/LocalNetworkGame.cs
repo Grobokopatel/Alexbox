@@ -1,10 +1,11 @@
-﻿using System;
+﻿using AlexBox.Infrastructure;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
-namespace AlexBox
+namespace AlexBox.Domain
 {
     public abstract class LocalNetworkGame : GameBase
     {
@@ -40,9 +41,9 @@ namespace AlexBox
                     try
                     {
                         var name = Formatter.Deserialize<string>(data);
-                        var message = new PlayerLoginEventArgs(new Player(name));
-                        TryAddPlayer(this, message);
-                        args.Result = message.Result.ToString();
+                        var playerLoginArgs = new PlayerLoginEventArgs(new Player(name));
+                        TryAddPlayer(this, playerLoginArgs);
+                        args.Result = playerLoginArgs.Result.ToString();
                     }
                     catch
                     {
@@ -52,18 +53,6 @@ namespace AlexBox
                         args.Result = message.Result.ToString();
                     }
                 }
-            }
-        }
-
-        protected void HandleSubmit(object sender, PlayerSubmitEventArgs args)
-        {
-            if (!messages.ContainsKey(args.Player))
-            {
-                messages[args.Player] = args.Message;
-            }
-            else
-            {
-                messages[args.Player] += "===" + args.Message;
             }
         }
 
@@ -80,7 +69,7 @@ namespace AlexBox
             Formatter = formatter ?? new BinaryFormatter();
 
             MessageSender.MessageRecieved += HandleMessage;
-            MessageSender.StartRecievingMessagesAsync();
+            
             PlayerSubmit += HandleSubmit;
         }
     }

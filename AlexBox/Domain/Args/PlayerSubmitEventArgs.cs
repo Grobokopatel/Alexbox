@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AlexBox
+namespace AlexBox.Domain
 {
     public class PlayerSubmitEventArgs : EventArgs
     {
