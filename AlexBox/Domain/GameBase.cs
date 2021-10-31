@@ -25,7 +25,7 @@ namespace AlexBox.Domain
             get;
             private set;
         }
-
+        
         public event EventHandler<PlayerLoginEventArgs> PlayerLogin;
         protected event EventHandler<PlayerSubmitEventArgs> PlayerSubmit;
 
@@ -37,11 +37,11 @@ namespace AlexBox.Domain
         {
             if (!submits.ContainsKey(args.Player))
             {
-                submits[args.Player] = args.Message;
+                submits[args.Player] = args.Submit;
             }
             else
             {
-                submits[args.Player] += "===" + args.Message;
+                submits[args.Player] += "===" + args.Submit;
             }
         }
 
@@ -92,6 +92,7 @@ namespace AlexBox.Domain
 
         public GameBase()
         {
+            PlayerSubmit += HandleSubmit;
         }
     }
 }

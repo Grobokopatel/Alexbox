@@ -67,7 +67,7 @@ namespace AlexBox.Infrastructure
                                 var clientMessage = new List<byte>();
                                 do
                                 {
-                                    var numberOfBytesReaded = stream.Read(buffer, 0, buffer.Length);
+                                    var numberOfBytesReaded = await stream.ReadAsync(buffer, 0, buffer.Length);
                                     clientMessage.AddRange(buffer.Take(numberOfBytesReaded));
                                 }
                                 while (stream.DataAvailable);
@@ -75,7 +75,7 @@ namespace AlexBox.Infrastructure
                                 var args = new MessageRecievedEventArgs(clientMessage.ToArray());
                                 MessageRecieved(this, args);
                                 var responseData = Formatter.Serialize(args.Result);
-                                stream.Write(responseData, 0, responseData.Length);
+                                await stream.WriteAsync(responseData, 0, responseData.Length);
                             }
                         }
                     }
@@ -104,13 +104,13 @@ namespace AlexBox.Infrastructure
                 using (var stream = client.GetStream())
                 {
                     // Отправка сообщения
-                    stream.Write(data, 0, data.Length);
+                    await stream.WriteAsync(data, 0, data.Length);
                     // Получение ответа
                     var buffer = new byte[256];
                     var serverResponse = new List<byte>();
                     do
                     {
-                        var numberOfBytesReaded = stream.Read(buffer, 0, buffer.Length);
+                        var numberOfBytesReaded = await stream.ReadAsync(buffer, 0, buffer.Length);
                         serverResponse.AddRange(buffer.Take(numberOfBytesReaded));
                     }
                     while (stream.DataAvailable);

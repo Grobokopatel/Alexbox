@@ -117,7 +117,7 @@ namespace AlexBox.View
                 var result = await game.MessageSender.SendAsync(ip, port, formatter.Serialize(nameTextBox.Text));
                 connectionResultLabel.Text = formatter.Deserialize<string>(result);
             }
-            catch (SystemException exception)
+            catch (Exception exception)
             {
                 connectionResultLabel.Text = exception.Message;
             }

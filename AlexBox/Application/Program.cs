@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using AlexBox.Domain;
 using AlexBox.View;
+using App = System.Windows.Forms.Application;
 
-namespace AlexBox
+namespace AlexBox.Application
 {
     public static class Program
     {
@@ -18,10 +19,10 @@ namespace AlexBox
         [STAThread]
         static void Main()
         {
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new StartForm(new Quiplash()));
+            App.SetHighDpiMode(HighDpiMode.SystemAware);
+            App.EnableVisualStyles();
+            App.SetCompatibleTextRenderingDefault(false);
+            App.Run(new StartForm(new Quiplash()));
         }
     }
 }

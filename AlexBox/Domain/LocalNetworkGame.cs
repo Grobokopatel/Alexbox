@@ -19,7 +19,6 @@ namespace AlexBox.Domain
             get;
         }
 
-
         protected void HandleMessage(object sender, MessageRecievedEventArgs args)
         {
             var data = args.Message;
@@ -69,8 +68,6 @@ namespace AlexBox.Domain
             Formatter = formatter ?? new BinaryFormatter();
 
             MessageSender.MessageRecieved += HandleMessage;
-            
-            PlayerSubmit += HandleSubmit;
         }
     }
 }

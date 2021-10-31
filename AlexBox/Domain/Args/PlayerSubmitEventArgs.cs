@@ -11,7 +11,7 @@ namespace AlexBox.Domain
             get;
         }
 
-        public string Message
+        public string Submit
         {
             get;
         }
@@ -19,7 +19,7 @@ namespace AlexBox.Domain
         public PlayerSubmitEventArgs(Player player, string message)
         {
             Player = player;
-            Message = message;
+            Submit = message;
         }
     }
 }

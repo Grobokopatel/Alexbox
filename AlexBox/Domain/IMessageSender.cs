@@ -15,10 +15,5 @@ namespace AlexBox.Domain
         {
             get;
         }
-
-        IPAddress LocalIPAddress
-        {
-            get;
-        }
     }
 }
