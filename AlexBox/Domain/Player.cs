@@ -32,9 +32,9 @@ namespace AlexBox.Domain
 
         public void AddSubmission(string submission, int round = 0)
         {
-            if(submissions.TryGetValue(round, out var submissionsList))
+            if(submissions.TryGetValue(round, out var submissionList))
             {
-                submissionsList.Add(submission);
+                submissionList.Add(submission);
             }
             else
             {

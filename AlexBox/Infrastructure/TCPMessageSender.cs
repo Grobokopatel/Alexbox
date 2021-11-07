@@ -36,13 +36,13 @@ namespace AlexBox.Infrastructure
             get;
         }
 
-        public event EventHandler<MessageRecievedEventArgs> MessageRecieved;
-
         public TCPMessageSender(IFormatter formatter = null)
         {
             Formatter = formatter ?? new BinaryFormatter();
             LocalIPAddress = IPAddress.Any;
         }
+
+        public event EventHandler<MessageRecievedEventArgs> MessageRecieved;
 
         public async void StartRecievingMessagesAsync()
         {
@@ -99,20 +99,7 @@ namespace AlexBox.Infrastructure
         public async Task<byte[]> SendAsync(string address, int port, byte[] data)
         {
             // Инициализация
-            TcpClient client;
-
-            try
-            {
-                var task = Task.Run(() => new TcpClient(address, port));
-                task.Exception
-                client = await Task.Run(() => new TcpClient(address, port));
-            }
-            catch
-            {
-                throw;
-            }
-
-            using (client)
+            using (var client = new TcpClient(address, port))
             {
                 using (var stream = client.GetStream())
                 {

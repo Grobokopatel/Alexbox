@@ -9,7 +9,5 @@ namespace AlexBox.Domain
         public override int MinPlayers => 3;
 
         public override int MaxPlayers => 8;
-
-        
     }
 }

@@ -16,9 +16,6 @@ namespace AlexBox.Domain
     {
         protected List<Player> players = new List<Player>();
 
-        public event EventHandler<PlayerLoginEventArgs> PlayerLogin;
-        public event EventHandler<PlayerSubmitEventArgs> PlayerSubmit;
-
         public abstract int MinPlayers
         {
             get;
@@ -49,6 +46,9 @@ namespace AlexBox.Domain
         {
             PlayerSubmit += HandleSubmit;
         }
+
+        public event EventHandler<PlayerLoginEventArgs> PlayerLogin;
+        public event EventHandler<PlayerSubmitEventArgs> PlayerSubmit;
 
         public void TryAddPlayer(object sender, PlayerLoginEventArgs args)
         {
