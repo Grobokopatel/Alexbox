@@ -4,8 +4,11 @@ using System.Text;
 
 namespace AlexBox.Domain
 {
-    public class Player
+    public class Player : Entity
     {
+        //Ключ - номер раунда, значение - список сабмитов
+        private readonly Dictionary<int, List<string>> submissions = new Dictionary<int, List<string>>();
+
         public double Score
         {
             get;
@@ -17,21 +20,33 @@ namespace AlexBox.Domain
             get;
         }
 
-        private void AddDeltaPoints(double delta)
-        {
-            Score += delta;
-        }
-
         public Player(string name)
         {
             Name = name;
         }
 
+        public IReadOnlyList<string> GetSubmissions(int round = 0)
+        {
+            return submissions[round];
+        }
+
+        public void AddSubmission(string submission, int round = 0)
+        {
+            if(submissions.TryGetValue(round, out var submissionsList))
+            {
+                submissionsList.Add(submission);
+            }
+            else
+            {
+                submissions.Add(round, new List<string>());
+                submissions[round].Add(submission);
+            }
+        }
+
         public override bool Equals(object obj)
         {
-            if (obj.GetType() == typeof(Player))
+            if (obj is Player player)
             {
-                var player = (Player)obj;
                 return Name == player.Name;
             }
 
@@ -41,6 +56,11 @@ namespace AlexBox.Domain
         public override int GetHashCode()
         {
             return Name.GetHashCode();
+        }
+
+        private void AddDeltaPoints(double delta)
+        {
+            Score += delta;
         }
     }
 }

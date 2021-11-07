@@ -12,48 +12,12 @@ namespace AlexBox.Domain
         Credits
     }
 
-    public abstract class GameBase
+    public abstract class GameBase : Entity
     {
-        public GameState State
-        {
-            get;
-            private set;
-        } = GameState.Preparation;
-
-        public int Round
-        {
-            get;
-            private set;
-        }
-        
-        public event EventHandler<PlayerLoginEventArgs> PlayerLogin;
-        protected event EventHandler<PlayerSubmitEventArgs> PlayerSubmit;
-
-        protected void InvokePlayerLogin(object sender, PlayerLoginEventArgs args)
-        {
-            PlayerLogin(sender, args);
-        }
-        protected void HandleSubmit(object sender, PlayerSubmitEventArgs args)
-        {
-            if (!submits.ContainsKey(args.Player))
-            {
-                submits[args.Player] = args.Submit;
-            }
-            else
-            {
-                submits[args.Player] += "===" + args.Submit;
-            }
-        }
-
-        protected void InvokePlayerSubmit(object sender, PlayerSubmitEventArgs args)
-        {
-            PlayerSubmit(sender, args);
-        }
-
-        protected Dictionary<Player, string> submits = new Dictionary<Player, string>();
         protected List<Player> players = new List<Player>();
 
-        public int CurrentPlayersNumber => players.Count;
+        public event EventHandler<PlayerLoginEventArgs> PlayerLogin;
+        public event EventHandler<PlayerSubmitEventArgs> PlayerSubmit;
 
         public abstract int MinPlayers
         {
@@ -65,11 +29,30 @@ namespace AlexBox.Domain
             get;
         }
 
+        public int CurrentPlayersNumber => players.Count;
+
         public bool IsEnoughPlayers => CurrentPlayersNumber >= MinPlayers;
+
+        public GameState State
+        {
+            get;
+            private set;
+        } = GameState.Preparation;
+
+        public int Round
+        {
+            get;
+            private set;
+        }
+
+        public GameBase()
+        {
+            PlayerSubmit += HandleSubmit;
+        }
 
         public void TryAddPlayer(object sender, PlayerLoginEventArgs args)
         {
-            var player = args.Player; //(Player) sender        ?
+            var player = args.Player;
 
             lock (players)
             {
@@ -77,10 +60,10 @@ namespace AlexBox.Domain
                 {
                     args.Result = LoginResult.GameIsFull;
                 }
-                else if(players.Any(otherPlayer => otherPlayer.Name == player.Name))
+                else if (players.Any(otherPlayer => otherPlayer.Name == player.Name))
                 {
                     args.Result = LoginResult.SomeoneHasSameNickname;
-                }    
+                }
                 else
                 {
                     players.Add(player);
@@ -90,9 +73,27 @@ namespace AlexBox.Domain
             }
         }
 
-        public GameBase()
+        protected void InvokePlayerLogin(object sender, PlayerLoginEventArgs args)
         {
-            PlayerSubmit += HandleSubmit;
+            PlayerLogin(sender, args);
+        }
+
+        protected void HandleSubmit(object sender, PlayerSubmitEventArgs args)
+        {
+            var name = args.PlayerName;
+            var submission = args.Submit;
+
+            var player = players.Find(player => player.Name == name);
+
+            if (player is null)
+                throw new ArgumentException("Игрока с таким именем нет в списке игроков");
+
+            player.AddSubmission(submission, Round);
+        }
+
+        protected void InvokePlayerSubmit(object sender, PlayerSubmitEventArgs args)
+        {
+            PlayerSubmit(sender, args);
         }
     }
 }

@@ -14,8 +14,8 @@ namespace AlexBox.View
     public partial class LobbyForm : Form
     {
         public Label[] playerLabels = new Label[8];
-        private LocalNetworkGame game;
-        private Label label;
+        private readonly LocalNetworkGame game;
+        private readonly Label label;
 
         public LobbyForm(LocalNetworkGame game)
         {

@@ -11,7 +11,7 @@ namespace AlexBox.View
 {
     public partial class HostOrPlayerControl : UserControl
     {
-        private LocalNetworkGame game;
+        private readonly LocalNetworkGame game;
         public HostOrPlayerControl(LocalNetworkGame game)
         {
             InitializeComponent();

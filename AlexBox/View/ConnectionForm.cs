@@ -12,11 +12,11 @@ namespace AlexBox.View
 {
     public partial class ConnectionForm : Form
     {
-        private MaskedTextBox nameTextBox;
-        private MaskedTextBox ipTextBox;
-        private MaskedTextBox portTextBox;
-        private Label connectionResultLabel;
-        private LocalNetworkGame game;
+        private readonly MaskedTextBox nameTextBox;
+        private readonly MaskedTextBox ipTextBox;
+        private readonly MaskedTextBox portTextBox;
+        private readonly Label connectionResultLabel;
+        private readonly LocalNetworkGame game;
         public ConnectionForm(LocalNetworkGame game)
         {
             InitializeComponent();

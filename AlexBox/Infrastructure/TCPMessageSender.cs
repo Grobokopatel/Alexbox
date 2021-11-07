@@ -13,8 +13,6 @@ namespace AlexBox.Infrastructure
 {
     public class TCPMessageSender : IMessageSender
     {
-        public event EventHandler<MessageRecievedEventArgs> MessageRecieved;
-
         private TcpListener server;
         public int Port
         {
@@ -27,22 +25,24 @@ namespace AlexBox.Infrastructure
             private set;
         }
 
+        public bool IsRunning
+        {
+            get;
+            set;
+        } = true;
+
         public IFormatter Formatter
         {
             get;
         }
+
+        public event EventHandler<MessageRecievedEventArgs> MessageRecieved;
 
         public TCPMessageSender(IFormatter formatter = null)
         {
             Formatter = formatter ?? new BinaryFormatter();
             LocalIPAddress = IPAddress.Any;
         }
-
-        public bool IsRunning
-        {
-            get;
-            set;
-        } = true;
 
         public async void StartRecievingMessagesAsync()
         {
@@ -52,7 +52,7 @@ namespace AlexBox.Infrastructure
 
             try
             {
-            // Бесконечный цикл
+                // Бесконечный цикл
                 while (IsRunning)
                 {
                     // Подключение клиента
@@ -99,7 +99,20 @@ namespace AlexBox.Infrastructure
         public async Task<byte[]> SendAsync(string address, int port, byte[] data)
         {
             // Инициализация
-            using (var client = new TcpClient(address, port))
+            TcpClient client;
+
+            try
+            {
+                var task = Task.Run(() => new TcpClient(address, port));
+                task.Exception
+                client = await Task.Run(() => new TcpClient(address, port));
+            }
+            catch
+            {
+                throw;
+            }
+
+            using (client)
             {
                 using (var stream = client.GetStream())
                 {

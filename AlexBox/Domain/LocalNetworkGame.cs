@@ -19,6 +19,14 @@ namespace AlexBox.Domain
             get;
         }
 
+        public LocalNetworkGame(IMessageSender messageSender = null, IFormatter formatter = null)
+        {
+            MessageSender = messageSender ?? new TCPMessageSender();
+            Formatter = formatter ?? new BinaryFormatter();
+
+            MessageSender.MessageRecieved += HandleMessage;
+        }
+
         protected void HandleMessage(object sender, MessageRecievedEventArgs args)
         {
             var data = args.Message;
@@ -55,19 +63,11 @@ namespace AlexBox.Domain
             }
         }
 
-        public void SendMessage<TMessage, TObject>(Player player, TObject obj)
-        {
-            //var convertedMessage = converter.Serialize<TObject, TMessage>(obj);
-            //messageSender.Send(convertedMessage, "123.123.214");
-            //player.Send()
-        }
-
-        public LocalNetworkGame(IMessageSender messageSender = null, IFormatter formatter = null)
-        {
-            MessageSender = messageSender ?? new TCPMessageSender();
-            Formatter = formatter ?? new BinaryFormatter();
-
-            MessageSender.MessageRecieved += HandleMessage;
-        }
+        /*public void SendMessage<TMessage, TObject>(Player player, TObject obj)
+        { Не помню, зачем я это написал, пусть пока здесь лежит
+            var convertedMessage = converter.Serialize<TObject, TMessage>(obj);
+            messageSender.Send(convertedMessage, "123.123.214");
+            player.Send()
+        }*/
     }
 }
