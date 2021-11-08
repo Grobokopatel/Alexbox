@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 
-namespace AlexBox.View
+namespace Alexbox.View
 {
     public partial class TestForm1 : Form
     {

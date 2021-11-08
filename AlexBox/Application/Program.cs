@@ -5,11 +5,11 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AlexBox.Domain;
-using AlexBox.View;
+using Alexbox.Domain;
+using Alexbox.View;
 using App = System.Windows.Forms.Application;
 
-namespace AlexBox.Application
+namespace Alexbox.Application
 {
     public static class Program
     {

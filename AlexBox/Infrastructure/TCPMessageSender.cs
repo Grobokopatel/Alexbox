@@ -1,5 +1,5 @@
-﻿using AlexBox;
-using AlexBox.Domain;
+﻿using Alexbox;
+using Alexbox.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 
-namespace AlexBox.Infrastructure
+namespace Alexbox.Infrastructure
 {
     public class TCPMessageSender : IMessageSender
     {

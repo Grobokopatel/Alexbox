@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace AlexBox.Domain
+namespace Alexbox.Domain
 {
     public class Quiplash : JackBoxLikeGame
     {

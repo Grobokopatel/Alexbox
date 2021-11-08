@@ -1,11 +1,11 @@
-﻿using AlexBox.Infrastructure;
+﻿using Alexbox.Infrastructure;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
-namespace AlexBox.Domain
+namespace Alexbox.Domain
 {
     public abstract class LocalNetworkGame : GameBase
     {

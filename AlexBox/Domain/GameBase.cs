@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AlexBox.Domain
+namespace Alexbox.Domain
 {
     public enum GameState
     {

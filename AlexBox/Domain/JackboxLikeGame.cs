@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
-namespace AlexBox.Domain
+namespace Alexbox.Domain
 {
     public abstract class JackBoxLikeGame : LocalNetworkGame
     {

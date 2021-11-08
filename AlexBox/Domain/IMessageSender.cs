@@ -4,7 +4,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlexBox.Domain
+namespace Alexbox.Domain
 {
     public interface IMessageSender
     {

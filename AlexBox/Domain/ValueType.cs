@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AlexBox.Domain
+namespace Alexbox.Domain
 {
     public class ValueType
     {

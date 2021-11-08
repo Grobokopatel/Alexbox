@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlexBox", "AlexBox\AlexBox.csproj", "{25383C91-48AD-4073-8142-4FE678F8C7FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alexbox", "Alexbox\Alexbox.csproj", "{25383C91-48AD-4073-8142-4FE678F8C7FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{0B251305-DA2E-4171-839B-9A970590A046}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{0B251305-DA2E-4171-839B-9A970590A046}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
