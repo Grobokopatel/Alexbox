@@ -9,7 +9,7 @@ using Alexbox.Domain;
 using Alexbox.View;
 using App = System.Windows.Forms.Application;
 
-namespace Alexbox.Application
+namespace Alexbox.Infrastructure
 {
     public static class Program
     {

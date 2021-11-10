@@ -36,7 +36,7 @@ namespace Alexbox.View
             label = new Label
             {
                 Padding = new Padding() { Left = 5, Right = 5, Top = 2, Bottom = 2},
-                Text = $"Заходите. Порт: {game.MessageSender.Port}, IP: в коммандной строке наберите ipconfig, найдите блок " +
+                Text = $"Заходите\nПорт: {game.MessageSender.Port}\nIP: в коммандной строке наберите ipconfig, найдите блок " +
                 "\"Адаптер беспроводной локальной сети Беспроводная сеть\" и скопируйте IP из строки \"IPv4-адрес\"",
                 MaximumSize = new Size(Bounds.Width, 0),
                 AutoSize = true,

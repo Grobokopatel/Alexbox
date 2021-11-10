@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace Alexbox.Domain
 {
-    public class ValueType
+    public class ValueObject
     {
         private static PropertyInfo[] publicProperties;
 
-        public ValueType()
+        public ValueObject()
         {
             publicProperties ??= GetType()
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
@@ -28,10 +28,10 @@ namespace Alexbox.Domain
         public override bool Equals(object other)
         {
             return other.GetType().IsAssignableTo(GetType())
-                && Equals((ValueType)other);
+                && Equals((ValueObject)other);
         }
 
-        public bool Equals(ValueType other)
+        public bool Equals(ValueObject other)
         {
             return ReferenceEquals(this, other)
                 || GetPropertiesValues()
