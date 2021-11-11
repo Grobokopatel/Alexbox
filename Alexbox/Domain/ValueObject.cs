@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Alexbox.Domain
 {
-    public class ValueObject
+    public abstract class ValueObject<T>
     {
-        private static PropertyInfo[] publicProperties;
+        private readonly static PropertyInfo[] publicProperties;
 
-        public ValueObject()
+        static ValueObject()
         {
-            publicProperties ??= GetType()
+            publicProperties = typeof(T)
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .ToArray();
         }
@@ -27,15 +27,16 @@ namespace Alexbox.Domain
 
         public override bool Equals(object other)
         {
-            return other.GetType().IsAssignableTo(GetType())
-                && Equals((ValueObject)other);
+            return other is T t
+                && Equals(t);
         }
 
-        public bool Equals(ValueObject other)
+        public bool Equals(T other)
         {
             return ReferenceEquals(this, other)
-                || GetPropertiesValues()
-                .SequenceEqual(other.GetPropertiesValues());
+                || (other is ValueObject<T> t
+                && GetPropertiesValues()
+                .SequenceEqual(t.GetPropertiesValues()));
         }
 
         public override int GetHashCode()

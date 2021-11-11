@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Alexbox.Domain
 {
-    public class Entity
+    public abstract class Entity
     {
 		public Entity()
 		{
