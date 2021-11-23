@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 
 namespace Alexbox.Infrastructure
 {
-    public class TCPMessageSender : IMessageSender
+    public class TCPMessageSender : MessageSender
     {
         private TcpListener server;
-        public int Port
+        public override int Port
         {
             get => ((IPEndPoint)server.LocalEndpoint).Port;
         }
@@ -31,20 +31,14 @@ namespace Alexbox.Infrastructure
             set;
         } = true;
 
-        public IFormatter Formatter
+        public TCPMessageSender(IFormatter formatter) : base(formatter)
         {
-            get;
-        }
-
-        public TCPMessageSender(IFormatter formatter = null)
-        {
-            Formatter = formatter ?? new BinaryFormatter();
             LocalIPAddress = IPAddress.Any;
         }
 
-        public event EventHandler<MessageRecievedEventArgs> MessageRecieved;
+        public override event EventHandler<MessageRecievedEventArgs> MessageRecieved;
 
-        public async void StartRecievingMessagesAsync()
+        public override async void StartRecievingMessagesAsync()
         {
             server = new TcpListener(LocalIPAddress, 0);
             // Запуск в работу
@@ -91,12 +85,7 @@ namespace Alexbox.Infrastructure
             }
         }
 
-        public async Task<byte[]> SendAsync<TObject>(string address, int port, TObject data)
-        {
-            return await SendAsync(address, port, Formatter.Serialize(data));
-        }
-
-        public async Task<byte[]> SendAsync(string address, int port, byte[] data)
+        public override async Task<byte[]> SendAsync(string address, int port, byte[] data)
         {
             // Инициализация
             using (var client = new TcpClient(address, port))

@@ -109,7 +109,7 @@ namespace Alexbox.View
 
         private async void ConnectButtonAsync_Click(object sender, EventArgs e)
         {
-            var formatter = game.Formatter;
+            var formatter = game.MessageSender.Formatter;
             try
             {
                 var ip = ipTextBox.Text;

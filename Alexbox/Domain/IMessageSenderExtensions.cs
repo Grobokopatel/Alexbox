@@ -8,7 +8,7 @@ namespace Alexbox.Domain
 {
     public static class IMessageSenderExtensions
     {
-        public static async Task<byte[]> SendAsync<TObject>(this IMessageSender messageSender,
+        public static async Task<byte[]> SendAsync<TObject>(this MessageSender messageSender,
             string address, int port, TObject data)
         {
             return await messageSender.SendAsync(address, port, messageSender.Formatter.Serialize(data));
