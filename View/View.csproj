@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net5.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationIcon />
+    <StartupObject />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Application\Application.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="ConnectionForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="HostOrPlayerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="LobbyForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="StartForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="TestForm1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
+
+</Project>

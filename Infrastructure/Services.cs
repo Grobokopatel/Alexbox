@@ -1,0 +1,25 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading.Tasks;
+using Alexbox.Domain;
+using Ninject;
+
+namespace Alexbox.Infrastructure
+{
+    public static class Services
+    {
+        public static StandardKernel ConfigureContainer()
+        {
+            var container = new StandardKernel();
+
+            container.Bind<MessageSender>().To<TCPMessageSender>();
+            container.Bind<IFormatter>().To<BinaryFormatter>();
+
+            return container;
+        }
+    }
+}
