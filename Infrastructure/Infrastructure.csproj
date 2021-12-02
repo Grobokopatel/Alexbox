@@ -8,45 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="SignalR\wwwroot\css\site.css" />
-    <Content Include="SignalR\wwwroot\favicon.ico" />
-    <Content Include="SignalR\wwwroot\js\site.js" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.min.css.map" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.css.map" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\css\bootstrap-reboot.min.css.map" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\css\bootstrap.css" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\css\bootstrap.css.map" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\css\bootstrap.min.css" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\css\bootstrap.min.css.map" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.js.map" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\js\bootstrap.bundle.min.js.map" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\js\bootstrap.js" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\js\bootstrap.js.map" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\js\bootstrap.min.js" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\dist\js\bootstrap.min.js.map" />
-    <Content Include="SignalR\wwwroot\lib\bootstrap\LICENSE" />
-    <Content Include="SignalR\wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.js" />
-    <Content Include="SignalR\wwwroot\lib\jquery-validation-unobtrusive\jquery.validate.unobtrusive.min.js" />
-    <Content Include="SignalR\wwwroot\lib\jquery-validation-unobtrusive\LICENSE.txt" />
-    <Content Include="SignalR\wwwroot\lib\jquery-validation\dist\additional-methods.js" />
-    <Content Include="SignalR\wwwroot\lib\jquery-validation\dist\additional-methods.min.js" />
-    <Content Include="SignalR\wwwroot\lib\jquery-validation\dist\jquery.validate.js" />
-    <Content Include="SignalR\wwwroot\lib\jquery-validation\dist\jquery.validate.min.js" />
-    <Content Include="SignalR\wwwroot\lib\jquery-validation\LICENSE.md" />
-    <Content Include="SignalR\wwwroot\lib\jquery\dist\jquery.js" />
-    <Content Include="SignalR\wwwroot\lib\jquery\dist\jquery.min.js" />
-    <Content Include="SignalR\wwwroot\lib\jquery\dist\jquery.min.map" />
-    <Content Include="SignalR\wwwroot\lib\jquery\LICENSE.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="6.0.0" />
     <PackageReference Include="Ninject" Version="3.3.4" />
   </ItemGroup>

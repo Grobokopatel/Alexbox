@@ -11,7 +11,7 @@ namespace Alexbox.Domain
     {
         public abstract void StartRecievingMessagesAsync();
 
-        public abstract Task<byte[]> SendAsync(string address, int port, byte[] data);
+        public abstract void SendAsync(string address, int port, byte[] data);
 
         public IFormatter Formatter
         {
@@ -25,9 +25,6 @@ namespace Alexbox.Domain
 
         public abstract event EventHandler<MessageRecievedEventArgs> MessageRecieved;
 
-        public abstract int Port
-        {
-            get;
-        }
+        public abstract int Port { get; }
     }
 }

@@ -59,13 +59,13 @@ namespace Alexbox.Infrastructure
                             {
                                 var buffer = new byte[1024];
                                 var clientMessage = new List<byte>();
-                                do
+
+                                while (stream.DataAvailable)
                                 {
                                     var numberOfBytesReaded = await stream.ReadAsync(buffer, 0, buffer.Length);
                                     clientMessage.AddRange(buffer.Take(numberOfBytesReaded));
                                 }
-                                while (stream.DataAvailable);
-
+                                
                                 var args = new MessageRecievedEventArgs(clientMessage.ToArray());
                                 MessageRecieved(this, args);
                                 var responseData = Formatter.Serialize(args.Result);
@@ -85,7 +85,7 @@ namespace Alexbox.Infrastructure
             }
         }
 
-        public override async Task<byte[]> SendAsync(string address, int port, byte[] data)
+        public override async void SendAsync(string address, int port, byte[] data)
         {
             // Инициализация
             using (var client = new TcpClient(address, port))
@@ -104,7 +104,7 @@ namespace Alexbox.Infrastructure
                     }
                     while (stream.DataAvailable);
 
-                    return serverResponse.ToArray();
+                    //return serverResponse.ToArray();
                 }
             }
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Alexbox.Infrastructure;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -8,12 +9,12 @@ namespace Alexbox.Domain
 {
     public abstract class LocalNetworkGame : GameBase
     {
-        public MessageSender MessageSender
+        public SocketServer MessageSender
         {
             get;
         }
 
-        public LocalNetworkGame(MessageSender messageSender)
+        public LocalNetworkGame(SocketServer messageSender)
         {
             MessageSender = messageSender;
 
