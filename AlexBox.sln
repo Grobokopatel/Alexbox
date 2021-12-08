@@ -3,15 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31205.134
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Alexbox", "Alexbox\Alexbox.csproj", "{25383C91-48AD-4073-8142-4FE678F8C7FE}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{0B251305-DA2E-4171-839B-9A970590A046}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{B5E456E9-7521-47A9-93DC-6C7B6F716472}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{F7515578-7BBD-4138-9645-0AEC817E96D0}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "View", "View\View.csproj", "{4B66C5FF-C2E7-4A1C-A4DC-DF6CD9EE03C2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{B3E0A146-07BE-4353-BC46-5A91B409995E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,26 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{25383C91-48AD-4073-8142-4FE678F8C7FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25383C91-48AD-4073-8142-4FE678F8C7FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25383C91-48AD-4073-8142-4FE678F8C7FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25383C91-48AD-4073-8142-4FE678F8C7FE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0B251305-DA2E-4171-839B-9A970590A046}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0B251305-DA2E-4171-839B-9A970590A046}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B251305-DA2E-4171-839B-9A970590A046}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B251305-DA2E-4171-839B-9A970590A046}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B5E456E9-7521-47A9-93DC-6C7B6F716472}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B5E456E9-7521-47A9-93DC-6C7B6F716472}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B5E456E9-7521-47A9-93DC-6C7B6F716472}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B5E456E9-7521-47A9-93DC-6C7B6F716472}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F7515578-7BBD-4138-9645-0AEC817E96D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F7515578-7BBD-4138-9645-0AEC817E96D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F7515578-7BBD-4138-9645-0AEC817E96D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F7515578-7BBD-4138-9645-0AEC817E96D0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4B66C5FF-C2E7-4A1C-A4DC-DF6CD9EE03C2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4B66C5FF-C2E7-4A1C-A4DC-DF6CD9EE03C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4B66C5FF-C2E7-4A1C-A4DC-DF6CD9EE03C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4B66C5FF-C2E7-4A1C-A4DC-DF6CD9EE03C2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B3E0A146-07BE-4353-BC46-5A91B409995E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B3E0A146-07BE-4353-BC46-5A91B409995E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B3E0A146-07BE-4353-BC46-5A91B409995E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B3E0A146-07BE-4353-BC46-5A91B409995E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

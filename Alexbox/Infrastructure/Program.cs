@@ -20,20 +20,19 @@ namespace Alexbox.Infrastructure
         {
             var telegramBotThread = new Thread(TelegramBot.Run);
             telegramBotThread.Start();
-            App.SetHighDpiMode(HighDpiMode.SystemAware);
-            App.EnableVisualStyles();
-            App.SetCompatibleTextRenderingDefault(false);
-            var container = ConfigureContainer();
-            App.Run(new StartForm(container.Get<Quiplash>()));
+            //App.SetHighDpiMode(HighDpiMode.SystemAware);
+            //App.EnableVisualStyles();
+            //App.SetCompatibleTextRenderingDefault(false);
+            //var container = ConfigureContainer();
+            //App.Run(new StartForm(container.Get<Quiplash>()));
         }
 
         private static StandardKernel ConfigureContainer()
         {
             var container = new StandardKernel();
 
-            container.Bind<MessageSender>().To<TCPMessageSender>();
-            container.Bind<IFormatter>().To<BinaryFormatter>();
-
+            //container.Bind<MessageSender>().To<TCPMessageSender>();
+            //container.Bind<IFormatter>().To<BinaryFormatter>();
             return container;
         }
     }
