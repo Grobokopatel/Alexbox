@@ -9,37 +9,32 @@ namespace Alexbox.Domain
 {
     public abstract class LocalNetworkGame : GameBase
     {
-        public IMessageSender MessageSender
+        public MessageSender MessageSender
         {
             get;
         }
 
-        public IFormatter Formatter
+        public LocalNetworkGame(MessageSender messageSender)
         {
-            get;
-        }
-
-        public LocalNetworkGame(IMessageSender messageSender = null, IFormatter formatter = null)
-        {
-            MessageSender = messageSender ?? new TCPMessageSender();
-            Formatter = formatter ?? new BinaryFormatter();
+            MessageSender = messageSender;
 
             MessageSender.MessageRecieved += HandleMessage;
         }
 
         protected void HandleMessage(object sender, MessageRecievedEventArgs args)
         {
+            var formatter = MessageSender.Formatter;
             var data = args.Message;
             try
             {
-                var message = Formatter.Deserialize<PlayerSubmitEventArgs>(data);
+                var message = formatter.Deserialize<PlayerSubmitEventArgs>(data);
                 InvokePlayerSubmit(this, message);
             }
             catch
             {
                 try
                 {
-                    var message = Formatter.Deserialize<PlayerLoginEventArgs>(data);
+                    var message = formatter.Deserialize<PlayerLoginEventArgs>(data);
                     TryAddPlayer(this, message);
                     args.Result = message.Result.ToString();
                 }
@@ -47,7 +42,7 @@ namespace Alexbox.Domain
                 {
                     try
                     {
-                        var name = Formatter.Deserialize<string>(data);
+                        var name = formatter.Deserialize<string>(data);
                         var playerLoginArgs = new PlayerLoginEventArgs(new Player(name));
                         TryAddPlayer(this, playerLoginArgs);
                         args.Result = playerLoginArgs.Result.ToString();

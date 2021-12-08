@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Alexbox.Domain
 {
     public class Player : Entity
     {
         //Ключ - номер раунда, значение - список сабмитов
-        private readonly Dictionary<int, List<string>> submissions = new Dictionary<int, List<string>>();
+        private readonly Dictionary<int, List<string>> submissions = new();
 
-        public double Score
+        private double Score
         {
             get;
-            private set;
+            set;
         }
 
         public string Name
