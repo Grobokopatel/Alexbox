@@ -9,12 +9,12 @@ namespace Alexbox.Domain
 {
     public abstract class LocalNetworkGame : GameBase
     {
-        public SocketServer MessageSender
+        public MessageSender MessageSender
         {
             get;
         }
 
-        public LocalNetworkGame(SocketServer messageSender)
+        public LocalNetworkGame(MessageSender messageSender)
         {
             MessageSender = messageSender;
 

@@ -70,7 +70,7 @@ namespace Alexbox.View
 
         private void HostButton_Click(object sender, EventArgs e)
         {
-            game.MessageSender.StartRecievingMessagesAsync();
+            game.MessageSender.StartReceivingMessagesAsync();
             var hostForm = new LobbyForm(game);
 
             hostForm.Show();

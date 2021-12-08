@@ -1,12 +1,10 @@
-﻿using Alexbox;
-using Alexbox.Domain;
+﻿using Alexbox.Domain;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 
 namespace Alexbox.Infrastructure
@@ -38,7 +36,7 @@ namespace Alexbox.Infrastructure
 
         public override event EventHandler<MessageRecievedEventArgs> MessageRecieved;
 
-        public override async void StartRecievingMessagesAsync()
+        public override async void StartReceivingMessagesAsync()
         {
             server = new TcpListener(LocalIPAddress, 0);
             // Запуск в работу
@@ -59,13 +57,13 @@ namespace Alexbox.Infrastructure
                             {
                                 var buffer = new byte[1024];
                                 var clientMessage = new List<byte>();
-
-                                while (stream.DataAvailable)
+                                do
                                 {
                                     var numberOfBytesReaded = await stream.ReadAsync(buffer, 0, buffer.Length);
                                     clientMessage.AddRange(buffer.Take(numberOfBytesReaded));
                                 }
-                                
+                                while (stream.DataAvailable);
+
                                 var args = new MessageRecievedEventArgs(clientMessage.ToArray());
                                 MessageRecieved(this, args);
                                 var responseData = Formatter.Serialize(args.Result);
@@ -85,7 +83,7 @@ namespace Alexbox.Infrastructure
             }
         }
 
-        public override async void SendAsync(string address, int port, byte[] data)
+        public override async Task<byte[]> SendAsync(string address, int port, byte[] data)
         {
             // Инициализация
             using (var client = new TcpClient(address, port))
@@ -104,7 +102,7 @@ namespace Alexbox.Infrastructure
                     }
                     while (stream.DataAvailable);
 
-                    //return serverResponse.ToArray();
+                    return serverResponse.ToArray();
                 }
             }
         }
