@@ -1,12 +1,9 @@
 using System;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Diagnostics;
 using System.Threading;
-using System.Windows.Forms;
-using Alexbox.Domain;
-using Alexbox.View;
 using Ninject;
 using App = System.Windows.Forms.Application;
+using static Alexbox.TelegramBot.TelegramBot;
 
 namespace Alexbox.Infrastructure
 {
@@ -18,13 +15,16 @@ namespace Alexbox.Infrastructure
         [STAThread]
         public static void Main()
         {
-            var telegramBotThread = new Thread(TelegramBot.Run);
+            var telegramBotThread = new Thread(Run);
             telegramBotThread.Start();
             //App.SetHighDpiMode(HighDpiMode.SystemAware);
             //App.EnableVisualStyles();
             //App.SetCompatibleTextRenderingDefault(false);
             //var container = ConfigureContainer();
             //App.Run(new StartForm(container.Get<Quiplash>()));
+            while (true)
+            {
+            }
         }
 
         private static StandardKernel ConfigureContainer()
