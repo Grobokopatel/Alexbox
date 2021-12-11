@@ -1,26 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Alexbox.Domain
+﻿namespace Alexbox.Domain
 {
     public abstract class Entity
     {
-		public Entity()
-		{
-			Id = new Guid();
-		}
+	    
 
-		public Entity(Guid id)
-		{
-			Id = id;
-		}
+		public long Id { get; set; }
 
-		public Guid Id { get; }
-
-		protected bool Equals(Entity other)
+		private bool Equals(Entity other)
 		{
 			return Id == other.Id;
 		}
@@ -31,10 +17,7 @@ namespace Alexbox.Domain
 				return false;
 			if (ReferenceEquals(this, obj)) 
 				return true;
-			if (!obj.GetType().IsAssignableTo(GetType()))
-				return false;
-
-			return Equals((Entity)obj);
+			return obj.GetType().IsAssignableTo(GetType()) && Equals((Entity)obj);
 		}
 
 		public override int GetHashCode()

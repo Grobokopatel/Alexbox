@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
+using System.Windows.Forms;
 using Ninject;
 using App = System.Windows.Forms.Application;
 using static Alexbox.TelegramBot.TelegramBot;
@@ -17,11 +19,10 @@ namespace Alexbox.Infrastructure
         {
             var telegramBotThread = new Thread(Run);
             telegramBotThread.Start();
-            //App.SetHighDpiMode(HighDpiMode.SystemAware);
-            //App.EnableVisualStyles();
-            //App.SetCompatibleTextRenderingDefault(false);
-            //var container = ConfigureContainer();
-            //App.Run(new StartForm(container.Get<Quiplash>()));
+            /*App.SetHighDpiMode(HighDpiMode.SystemAware);
+            App.EnableVisualStyles();
+            App.SetCompatibleTextRenderingDefault(false);*/
+            var container = ConfigureContainer();
             while (true)
             {
             }
@@ -30,9 +31,6 @@ namespace Alexbox.Infrastructure
         private static StandardKernel ConfigureContainer()
         {
             var container = new StandardKernel();
-
-            //container.Bind<MessageSender>().To<TCPMessageSender>();
-            //container.Bind<IFormatter>().To<BinaryFormatter>();
             return container;
         }
     }

@@ -1,4 +1,5 @@
 ﻿
+/*
 namespace Alexbox.View
 {
     partial class LobbyForm
@@ -45,4 +46,5 @@ namespace Alexbox.View
         #endregion
     }
 }
+*/
 

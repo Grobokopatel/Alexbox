@@ -5,39 +5,41 @@ namespace Alexbox.Domain
     public class Player : Entity
     {
         //Ключ - номер раунда, значение - список сабмитов
-        private readonly Dictionary<int, List<string>> submissions = new();
+        private readonly Dictionary<int, List<string>> _submissions = new();
 
-        private double Score
+        public double Score
         {
             get;
-            set;
+            private set;
         }
 
-        public string Name
+        private string Name
         {
             get;
         }
 
-        public Player(string name)
+        public Player(long id,string name)
         {
+            Id = id;
             Name = name;
         }
 
         public IReadOnlyList<string> GetSubmissions(int round = 0)
         {
-            return submissions[round];
+            return _submissions[round];
         }
 
         public void AddSubmission(string submission, int round = 0)
         {
-            if(submissions.TryGetValue(round, out var submissionList))
+            if(_submissions.TryGetValue(round, out var submissionList))
             {
                 submissionList.Add(submission);
             }
             else
             {
-                submissions.Add(round, new List<string>());
-                submissions[round].Add(submission);
+                
+                _submissions.Add(round, new List<string>());
+                _submissions[round].Add(submission);
             }
         }
 

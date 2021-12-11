@@ -1,52 +1,54 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 
 namespace Alexbox.View
 {
     public partial class TestForm1 : Form
     {
-        Point moveStart; // точка для перемещения
+        private Point _moveStart; // точка для перемещения
 
         public TestForm1()
         {
             InitializeComponent();
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.BackColor = Color.Yellow;
-            Button button1 = new Button
+            FormBorderStyle = FormBorderStyle.None;
+            BackColor = Color.Yellow;
+            var button1 = new Button
             {
                 Location = new Point
                 {
-                    X = this.Width / 3,
-                    Y = this.Height / 3
+                    X = Width / 3,
+                    Y = Height / 3
                 }
             };
             button1.Text = "Закрыть";
             button1.Click += button1_Click;
-            this.Controls.Add(button1); // добавляем кнопку на форму
-            this.Load += Form1_Load;
-            this.MouseDown += Form1_MouseDown;
-            this.MouseMove += Form1_MouseMove;
+            Controls.Add(button1); // добавляем кнопку на форму
+            Load += Form1_Load;
+            MouseDown += Form1_MouseDown;
+            MouseMove += Form1_MouseMove;
+        }
+
+        public sealed override Color BackColor
+        {
+            get => base.BackColor;
+            set => base.BackColor = value;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            System.Drawing.Drawing2D.GraphicsPath myPath = new System.Drawing.Drawing2D.GraphicsPath();
+            var myPath = new System.Drawing.Drawing2D.GraphicsPath();
             // создаем эллипс с высотой и шириной формы
-            myPath.AddEllipse(0, 0, this.Width, this.Height);
+            myPath.AddEllipse(0, 0, Width, Height);
             // создаем с помощью элипса ту область формы, которую мы хотим видеть
-            Region myRegion = new Region(myPath);
+            var myRegion = new Region(myPath);
             // устанавливаем видимую область
-            this.Region = myRegion;
+            Region = myRegion;
         }
 
         private void Form1_MouseDown(object sender, MouseEventArgs e)
@@ -54,20 +56,18 @@ namespace Alexbox.View
             // если нажата левая кнопка мыши
             if (e.Button == MouseButtons.Left)
             {
-                moveStart = new Point(e.X, e.Y);
+                _moveStart = new Point(e.X, e.Y);
             }
         }
 
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
             // если нажата левая кнопка мыши
-            if ((e.Button & MouseButtons.Left) != 0)
-            {
-                // получаем новую точку положения формы
-                Point deltaPos = new Point(e.X - moveStart.X, e.Y - moveStart.Y);
-                // устанавливаем положение формы
-                this.Location = new Point(this.Location.X + deltaPos.X, this.Location.Y + deltaPos.Y);
-            }
+            if ((e.Button & MouseButtons.Left) == 0) return;
+            // получаем новую точку положения формы
+            var deltaPos = new Point(e.X - _moveStart.X, e.Y - _moveStart.Y);
+            // устанавливаем положение формы
+            Location = new Point(this.Location.X + deltaPos.X, Location.Y + deltaPos.Y);
         }
     }
 }

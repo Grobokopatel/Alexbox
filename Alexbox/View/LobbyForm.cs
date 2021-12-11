@@ -1,4 +1,5 @@
-﻿using Alexbox.Domain;
+﻿/*
+using Alexbox.Domain;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,7 +15,6 @@ namespace Alexbox.View
     public partial class LobbyForm : Form
     {
         public Label[] playerLabels = new Label[8];
-        private readonly LocalNetworkGame game;
         private readonly Label label;
 
         public LobbyForm(LocalNetworkGame game)
@@ -93,3 +93,4 @@ namespace Alexbox.View
         }
     }
 }
+*/
