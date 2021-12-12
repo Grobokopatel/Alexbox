@@ -3,7 +3,7 @@
     public enum GameStatus
     {
         WaitingForPlayers,
-        Playing,
-        Finished,
+        WaitingForReplies,
+        Voting,
     }
 }

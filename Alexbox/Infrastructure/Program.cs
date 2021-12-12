@@ -1,11 +1,13 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using Alexbox.Domain;
 using Ninject;
 using App = System.Windows.Forms.Application;
-using static Alexbox.TelegramBot.TelegramBot;
+using static Alexbox.Application.TelegramBot.TelegramBot;
 
 namespace Alexbox.Infrastructure
 {
@@ -19,6 +21,12 @@ namespace Alexbox.Infrastructure
         {
             var telegramBotThread = new Thread(Run);
             telegramBotThread.Start();
+            var quiplash = new CustomGame(2, 8, "Quiplash");
+            foreach (var gamePage in new List<IGamePage>())
+            {
+                quiplash.AddGamePage(gamePage);
+            }
+            //quiplash = new CustomGame(2, 8, "Quiplash").AddGamePage(page).Start();
             /*App.SetHighDpiMode(HighDpiMode.SystemAware);
             App.EnableVisualStyles();
             App.SetCompatibleTextRenderingDefault(false);*/

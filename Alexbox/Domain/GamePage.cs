@@ -1,11 +1,23 @@
-﻿namespace Alexbox.Domain
+﻿using System;
+using System.Drawing;
+
+namespace Alexbox.Domain
 {
-    public class GamePage
+    public class GamePage : IGamePage
     {
-        private GamePage WithBackground() // set background
+        public IGamePage WithBackground(Image image)
         {
-            return new GamePage(); 
+            throw new NotImplementedException();
         }
-        
+
+        public IGamePage WithTask(string task)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IGamePage WithNextButton(string buttonText, Action action)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
