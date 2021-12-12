@@ -13,7 +13,7 @@ namespace Alexbox.Domain
             private set;
         }
 
-        private string Name
+        public string Name
         {
             get;
         }

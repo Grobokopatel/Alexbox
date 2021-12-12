@@ -14,7 +14,7 @@ namespace Alexbox.Application.TelegramBot
     {
         private static readonly string Token = new StreamReader("token.token").ReadLine();
         private static readonly TelegramBotClient Client = new(Token);
-        private static readonly CustomGame CurrentGame = new(2, 8, "CustomGame");
+        public static readonly CustomGame CurrentGame = new(2, 8, "CustomGame");
 
         public static void Run()
         {

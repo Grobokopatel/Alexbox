@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Alexbox.Domain;
 using Ninject;
+using Alexbox.View;
 using App = System.Windows.Forms.Application;
 using static Alexbox.Application.TelegramBot.TelegramBot;
 
@@ -31,6 +32,7 @@ namespace Alexbox.Infrastructure
             App.EnableVisualStyles();
             App.SetCompatibleTextRenderingDefault(false);*/
             var container = ConfigureContainer();
+            App.Run(new Form1());
             while (true)
             {
             }
