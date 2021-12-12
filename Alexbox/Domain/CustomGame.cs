@@ -7,7 +7,7 @@ namespace Alexbox.Domain
     {
         public List<Player> _players = new();
         public List<Viewer> _viewers = new();
-        public readonly GameStatus _gameStatus = GameStatus.WaitingForPlayers;
+        public readonly GameStatus GameStatus;
         private string Instruction;
         private readonly int _minPlayers;
         public readonly int _maxPlayers;
@@ -16,6 +16,7 @@ namespace Alexbox.Domain
 
         public CustomGame(int minPlayers, int maxPlayers, string name)
         {
+            GameStatus = GameStatus.WaitingForPlayers;
             _minPlayers = minPlayers;
             _maxPlayers = maxPlayers;
             _name = name;
