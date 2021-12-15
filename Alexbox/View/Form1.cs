@@ -16,6 +16,9 @@ namespace Alexbox.View
     {
         public static readonly Label[] playerLabels = new Label[8];
         private readonly TableLayoutPanel table;
+        public readonly Timer timer_viewers; 
+        private readonly Timer timer_players;
+        private readonly Label label3;
 
         public Form1()
         {
@@ -29,29 +32,30 @@ namespace Alexbox.View
                 AutoSize = true,
             };
 
-            table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            for (var i = 0; i < 9; ++i)
-                table.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
-
             var label1 = new Label
             {
-                Text = "Смехлыст\n",
-                AutoSize = true,
+                Text = "\nСмехлыст\n",
                 Dock = DockStyle.Fill,
+                AutoSize = true,
                 TextAlign = ContentAlignment.MiddleCenter,
-                Font = new Font("Arial", 20),
+                Font = new Font("Arial", 22),
             };
 
-            Console.WriteLine("l");
+            table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
             var label2 = new Label
             {
-                Text = "\nОжидание игроков...\n\n",
-                AutoSize = true,
+                Text = "\nОжидание игроков\n\n",
                 Dock = DockStyle.Fill,
+                AutoSize = true,
                 TextAlign = ContentAlignment.MiddleCenter,
                 Font = new Font("Arial", 18),
             };
+
+            table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+
+            for (var i = 0; i < 8; ++i)
+                table.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
 
             table.Controls.Add(label2, 0, 1);
             table.Controls.Add(label1, 0, 0);
@@ -70,10 +74,13 @@ namespace Alexbox.View
                 table.Controls.Add(playerLabel, 0, i + 2);
             }
 
-            var label3 = new Label
+            label3 = new Label
             {
+                Text = $"Зрителей: {CurrentGame._viewers.Count}",
                 Dock = DockStyle.Fill,
-                Size = new Size(0, 50),
+                Size = new Size(0, 100),
+                TextAlign = ContentAlignment.MiddleCenter,
+                Font = new Font("ComicSans", 16),
             };
 
             var button = new Button
@@ -90,40 +97,52 @@ namespace Alexbox.View
 
             button.Click += Button_Click;
 
-            var timer = new Timer()
+            timer_viewers = new Timer()
             {
                 Interval = 100
             };
-            timer.Tick += new EventHandler(timer_Tick);
-            timer.Start();
-        }
+            timer_viewers.Tick += new EventHandler(Timer_Tick_Players);
 
-        public static void UpdatePlayers(List<Player> players)
-        {
-            for (var i = 0; i < 8; ++i)
+            timer_players = new Timer()
             {
-                playerLabels[i].Text = players[i].Name;
-            }
-        }
+                Interval = 100
+            };
+            timer_players.Tick += new EventHandler(Timer_Tick_Viewers);
 
-        void timer_Tick(object sender, EventArgs e)
+            timer_players.Start();
+            timer_viewers.Start();
+
+        }
+        void Timer_Tick_Players(object sender, EventArgs e)
         {
             for (var i = 0; i < 8; ++i)
             {
                 try
                 {
-                    playerLabels[i].Text = Alexbox.Application.TelegramBot.TelegramBot.CurrentGame._players[i].Name;
+                    playerLabels[i].Text = $"{i + 1} - {CurrentGame._players[i].Name}";
                 }
                 catch
                 {
-
+                    playerLabels[i].Text = $"{i + 1} - Место свободно";
                 }
             }
         }
 
+        void Timer_Tick_Viewers(object sender, EventArgs e)
+        {
+            label3.Text = $"Зрителей: {CurrentGame._viewers.Count}";
+        }
+
         private void Button_Click(object sender, EventArgs e)
         {
-            // запуск игры
+            timer_players.Stop();
+
+            ActiveForm.Hide();
+            Form2 Form2 = new();
+            Form2.ShowDialog();
+            Close();
+
+            // здесь переключение на вторую форму и надо расписать начало игры
         }
     }
 }
