@@ -1,19 +1,20 @@
-﻿using System.Collections.Generic;
+﻿using Alexbox.View;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using static System.Windows.Forms.Control;
 
 namespace Alexbox.Domain
 {
-    public sealed class CustomGame : Entity
+    public sealed class CustomGame
     {
         public List<Player> _players = new();
         public List<Viewer> _viewers = new();
         public readonly GameStatus GameStatus;
-        private string Instruction;
         private readonly int _minPlayers;
         public readonly int _maxPlayers;
         private readonly string _name;
-        private readonly List<IGamePage> _pages;
+        private readonly Queue<Page> _pages;
 
         public CustomGame(int minPlayers, int maxPlayers, string name)
         {
@@ -21,7 +22,7 @@ namespace Alexbox.Domain
             _minPlayers = minPlayers;
             _maxPlayers = maxPlayers;
             _name = name;
-            _pages = new List<IGamePage>();
+            _pages = new Queue<Page>();
         }
 
         public Player GetBestPlayer()
@@ -38,18 +39,46 @@ namespace Alexbox.Domain
             return bestPlayer;
         }
 
-        public CustomGame AddGamePage(IGamePage gamePage)
+        public CustomGame AddGamePage(Page gamePage)
         {
-            _pages.Add(gamePage);
+            _pages.Enqueue(gamePage);
             return this;
         }
-        public CustomGame AddGamePages(List<IGamePage> gamePages)
+
+        public CustomGame AddGamePages(List<Page> gamePages)
         {
             foreach (var gamePage in gamePages)
             {
-                _pages.Add(gamePage);
+                _pages.Enqueue(gamePage);
             }
             return this;
+        }
+
+        private ControlCollection _controls;
+        private Page _currentPage;
+
+        public void Start(Panel panel)
+        {
+            _controls = panel.Controls;
+
+            AddNextPageToControls();
+        }
+
+        private void ChangePage(TerminationType type)
+        {
+            _controls.Remove(_currentPage);
+            _currentPage.Ended -= ChangePage;
+            if (_pages.Count != 0)
+            {
+                AddNextPageToControls();
+            }
+        }
+
+        private void AddNextPageToControls()
+        {
+            _currentPage = _pages.Dequeue();
+            _controls.Add(_currentPage);
+            _currentPage.Ended += ChangePage;
         }
     }
 }

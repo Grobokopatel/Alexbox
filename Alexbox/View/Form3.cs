@@ -13,7 +13,7 @@ namespace Alexbox.View
 {
     public partial class Form3 : Form
     {
-        public Panel Panel;
+        public Panel Panel { get; set; }
 
         public Form3()
         {
@@ -21,9 +21,10 @@ namespace Alexbox.View
             Panel = new Panel()
             {
                 Dock = DockStyle.Fill,
-            };
+                BackgroundImage = Image.FromFile(
+                Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\2020-9-13 14-27-14.png")
+        };
             Controls.Add(Panel);
-
         }
     }
 }

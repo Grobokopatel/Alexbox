@@ -2,6 +2,7 @@
 {
     public enum TerminationType
     {
-        
+        Timeout,
+        EveryoneReplied
     }
 }
