@@ -38,9 +38,9 @@ namespace Alexbox.Infrastructure
             App.EnableVisualStyles();
             App.SetCompatibleTextRenderingDefault(false);
 
-            var quiplash = new CustomGame(2, 8, "Quiplash")
-    .AddGamePage(new TextPage("Правила бла бла бла").WithParagraph("Paragpah test"))
-    .AddGamePage(new TextPage("ЗАДАНИЯ"));
+            var quiplash = new CustomGame(3, 8, "Quiplash")
+                .AddGamePage(new TextPage("Правила бла бла бла").WithParagraph("Paragpah test"))
+                .AddGamePage(new TextPage("ЗАДАНИЯ"));
 
             var form = new Form3();
             quiplash.Start(form.Panel);

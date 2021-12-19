@@ -24,8 +24,7 @@ namespace Alexbox.Domain
 
         public override bool Equals(object other)
         {
-            return other is T t
-                && Equals(t);
+            return other is T t && Equals(t);
         }
 
         public bool Equals(T other)

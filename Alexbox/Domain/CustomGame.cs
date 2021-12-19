@@ -27,16 +27,7 @@ namespace Alexbox.Domain
 
         public Player GetBestPlayer()
         {
-            var bestPlayer = _players.First();
-            foreach (var player in _players)
-            {
-                if (bestPlayer.Score < player.Score)
-                {
-                    bestPlayer = player;
-                }
-            }
-
-            return bestPlayer;
+            return _players.Max(player => player.Score);
         }
 
         public CustomGame AddGamePage(Page gamePage)
