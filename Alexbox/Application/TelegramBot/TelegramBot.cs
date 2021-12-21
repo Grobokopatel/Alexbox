@@ -12,14 +12,14 @@ namespace Alexbox.Application.TelegramBot
 {
     public static class TelegramBot
     {
-        private static readonly string Token = new StreamReader("token.token").ReadLine();
-        private static readonly TelegramBotClient Client = new(Token);
-        public static readonly CustomGame CurrentGame = new(2, 8, "CustomGame");
+        private static readonly string _token = new StreamReader("token.token").ReadLine();
+        private static readonly TelegramBotClient _client = new(_token);
+        public static CustomGame CurrentGame { get; } = new(2, 8, "CustomGame");
 
         public static void Run()
         {
-            Client.StartReceiving();
-            Client.OnMessage += BotClientOnOnMessage;
+            _client.StartReceiving();
+            _client.OnMessage += BotClientOnOnMessage;
         }
 
         private static void BotClientOnOnMessage(object sender, MessageEventArgs e)
@@ -27,7 +27,7 @@ namespace Alexbox.Application.TelegramBot
             var id = e.Message.Chat.Id;
             var possiblePlayer = new Player(e.Message.Chat.Id, e.Message.From.FirstName);
             var text = e.Message.Text;
-            if (e.Message.Type != MessageType.Text) Client.SendTextMessageAsync(id, "Бот распознает только текст");
+            if (e.Message.Type != MessageType.Text) _client.SendTextMessageAsync(id, "Бот распознает только текст");
             if (CurrentGame.GameStatus == GameStatus.WaitingForPlayers)
             {
                 if (!CurrentGame._players.Contains(possiblePlayer))
@@ -70,6 +70,6 @@ namespace Alexbox.Application.TelegramBot
             }
         }
 
-        private static void SendMessageToUser(long id, string message) => Client.SendTextMessageAsync(id, message);
+        private static void SendMessageToUser(long id, string message) => _client.SendTextMessageAsync(id, message);
     }
 }

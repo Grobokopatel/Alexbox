@@ -18,6 +18,7 @@ namespace Alexbox.Domain
 
         public CustomGame(int minPlayers, int maxPlayers, string name)
         {
+
             GameStatus = GameStatus.WaitingForPlayers;
             _minPlayers = minPlayers;
             _maxPlayers = maxPlayers;
@@ -36,7 +37,7 @@ namespace Alexbox.Domain
             return this;
         }
 
-        public CustomGame AddGamePages(List<Page> gamePages)
+        public CustomGame AddGamePages(IEnumerable<Page> gamePages)
         {
             foreach (var gamePage in gamePages)
             {
@@ -49,10 +50,17 @@ namespace Alexbox.Domain
         private Page _currentPage;
 
         public void Start(Panel panel)
-        {
+        {   
             _controls = panel.Controls;
 
             AddNextPageToControls();
+        }
+
+        private void AddNextPageToControls()
+        {
+            _currentPage = _pages.Dequeue();
+            _controls.Add(_currentPage);
+            _currentPage.Ended += ChangePage;
         }
 
         private void ChangePage(TerminationType type)
@@ -63,13 +71,6 @@ namespace Alexbox.Domain
             {
                 AddNextPageToControls();
             }
-        }
-
-        private void AddNextPageToControls()
-        {
-            _currentPage = _pages.Dequeue();
-            _controls.Add(_currentPage);
-            _currentPage.Ended += ChangePage;
         }
     }
 }

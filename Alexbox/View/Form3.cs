@@ -18,6 +18,7 @@ namespace Alexbox.View
         public Form3()
         {
             InitializeComponent();
+            ClientSize = new Size(1400, 700);
             Panel = new Panel()
             {
                 Dock = DockStyle.Fill,

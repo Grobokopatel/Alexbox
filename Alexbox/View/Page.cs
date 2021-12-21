@@ -15,6 +15,7 @@ namespace Alexbox.View
             BackgroundImage = image;
             return this;
         }
+
         public Page WithParagraph(string text)
         {
             paragraph.Text = text;
@@ -41,7 +42,8 @@ namespace Alexbox.View
                 Dock = DockStyle.Fill,
                 AutoSize = true,
                 TextAlign = ContentAlignment.MiddleCenter,
-                BorderStyle = BorderStyle.FixedSingle
+                BorderStyle = BorderStyle.FixedSingle,
+                Font = new Font("Arial", 30),
             };
 
             controlTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 1));
@@ -53,7 +55,7 @@ namespace Alexbox.View
             Load += (sender, e) =>
             {
                 var timer = new Timer();
-                timer.Interval = 3000;
+                timer.Interval = 10000;
                 timer.Start();
                 timer.Tick += (sender, e) =>
                 { Ended(TerminationType.Timeout); timer.Stop(); };
