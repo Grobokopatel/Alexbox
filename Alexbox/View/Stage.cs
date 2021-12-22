@@ -5,33 +5,33 @@ using System.Windows.Forms;
 
 namespace Alexbox.View
 {
-    public abstract class Page : UserControl
+    public abstract class Stage : UserControl
     {
         //public Page WaitPlayerRepliesOrTimout(60000)
         
         //Пока не работает
-        public Page WithBackground(Image image)
+        public Stage WithBackground(Image image)
         {
             BackgroundImage = image;
             return this;
         }
 
-        public Page WithParagraph(string text)
+        public Stage WithParagraph(string text)
         {
             paragraph.Text = text;
             return this;
         }
 
         public Action<TerminationType> Ended;
-        protected readonly TableLayoutPanel controlTable;
+        protected readonly TableLayoutPanel ControlTable;
         private Label paragraph;
 
-        public Page()
+        public Stage()
         {
             /*            this.components = new System.ComponentModel.Container();
                         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             */
-            controlTable = new TableLayoutPanel
+            ControlTable = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 AutoSize = true,
@@ -46,18 +46,18 @@ namespace Alexbox.View
                 Font = new Font("Arial", 30),
             };
 
-            controlTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 1));
-            controlTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 80));
-            controlTable.Controls.Add(paragraph/*, 0, 0*/);
+            ControlTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 1));
+            ControlTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 80));
+            ControlTable.Controls.Add(paragraph/*, 0, 0*/);
             Dock = DockStyle.Fill;
-            Controls.Add(controlTable);
+            Controls.Add(ControlTable);
 
-            Load += (sender, e) =>
+            Load += (_, _) =>
             {
                 var timer = new Timer();
                 timer.Interval = 3000;
                 timer.Start();
-                timer.Tick += (sender, e) =>
+                timer.Tick += (_, _) =>
                 { Ended(TerminationType.Timeout); timer.Stop(); };
             };
         }

@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace Alexbox.View
 {
-    public partial class VotingPage : Page
+    public partial class VotingStage : Stage
     {
         private Label[] labels;
-        public VotingPage(string[] captions)
+        public VotingStage(string[] captions)
         {
             var table = new TableLayoutPanel()
             {
@@ -63,7 +56,7 @@ namespace Alexbox.View
                 table.Controls.Add(label, i+1, 0);
             }
 
-            controlTable.Controls.Add(table);
+            ControlTable.Controls.Add(table);
         }
     }
 }

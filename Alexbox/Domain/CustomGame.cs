@@ -1,6 +1,5 @@
 ﻿using Alexbox.View;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 using static System.Windows.Forms.Control;
 
@@ -8,46 +7,46 @@ namespace Alexbox.Domain
 {
     public sealed class CustomGame
     {
-        public Dictionary<long, Player> _players = new();
-        public Dictionary<long, Viewer> _viewers = new();
+        public readonly Dictionary<long, Player> Players = new();
+        public readonly Dictionary<long, Viewer> Viewers = new();
         public readonly GameStatus GameStatus;
-        private readonly int _minPlayers;
-        public readonly int _maxPlayers;
+        private readonly int MinPlayers;
+        public readonly int MaxPlayers;
         private readonly string _name;
-        private readonly Queue<Page> _pages;
+        private readonly Queue<Stage> _stages;
 
         public CustomGame(int minPlayers, int maxPlayers, string name)
         {
             GameStatus = GameStatus.WaitingForPlayers;
-            _minPlayers = minPlayers;
-            _maxPlayers = maxPlayers;
+            MinPlayers = minPlayers;
+            MaxPlayers = maxPlayers;
             _name = name;
-            _pages = new Queue<Page>();
+            _stages = new Queue<Stage>();
         }
 
         public Player GetBestPlayer()
         {
-            return _players.Max(item => item.Value.Score).Value;
+            return Players.Max(item => item.Value.Score).Value;
         }
 
-        public CustomGame AddGamePage(Page gamePage)
+        public CustomGame AddStage(Stage stage)
         {
-            _pages.Enqueue(gamePage);
+            _stages.Enqueue(stage);
             return this;
         }
 
-        public CustomGame AddGamePages(IEnumerable<Page> gamePages)
+        public CustomGame AddStages(IEnumerable<Stage> stages)
         {
-            foreach (var gamePage in gamePages)
+            foreach (var stage in stages)
             {
-                _pages.Enqueue(gamePage);
+                _stages.Enqueue(stage);
             }
 
             return this;
         }
 
         private ControlCollection _controls;
-        private Page _currentPage;
+        private Stage _currentStage;
 
         public void Start(Panel panel)
         {
@@ -57,25 +56,25 @@ namespace Alexbox.Domain
             lobby.Click += (s, a) =>
             {
                 _controls.Remove(lobby);
-                AddNextPageToControls();
+                AddNextStageToControls();
             };
             _controls.Add(lobby);
         }
 
-        private void AddNextPageToControls()
+        private void AddNextStageToControls()
         {
-            _currentPage = _pages.Dequeue();
-            _controls.Add(_currentPage);
-            _currentPage.Ended += ChangePage;
+            _currentStage = _stages.Dequeue();
+            _controls.Add(_currentStage);
+            _currentStage.Ended += ChangeStage;
         }
 
-        private void ChangePage(TerminationType type)
+        private void ChangeStage(TerminationType type)
         {
-            _controls.Remove(_currentPage);
-            _currentPage.Ended -= ChangePage;
-            if (_pages.Count != 0)
+            _controls.Remove(_currentStage);
+            _currentStage.Ended -= ChangeStage;
+            if (_stages.Count != 0)
             {
-                AddNextPageToControls();
+                AddNextStageToControls();
             }
         }
     }

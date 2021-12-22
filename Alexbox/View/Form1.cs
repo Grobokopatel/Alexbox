@@ -80,7 +80,7 @@ namespace Alexbox.View
 
             label3 = new Label
             {
-                Text = $"Зрителей: {CurrentGame._viewers.Count}",
+                Text = $"Зрителей: {CurrentGame.Viewers.Count}",
                 Dock = DockStyle.Fill,
                 Size = new Size(0, 100),
                 TextAlign = ContentAlignment.MiddleCenter,
@@ -120,12 +120,12 @@ namespace Alexbox.View
         }
         void Timer_Tick_Players(object sender, EventArgs e)
         {
-            var players = CurrentGame._players;
+            var players = CurrentGame.Players;
             for (var i = 0; i < 8; ++i)
             {
                 if (i < players.Count)
                 {
-                    playerLabels[i].Text = $"{i + 1} - {CurrentGame._players[i].Name}";
+                    playerLabels[i].Text = $"{i + 1} - {CurrentGame.Players[i].Name}";
                 }
                 else
                 {
@@ -136,7 +136,7 @@ namespace Alexbox.View
 
         void Timer_Tick_Viewers(object sender, EventArgs e)
         {
-            label3.Text = $"Зрителей: {CurrentGame._viewers.Count}";
+            label3.Text = $"Зрителей: {CurrentGame.Viewers.Count}";
         }
 
         private void Button_Click(object sender, EventArgs e)

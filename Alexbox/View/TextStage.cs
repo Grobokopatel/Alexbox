@@ -3,9 +3,9 @@ using System.Windows.Forms;
 
 namespace Alexbox.View
 {
-    public class TextPage : Page
+    public class TextStage : Stage
     {
-        public TextPage(string text)
+        public TextStage(string text)
         {
             var label = new Label
             {
@@ -15,8 +15,8 @@ namespace Alexbox.View
                 Font = new Font("Arial", 16),
             };
 
-            controlTable.RowStyles.Add(new RowStyle(SizeType.Percent, 5));
-            controlTable.Controls.Add(label/*, 0, 1*/);
+            ControlTable.RowStyles.Add(new RowStyle(SizeType.Percent, 5));
+            ControlTable.Controls.Add(label/*, 0, 1*/);
         }
     }
 }

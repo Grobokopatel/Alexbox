@@ -22,10 +22,16 @@ namespace Alexbox.Application.TelegramBot
         public static void Run()
         {
             Client.StartReceiving();
-            Client.OnMessage += BotClientOnOnMessage;
+            Client.OnMessage += BotClientOnMessage;
+            Client.OnCallbackQuery += BotClientOnCallbackQuery;
         }
 
-        private static void BotClientOnOnMessage(object sender, MessageEventArgs e)
+        private static void BotClientOnCallbackQuery(object sender, CallbackQueryEventArgs e)
+        {
+            var id = e.CallbackQuery.From.Id;
+            CurrentGame.Players[id].AddSubmission(e.CallbackQuery.Data);
+        }
+        private static void BotClientOnMessage(object sender, MessageEventArgs e)
         {
             var id = e.Message.Chat.Id;
             var text = e.Message.Text;
@@ -38,16 +44,16 @@ namespace Alexbox.Application.TelegramBot
             switch (CurrentGame.GameStatus)
             {
                 case GameStatus.WaitingForPlayers
-                    when !CurrentGame._players.ContainsKey(id) && !CurrentGame._viewers.ContainsKey(id):
+                    when !CurrentGame.Players.ContainsKey(id) && !CurrentGame.Viewers.ContainsKey(id):
                 {
-                    if (CurrentGame._players.Count < CurrentGame._maxPlayers)
+                    if (CurrentGame.Players.Count < CurrentGame.MaxPlayers)
                     {
-                        CurrentGame._players[id] = new Player(e.Message.From.FirstName);
+                        CurrentGame.Players[id] = new Player(e.Message.From.FirstName);
                         SendMessageToUser(id, "Вы успешно были добавлены в игру");
                     }
                     else
                     {
-                        CurrentGame._viewers[id] = new Viewer(e.Message.From.FirstName);
+                        CurrentGame.Viewers[id] = new Viewer(e.Message.From.FirstName);
                         SendMessageToUser(id, "Вы были добавлены как зритель");
                     }
 
@@ -56,15 +62,15 @@ namespace Alexbox.Application.TelegramBot
                 case GameStatus.WaitingForPlayers:
                     SendMessageToUser(id, "Вы уже были добавлены!");
                     break;
-                case GameStatus.WaitingForReplies when !CurrentGame._players.ContainsKey(id):
-                    CurrentGame._players[id].AddSubmission(text);
+                case GameStatus.WaitingForReplies when !CurrentGame.Players.ContainsKey(id):
+                    CurrentGame.Players[id].AddSubmission(text);
                     SendMessageToUser(id, "Ваш ответ был записан");
                     break;
-                case GameStatus.WaitingForReplies when !CurrentGame._viewers.ContainsKey(id):
+                case GameStatus.WaitingForReplies when !CurrentGame.Viewers.ContainsKey(id):
                     SendMessageToUser(id, "Вы зритель, ждите голосования");
                     break;
                 case GameStatus.WaitingForReplies:
-                    CurrentGame._viewers[id] = new Viewer(e.Message.From.FirstName);
+                    CurrentGame.Viewers[id] = new Viewer(e.Message.From.FirstName);
                     SendMessageToUser(id, "Вы были добавлены как зритель");
                     break;
                 case GameStatus.Voting:
