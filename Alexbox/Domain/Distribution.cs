@@ -8,7 +8,7 @@ namespace Alexbox.Domain
 {
     public class Distribution
     {
-        private int playersNumber;
+        private int playerAmount;
         private int tasksPerPlayer;
         public int TasksAmount
         {
@@ -16,9 +16,27 @@ namespace Alexbox.Domain
         }
         private int[] players;
 
-        public int[][] Groups
+        //Ключ - индекс задания, значение - индексы игроков  
+        public Dictionary<int, List<int>> Groups
         {
             get;
+        }
+
+        //Ключ - индекс игрока, значение - индексы заданий
+        public Dictionary<int, List<int>> GetTasks()
+        {
+            var tasks = new Dictionary<int, List<int>>();
+
+            for (var i = 0; i < playerAmount; ++i)
+            {
+                tasks.Add(i, new List<int>());
+                foreach (var playerId in Groups[i])
+                {
+                    tasks[i].Add(playerId);
+                }
+            }
+
+            return tasks;
         }
 
         public Distribution(int playerNumber, int tasksPerPlayer, int groupSize)
@@ -26,7 +44,7 @@ namespace Alexbox.Domain
             if (groupSize > playerNumber || tasksPerPlayer * playerNumber % groupSize != 0)
                 throw new ArgumentException("Невозможно сделать такое разбиение");
             TasksAmount = tasksPerPlayer * playerNumber / groupSize;
-            this.playersNumber = playerNumber;
+            this.playerAmount = playerNumber;
             this.tasksPerPlayer = tasksPerPlayer;
 
             players = Enumerable.Repeat(tasksPerPlayer, playerNumber).ToArray();
@@ -34,13 +52,13 @@ namespace Alexbox.Domain
             {
                 players[i] = tasksPerPlayer;
             }
-            Groups = new int[TasksAmount][];
+            Groups = new Dictionary<int, List<int>>();
 
             var start = new Random().Next(playerNumber);
             var k = 0;
             for (var i = 0; i < TasksAmount; ++i)
             {
-                var group = new HashSet<int>();
+                var group = new List<int>();
 
                 for (; group.Count != groupSize; k = (k + 1) % playerNumber)
                 {
@@ -52,7 +70,7 @@ namespace Alexbox.Domain
                     }
                 }
                 --k;
-                Groups[i] = group.ToArray();
+                Groups.Add(i,group);
                 group.Clear();
             }
         }
