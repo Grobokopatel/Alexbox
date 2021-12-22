@@ -20,12 +20,14 @@ namespace Alexbox.View
         private readonly Timer timer_players;
         private readonly Label label3;
         public event EventHandler ButtonClick;
+        public Button Button;
 
         public Form1()
         {
-            components = new Container();
+/*            components = new Container();
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(900, 750);
+*/
+            Dock = DockStyle.Fill;
             Text = "Лобби";
 
             table = new TableLayoutPanel
@@ -85,20 +87,20 @@ namespace Alexbox.View
                 Font = new Font("ComicSans", 16),
             };
 
-            var button = new Button
+            Button = new Button
             {
                 Text = "Начать",
                 Dock = DockStyle.Fill,
-                Size = new Size(0, 50),
                 Font = new Font("ComicSans", 16),
+                Size = new Size(0, 50)
             };
             table.Controls.Add(label3, 0, 10);
-            table.Controls.Add(button, 0, 11);
+            table.Controls.Add(Button, 0, 11);
 
             Controls.Add(table);
 
-            button.Click += ButtonClick;
-            button.Click += Button_Click;
+            //button.Click += ButtonClick;
+            Button.Click += Button_Click;
 
             timer_viewers = new Timer()
             {
@@ -118,13 +120,14 @@ namespace Alexbox.View
         }
         void Timer_Tick_Players(object sender, EventArgs e)
         {
+            var players = CurrentGame._players;
             for (var i = 0; i < 8; ++i)
             {
-                try
+                if (i < players.Count)
                 {
                     playerLabels[i].Text = $"{i + 1} - {CurrentGame._players[i].Name}";
                 }
-                catch
+                else
                 {
                     playerLabels[i].Text = $"{i + 1} - Место свободно";
                 }

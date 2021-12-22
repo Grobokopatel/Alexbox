@@ -8,6 +8,11 @@ namespace Alexbox
 {
     internal static class IEnumerableExtensions
     {
+        /*public static TSource Shuffle()
+        {
+
+        }*/
+
         public static TSource Max<TSource, TKey>(this IEnumerable<TSource> source,
             Func<TSource, TKey> keySelector)
             where TKey : IComparable<TKey>
