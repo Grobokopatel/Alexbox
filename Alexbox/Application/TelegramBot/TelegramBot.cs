@@ -27,7 +27,12 @@ namespace Alexbox.Application.TelegramBot
             var id = e.Message.Chat.Id;
             var possiblePlayer = new Player(e.Message.Chat.Id, e.Message.From.FirstName);
             var text = e.Message.Text;
-            if (e.Message.Type != MessageType.Text) _client.SendTextMessageAsync(id, "Бот распознает только текст");
+            if (e.Message.Type != MessageType.Text)
+            {
+                _client.SendTextMessageAsync(id, "Бот распознает только текст");
+                return;
+            }
+
             if (CurrentGame.GameStatus == GameStatus.WaitingForPlayers)
             {
                 if (!CurrentGame._players.Contains(possiblePlayer))

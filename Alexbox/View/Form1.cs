@@ -12,17 +12,19 @@ using Alexbox.Domain;
 
 namespace Alexbox.View
 {
-    public partial class Form1 : Form
+    public partial class Form1 : UserControl
     {
         public static readonly Label[] playerLabels = new Label[8];
         private readonly TableLayoutPanel table;
         public readonly Timer timer_viewers; 
         private readonly Timer timer_players;
         private readonly Label label3;
+        public event EventHandler ButtonClick;
 
         public Form1()
         {
-            InitializeComponent();
+            components = new Container();
+            AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(900, 750);
             Text = "Лобби";
 
@@ -95,6 +97,7 @@ namespace Alexbox.View
 
             Controls.Add(table);
 
+            button.Click += ButtonClick;
             button.Click += Button_Click;
 
             timer_viewers = new Timer()
@@ -135,13 +138,13 @@ namespace Alexbox.View
 
         private void Button_Click(object sender, EventArgs e)
         {
-            timer_players.Stop();
+/*            timer_players.Stop();
 
             ActiveForm.Hide();
             Form2 Form2 = new();
             Form2.ShowDialog();
             Close();
-
+*/
             // здесь переключение на вторую форму и надо расписать начало игры
         }
     }

@@ -18,7 +18,6 @@ namespace Alexbox.Domain
 
         public CustomGame(int minPlayers, int maxPlayers, string name)
         {
-
             GameStatus = GameStatus.WaitingForPlayers;
             _minPlayers = minPlayers;
             _maxPlayers = maxPlayers;
@@ -53,7 +52,9 @@ namespace Alexbox.Domain
         {   
             _controls = panel.Controls;
 
-            AddNextPageToControls();
+            var lobby = new Form1();
+            lobby.Click += (s,a) => { _controls.Remove(lobby); AddNextPageToControls();  };
+            _controls.Add(new Form1());
         }
 
         private void AddNextPageToControls()

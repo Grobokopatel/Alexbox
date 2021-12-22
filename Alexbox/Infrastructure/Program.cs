@@ -37,7 +37,7 @@ namespace Alexbox.Infrastructure
             App.SetHighDpiMode(HighDpiMode.SystemAware);
             App.EnableVisualStyles();
             App.SetCompatibleTextRenderingDefault(false);
-
+                
             var quiplash = new CustomGame(3, 8, "Quiplash")
                 .AddGamePage(new VotingPage(new[] { "Я съел кота", "Бебра понюхана", "Новый автомат"}).WithParagraph("Что бы сказал моргенштерн при встрече с владом а4?"))
                 .AddGamePage(new TextPage("Правила бла бла бла").WithParagraph("Paragpah test"))
