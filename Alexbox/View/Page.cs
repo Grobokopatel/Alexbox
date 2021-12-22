@@ -55,7 +55,7 @@ namespace Alexbox.View
             Load += (sender, e) =>
             {
                 var timer = new Timer();
-                timer.Interval = 10000;
+                timer.Interval = 3000;
                 timer.Start();
                 timer.Tick += (sender, e) =>
                 { Ended(TerminationType.Timeout); timer.Stop(); };

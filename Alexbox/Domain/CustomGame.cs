@@ -53,8 +53,8 @@ namespace Alexbox.Domain
             _controls = panel.Controls;
 
             var lobby = new Form1();
-            lobby.Click += (s,a) => { _controls.Remove(lobby); AddNextPageToControls();  };
-            _controls.Add(new Form1());
+            lobby.Button.Click += (s,a) => { _controls.Remove(lobby); AddNextPageToControls();  };
+            _controls.Add(lobby);
         }
 
         private void AddNextPageToControls()
