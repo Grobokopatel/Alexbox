@@ -1,9 +1,12 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Alexbox.Domain;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.Enums;
+using Telegram.Bot.Types.ReplyMarkups;
 
 #pragma warning disable 618
 
@@ -12,69 +15,75 @@ namespace Alexbox.Application.TelegramBot
 {
     public static class TelegramBot
     {
-        private static readonly string _token = new StreamReader("token.token").ReadLine();
-        private static readonly TelegramBotClient _client = new(_token);
-        public static CustomGame CurrentGame { get; } = new(2, 8, "CustomGame");
+        private static readonly string Token = new StreamReader("token.token").ReadLine();
+        private static readonly TelegramBotClient Client = new(Token);
+        public static CustomGame CurrentGame { get; } = new(3, 8, "CustomGame");
 
         public static void Run()
         {
-            _client.StartReceiving();
-            _client.OnMessage += BotClientOnOnMessage;
+            Client.StartReceiving();
+            Client.OnMessage += BotClientOnOnMessage;
         }
 
         private static void BotClientOnOnMessage(object sender, MessageEventArgs e)
         {
             var id = e.Message.Chat.Id;
-            var possiblePlayer = new Player(e.Message.Chat.Id, e.Message.From.FirstName);
             var text = e.Message.Text;
             if (e.Message.Type != MessageType.Text)
             {
-                _client.SendTextMessageAsync(id, "Бот распознает только текст");
+                Client.SendTextMessageAsync(id, "Бот распознает только текст");
                 return;
             }
 
-            if (CurrentGame.GameStatus == GameStatus.WaitingForPlayers)
+            switch (CurrentGame.GameStatus)
             {
-                if (!CurrentGame._players.Contains(possiblePlayer))
+                case GameStatus.WaitingForPlayers
+                    when !CurrentGame._players.ContainsKey(id) && !CurrentGame._viewers.ContainsKey(id):
                 {
                     if (CurrentGame._players.Count < CurrentGame._maxPlayers)
                     {
-                        CurrentGame._players.Add(possiblePlayer);
+                        CurrentGame._players[id] = new Player(e.Message.From.FirstName);
                         SendMessageToUser(id, "Вы успешно были добавлены в игру");
                     }
                     else
                     {
-                        CurrentGame._viewers.Add(new Viewer(id, e.Message.From.FirstName));
+                        CurrentGame._viewers[id] = new Viewer(e.Message.From.FirstName);
                         SendMessageToUser(id, "Вы были добавлены как зритель");
                     }
+
+                    break;
                 }
-                else SendMessageToUser(id, "Вы уже были добавлены!");
-            }
-
-            if (CurrentGame.GameStatus == GameStatus.WaitingForReplies)
-            {
-                if (!CurrentGame._players.Contains(possiblePlayer))
-                    SendMessageToUser(id, "ЛОЛ, Ты зритель. Жди!");
-                else
-                {
-                    var isPlayer = false;
-                    foreach (var player in CurrentGame._players.Where(player => player.Equals(possiblePlayer)))
-                    {
-                        player.AddSubmission(text);
-                        isPlayer = true;
-                        break;
-                    }
-
-                    if (!isPlayer && !CurrentGame._viewers.Contains(new Viewer(id, e.Message.From.FirstName)))
-                        CurrentGame._viewers.Add(new Viewer(id, e.Message.From.FirstName));
-                }
-            }
-
-            if (CurrentGame.GameStatus == GameStatus.Voting)
-            {
+                case GameStatus.WaitingForPlayers:
+                    SendMessageToUser(id, "Вы уже были добавлены!");
+                    break;
+                case GameStatus.WaitingForReplies when !CurrentGame._players.ContainsKey(id):
+                    CurrentGame._players[id].AddSubmission(text);
+                    SendMessageToUser(id, "Ваш ответ был записан");
+                    break;
+                case GameStatus.WaitingForReplies when !CurrentGame._viewers.ContainsKey(id):
+                    SendMessageToUser(id, "Вы зритель, ждите голосования");
+                    break;
+                case GameStatus.WaitingForReplies:
+                    CurrentGame._viewers[id] = new Viewer(e.Message.From.FirstName);
+                    SendMessageToUser(id, "Вы были добавлены как зритель");
+                    break;
+                case GameStatus.Voting:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
-        private static void SendMessageToUser(long id, string message) => _client.SendTextMessageAsync(id, message);
+        private static InlineKeyboardMarkup CreateButtons(IEnumerable<string> textButtons)
+        {
+            return new InlineKeyboardMarkup(textButtons
+                .Select(text => new InlineKeyboardButton {Text = text, CallbackData = text})
+                .Select(button => new[] {button}).ToArray());
+        }
+
+        private static void SendMessageToUser(long id, string message) => Client.SendTextMessageAsync(id, message);
+
+        private static void SendMessageWithButtonsToUser(long id, string message, IEnumerable<string> textButtons) =>
+            Client.SendTextMessageAsync(id, message, replyMarkup: CreateButtons(textButtons));
     }
 }

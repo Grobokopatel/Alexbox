@@ -8,8 +8,8 @@ namespace Alexbox.Domain
 {
     public sealed class CustomGame
     {
-        public List<Player> _players = new();
-        public List<Viewer> _viewers = new();
+        public Dictionary<long, Player> _players = new();
+        public Dictionary<long, Viewer> _viewers = new();
         public readonly GameStatus GameStatus;
         private readonly int _minPlayers;
         public readonly int _maxPlayers;
@@ -27,7 +27,7 @@ namespace Alexbox.Domain
 
         public Player GetBestPlayer()
         {
-            return _players.Max(player => player.Score);
+            return _players.Max(item => item.Value.Score).Value;
         }
 
         public CustomGame AddGamePage(Page gamePage)
@@ -42,6 +42,7 @@ namespace Alexbox.Domain
             {
                 _pages.Enqueue(gamePage);
             }
+
             return this;
         }
 
@@ -49,12 +50,16 @@ namespace Alexbox.Domain
         private Page _currentPage;
 
         public void Start(Panel panel)
-        {   
+        {
             _controls = panel.Controls;
 
             var lobby = new Form1();
-            lobby.Click += (s,a) => { _controls.Remove(lobby); AddNextPageToControls();  };
-            _controls.Add(new Form1());
+            lobby.Click += (s, a) =>
+            {
+                _controls.Remove(lobby);
+                AddNextPageToControls();
+            };
+            _controls.Add(lobby);
         }
 
         private void AddNextPageToControls()

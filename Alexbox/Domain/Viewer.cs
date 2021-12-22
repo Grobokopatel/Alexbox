@@ -4,9 +4,8 @@
     {
         public readonly string Name;
 
-        public Viewer(long id, string name)
+        public Viewer(string name)
         {
-            Id = id;
             Name = name;
         }
         
