@@ -53,7 +53,7 @@ namespace Alexbox.Domain
             _controls = panel.Controls;
 
             var lobby = new Form1();
-            lobby.Click += (s, a) =>
+            lobby.Click += (_, _) =>
             {
                 _controls.Remove(lobby);
                 AddNextStageToControls();
