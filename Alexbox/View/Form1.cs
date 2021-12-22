@@ -19,7 +19,6 @@ namespace Alexbox.View
         public readonly Timer timer_viewers; 
         private readonly Timer timer_players;
         private readonly Label label3;
-        public event EventHandler ButtonClick;
         public Button Button;
 
         public Form1()

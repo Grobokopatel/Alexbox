@@ -22,8 +22,8 @@ namespace Alexbox.View
             Panel = new Panel()
             {
                 Dock = DockStyle.Fill,
-                
-        };
+
+            };
             Controls.Add(Panel);
         }
     }
