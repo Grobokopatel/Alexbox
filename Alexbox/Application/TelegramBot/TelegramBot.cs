@@ -17,10 +17,11 @@ namespace Alexbox.Application.TelegramBot
     {
         private static readonly string Token = new StreamReader("token.token").ReadLine();
         private static readonly TelegramBotClient Client = new(Token);
-        public static CustomGame CurrentGame { get; } = new(3, 8, "CustomGame");
+        public static CustomGame CurrentGame { get; private set; }
 
-        public static void Run()
+        public static void Run(CustomGame currentGame)
         {
+            CurrentGame = currentGame;
             Client.StartReceiving();
             Client.OnMessage += BotClientOnMessage;
             Client.OnCallbackQuery += BotClientOnCallbackQuery;

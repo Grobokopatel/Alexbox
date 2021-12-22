@@ -12,7 +12,7 @@ namespace Alexbox.Domain
         public readonly GameStatus GameStatus;
         private readonly int MinPlayers;
         public readonly int MaxPlayers;
-        private readonly string _name;
+        public readonly string Name;
         private readonly Queue<Stage> _stages;
 
         public CustomGame(int minPlayers, int maxPlayers, string name)
@@ -20,7 +20,7 @@ namespace Alexbox.Domain
             GameStatus = GameStatus.WaitingForPlayers;
             MinPlayers = minPlayers;
             MaxPlayers = maxPlayers;
-            _name = name;
+            Name = name;
             _stages = new Queue<Stage>();
         }
 
