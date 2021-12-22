@@ -23,8 +23,8 @@ namespace Alexbox.Infrastructure
         [STAThread]
         public static void Main()
         {
-            /*            var telegramBotThread = new Thread(Run);
-                        telegramBotThread.Start();
+            var telegramBotThread = new Thread(Run);
+            telegramBotThread.Start();
 
                         /*foreach (var gamePage in new List<IGamePage>())
                         {

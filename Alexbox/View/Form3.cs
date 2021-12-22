@@ -22,8 +22,7 @@ namespace Alexbox.View
             Panel = new Panel()
             {
                 Dock = DockStyle.Fill,
-                BackgroundImage = Image.FromFile(
-                Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\2020-9-13 14-27-14.png")
+                
         };
             Controls.Add(Panel);
         }
