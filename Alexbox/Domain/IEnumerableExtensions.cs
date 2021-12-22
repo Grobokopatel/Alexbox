@@ -8,10 +8,26 @@ namespace Alexbox
 {
     internal static class IEnumerableExtensions
     {
-        /*public static TSource Shuffle()
+        public static void Swap<TSource>(this TSource[] array, long index1, long index2)
         {
+            var tmp = array[index1];
+            array[index1] = array[index2];
+            array[index2] = tmp;
+        }
 
-        }*/
+        public static IEnumerable<TSource> Shuffle<TSource>(this IEnumerable<TSource> source)
+        {
+            var sourceArray = source.ToArray();
+            var length = sourceArray.Length;
+            var rng = new Random();
+            for (var i = 0; i < length; ++i)
+            {
+                var j = rng.Next(length);
+                sourceArray.Swap(i, j);
+            }
+
+            return sourceArray;
+        }
 
         public static TSource Max<TSource, TKey>(this IEnumerable<TSource> source,
             Func<TSource, TKey> keySelector)
