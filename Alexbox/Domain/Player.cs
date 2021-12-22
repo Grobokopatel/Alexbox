@@ -13,14 +13,13 @@ namespace Alexbox.Domain
             private set;
         }
 
-        private string Name
+        public string Name
         {
             get;
         }
 
-        public Player(long id,string name)
+        public Player(string name)
         {
-            Id = id;
             Name = name;
         }
 

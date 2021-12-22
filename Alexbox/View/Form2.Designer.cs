@@ -1,7 +1,7 @@
 ﻿
 namespace Alexbox.View
 {
-    partial class TestForm1
+    partial class Form2
     {
         /// <summary>
         /// Required designer variable.
@@ -29,17 +29,10 @@ namespace Alexbox.View
         /// </summary>
         private void InitializeComponent()
         {
-            this.SuspendLayout();
-            // 
-            // TestForm1
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Name = "TestForm1";
-            this.Text = "TestForm1";
-            this.ResumeLayout(false);
-
+            this.Text = "Form2";
         }
 
         #endregion

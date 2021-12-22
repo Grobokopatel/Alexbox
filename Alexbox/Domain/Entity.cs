@@ -2,8 +2,6 @@
 {
     public abstract class Entity
     {
-	    
-
 		public long Id { get; set; }
 
 		private bool Equals(Entity other)
@@ -17,7 +15,8 @@
 				return false;
 			if (ReferenceEquals(this, obj)) 
 				return true;
-			return obj.GetType().IsAssignableTo(GetType()) && Equals((Entity)obj);
+
+			return obj is Entity entity && Equals(entity);
 		}
 
 		public override int GetHashCode()
