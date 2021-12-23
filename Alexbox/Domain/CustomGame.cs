@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using static System.Windows.Forms.Control;
+using Form = Alexbox.View.Form;
 
 namespace Alexbox.Domain
 {
@@ -52,7 +53,7 @@ namespace Alexbox.Domain
         {
             _controls = panel.Controls;
 
-            var lobby = new Form1();
+            var lobby = new Form();
             lobby.Button.Click += (_, _) =>
             {
                 _controls.Remove(lobby);

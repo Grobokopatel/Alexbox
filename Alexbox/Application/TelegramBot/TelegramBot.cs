@@ -88,9 +88,9 @@ namespace Alexbox.Application.TelegramBot
                 .Select(button => new[] {button}).ToArray());
         }
 
-        private static void SendMessageToUser(long id, string message) => Client.SendTextMessageAsync(id, message);
+        public static void SendMessageToUser(long id, string message) => Client.SendTextMessageAsync(id, message);
 
-        private static void SendMessageWithButtonsToUser(long id, string message, IEnumerable<string> textButtons) =>
+        public static void SendMessageWithButtonsToUser(long id, string message, IEnumerable<string> textButtons) =>
             Client.SendTextMessageAsync(id, message, replyMarkup: CreateButtons(textButtons));
     }
 }

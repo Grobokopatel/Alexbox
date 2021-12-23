@@ -14,4 +14,16 @@
     <PackageReference Include="Telegram.Bot" Version="16.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="View\Form3.Designer.cs" />
+    <Compile Remove="View\Form1.Designer.cs" />
+    <Compile Remove="View\Form3.cs" />
+    <Compile Remove="View\Form1.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="View\Form3.resx" />
+    <EmbeddedResource Remove="View\Form1.resx" />
+  </ItemGroup>
+
 </Project>

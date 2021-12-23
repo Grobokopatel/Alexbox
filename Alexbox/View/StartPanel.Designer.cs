@@ -1,7 +1,7 @@
 ﻿
 namespace Alexbox.View
 {
-    partial class Form3
+    partial class StartPanel
     {
         /// <summary>
         /// Required designer variable.
