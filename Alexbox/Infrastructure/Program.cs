@@ -17,18 +17,16 @@ namespace Alexbox.Infrastructure
         [STAThread]
         public static void Main()
         {
-            var telegramBotThread = new Thread(Run);
-            telegramBotThread.Start();
-            App.SetCompatibleTextRenderingDefault(false);
             App.SetHighDpiMode(HighDpiMode.SystemAware);
             App.EnableVisualStyles();
             App.SetCompatibleTextRenderingDefault(false);
-                
-            var quiplash = new CustomGame(3, 8, "Quiplash")
-                .AddStage(new VotingStage(new[] { "Я съел кота", "Бебра понюхана", "Новый автомат"}).WithParagraph("Что бы сказал моргенштерн при встрече с владом а4?"))
+            var quiplash = new CustomGame(1, 1, "Quiplash")
+                .AddStage(new VotingStage(new[] {"Я съел кота", "Бебра понюхана", "Новый автомат"}).WithParagraph(
+                    "Что бы сказал моргенштерн при встрече с владом а4?"))
                 .AddStage(new TextStage("Правила бла бла бла").WithParagraph("Paragpah test"))
                 .AddStage(new TextStage("ЗАДАНИЯ"));
-
+            var telegramBotThread = new Thread(() => Run(quiplash));
+            telegramBotThread.Start();
             var form = new Form3();
             quiplash.Start(form.Panel);
             App.Run(form);
@@ -39,7 +37,5 @@ namespace Alexbox.Infrastructure
             var container = new StandardKernel();
             return container;
         }
-
-
     }
 }
