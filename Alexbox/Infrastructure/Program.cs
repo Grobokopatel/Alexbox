@@ -20,6 +20,7 @@ namespace Alexbox.Infrastructure
             App.SetHighDpiMode(HighDpiMode.SystemAware);
             App.EnableVisualStyles();
             App.SetCompatibleTextRenderingDefault(false);
+            var distribution = new Distribution(2,1,2);
             var quiplash = new CustomGame(1, 1, "Quiplash")
                 .AddStage(new VotingStage(new[] {"Я съел кота", "Бебра понюхана", "Новый автомат"}).WithParagraph(
                     "Что бы сказал моргенштерн при встрече с владом а4?"))
@@ -27,7 +28,7 @@ namespace Alexbox.Infrastructure
                 .AddStage(new TextStage("ЗАДАНИЯ"));
             var telegramBotThread = new Thread(() => Run(quiplash));
             telegramBotThread.Start();
-            var form = new Form3();
+            var form = new StartPanel();
             quiplash.Start(form.Panel);
             App.Run(form);
         }
