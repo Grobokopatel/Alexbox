@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Forms;
 using Alexbox.Domain;
@@ -21,14 +20,14 @@ namespace Alexbox.Infrastructure
             App.SetHighDpiMode(HighDpiMode.SystemAware);
             App.EnableVisualStyles();
             App.SetCompatibleTextRenderingDefault(false);
-            var tasks = new List<Task> {new("Что вы сегодня ели?")};
-            var distribution = new Distribution(2, 1, 2);
             var quiplash = new CustomGame(1, 1, "Quiplash")
-                .AddStage(new VotingStage(new []{"KEK","KEK"}).WithParagraph(
-                    "Что бы сказал моргенштерн при встрече с владом а4?").WaitForTimout(10000));
+                .AddStage(new VotingStage(new[] {"Я съел кота", "Бебра понюхана", "Новый автомат"}).WithParagraph(
+                    "Что бы сказал моргенштерн при встрече с владом а4?"))
+                .AddStage(new TextStage("Правила бла бла бла").WithParagraph("Paragpah test"))
+                .AddStage(new TextStage("ЗАДАНИЯ"));
             var telegramBotThread = new Thread(() => Run(quiplash));
             telegramBotThread.Start();
-            var form = new StartPanel();
+            var form = new Form3();
             quiplash.Start(form.Panel);
             App.Run(form);
         }
