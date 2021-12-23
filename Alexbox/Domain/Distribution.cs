@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Alexbox.Domain
 {
-    /*public class Distribution<TMember, TTask>
+    public class Distribution<TMember, TTask>
     {
         public class Group
         {
@@ -23,6 +23,7 @@ namespace Alexbox.Domain
         }
 
         private int playerAmount;
+
         private int tasksPerPlayer;
         public int TasksAmount
         {
@@ -56,31 +57,32 @@ namespace Alexbox.Domain
             }
         }
 
-        public Distribution(int playerNumber, int tasksPerPlayer, int groupSize)
+        public Distribution(int playerAmount, int tasksPerPlayer, int groupSize,
+            IEnumerable<TMember> members, IEnumerable<TTask> tasks)
         {
-            if (groupSize > playerNumber || tasksPerPlayer * playerNumber % groupSize != 0)
+            if (groupSize > playerAmount || tasksPerPlayer * playerAmount % groupSize != 0)
                 throw new ArgumentException("Невозможно сделать такое разбиение");
-            TasksAmount = tasksPerPlayer * playerNumber / groupSize;
-            this.playerAmount = playerNumber;
+            TasksAmount = tasksPerPlayer * playerAmount / groupSize;
+            this.playerAmount = playerAmount;
             this.tasksPerPlayer = tasksPerPlayer;
 
-            players = Enumerable.Repeat(tasksPerPlayer, playerNumber).ToArray();
-            for (var i = 0; i < playerNumber; ++i)
+            players = Enumerable.Repeat(tasksPerPlayer, playerAmount).ToArray();
+            for (var i = 0; i < playerAmount; ++i)
             {
                 players[i] = tasksPerPlayer;
             }
 
-            Groups = (ILookup<TTask, TMember>)new Dictionary<TTask, List<TMember>>();
+            Groups = new Dictionary<TTask, List<TMember>>();
 
-            var start = new Random().Next(playerNumber);
+            var start = new Random().Next(playerAmount);
             var k = 0;
             for (var i = 0; i < TasksAmount; ++i)
             {
                 var group = new List<int>();
 
-                for (; group.Count != groupSize; k = (k + 1) % playerNumber)
+                for (; group.Count != groupSize; k = (k + 1) % playerAmount)
                 {
-                    var h = (k + start) % playerNumber;
+                    var h = (k + start) % playerAmount;
                     if (players[h] > 0)
                     {
                         --players[h];
@@ -92,7 +94,7 @@ namespace Alexbox.Domain
                 group.Clear();
             }
         }
-    }*/
+    }
 
     public class Distribution
     {
