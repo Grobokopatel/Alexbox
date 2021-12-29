@@ -21,9 +21,9 @@ namespace Alexbox.Infrastructure
             App.EnableVisualStyles();
             App.SetCompatibleTextRenderingDefault(false);
             var distribution = new Distribution(2,1,2);
-            var quiplash = new CustomGame(1, 1, "Quiplash")
+            var quiplash = new CustomGame(1, 8, "Quiplash")
                 .AddStage(new VotingStage(new[] {"Я съел кота", "Бебра понюхана", "Новый автомат"}).WithParagraph(
-                    "Что бы сказал моргенштерн при встрече с владом а4?"))
+                    "Что бы сказал моргенштерн при встрече с владом а4?").WaitForTimout(10000))
                 .AddStage(new TextStage("Правила бла бла бла").WithParagraph("Paragpah test"))
                 .AddStage(new TextStage("ЗАДАНИЯ"));
             var telegramBotThread = new Thread(() => Run(quiplash));
