@@ -49,7 +49,7 @@ namespace Alexbox.View
             {
                 foreach (var id in TelegramBot.CurrentGame.Players.Keys)
                 {
-                    TelegramBot.SendMessageWithButtonsToUser(id,Paragraph.Text, captions);
+                    TelegramBot.SendMessageWithButtonsToUser(id, Paragraph.Text, captions);
                 }
             };
         }

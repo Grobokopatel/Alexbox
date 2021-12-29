@@ -77,6 +77,7 @@ namespace Alexbox
                     minValue = currentElement;
                 }
             }
+
             return minValue;
         }
     }

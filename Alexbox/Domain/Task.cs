@@ -12,6 +12,5 @@
             _possibleAnswers = possibleAnswers;
             _rightAnswer = rightAnswer;
         }
-
     }
 }

@@ -7,16 +7,9 @@ namespace Alexbox.Domain
         //Ключ - номер раунда, значение - список сабмитов
         private readonly Dictionary<int, List<string>> _submissions = new();
 
-        public double Score
-        {
-            get;
-            private set;
-        }
+        public double Score { get; private set; }
 
-        public string Name
-        {
-            get;
-        }
+        public string Name { get; }
 
         public Player(string name)
         {
@@ -30,13 +23,12 @@ namespace Alexbox.Domain
 
         public void AddSubmission(string submission, int round = 0)
         {
-            if(_submissions.TryGetValue(round, out var submissionList))
+            if (_submissions.TryGetValue(round, out var submissionList))
             {
                 submissionList.Add(submission);
             }
             else
             {
-                
                 _submissions.Add(round, new List<string>());
                 _submissions[round].Add(submission);
             }

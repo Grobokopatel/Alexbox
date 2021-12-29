@@ -15,10 +15,14 @@ namespace Alexbox.View
                 timer.Interval = milliseconds;
                 timer.Start();
                 timer.Tick += (_, _) =>
-                    { Ended(TerminationType.Timeout); timer.Stop(); };
+                {
+                    Ended(TerminationType.Timeout);
+                    timer.Stop();
+                };
             };
             return this;
         }
+
         public Stage WithBackground(Image image)
         {
             BackgroundImage = image;
@@ -57,7 +61,7 @@ namespace Alexbox.View
 
             ControlTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 1));
             ControlTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 80));
-            ControlTable.Controls.Add(Paragraph/*, 0, 0*/);
+            ControlTable.Controls.Add(Paragraph /*, 0, 0*/);
             Dock = DockStyle.Fill;
             Controls.Add(ControlTable);
         }

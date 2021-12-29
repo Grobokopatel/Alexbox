@@ -85,7 +85,7 @@ namespace Alexbox.View
             table.Controls.Add(Button, 0, 11);
 
             Controls.Add(table);
-            
+
             var timer = new Timer
             {
                 Interval = 100
@@ -107,6 +107,7 @@ namespace Alexbox.View
                 {
                     PlayerLabels[i].Text = $"{i + 1} - Место свободно";
                 }
+
                 _viewersLabel.Text = $"Зрителей: {CurrentGame.Viewers.Count}";
             }
         }

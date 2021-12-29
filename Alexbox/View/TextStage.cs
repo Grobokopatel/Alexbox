@@ -16,7 +16,7 @@ namespace Alexbox.View
             };
 
             ControlTable.RowStyles.Add(new RowStyle(SizeType.Percent, 5));
-            ControlTable.Controls.Add(label/*, 0, 1*/);
+            ControlTable.Controls.Add(label /*, 0, 1*/);
         }
     }
 }

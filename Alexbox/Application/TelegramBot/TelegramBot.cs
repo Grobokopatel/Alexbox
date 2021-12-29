@@ -32,6 +32,7 @@ namespace Alexbox.Application.TelegramBot
             var id = e.CallbackQuery.From.Id;
             CurrentGame.Players[id].AddSubmission(e.CallbackQuery.Data);
         }
+
         private static void BotClientOnMessage(object sender, MessageEventArgs e)
         {
             var id = e.Message.Chat.Id;
