@@ -19,8 +19,6 @@ namespace Alexbox.View
             };
             return this;
         }
-        
-        //Пока не работает
         public Stage WithBackground(Image image)
         {
             BackgroundImage = image;
@@ -37,7 +35,7 @@ namespace Alexbox.View
         protected readonly TableLayoutPanel ControlTable;
         protected readonly Label Paragraph;
 
-        public Stage()
+        protected Stage()
         {
             /*            this.components = new System.ComponentModel.Container();
                         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
