@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Timers;
 using System.Collections.Generic;
 
 namespace Alexbox.Domain
@@ -15,9 +14,7 @@ namespace Alexbox.Domain
         public readonly Queue<Stage> Stages;
         private List<Task> Tasks;
         private Distribution Distribution;
-        public event Action StageEnded;
-        public event Action StopProgram;
-        public Stage CurrentStage { get; private set; }
+        public Stage CurrentStage { get; set; }
 
         public CustomGame(int minPlayers, int maxPlayers, string name)
         {
@@ -49,19 +46,6 @@ namespace Alexbox.Domain
             return this;
         }
 
-        public void Start()
-        {
-            StageEnded += ChangeStage;
-            ChangeStage();
-        }
-
-        private void ChangeStage()
-        {
-            CurrentStage = Stages.Dequeue();
-            if (CurrentStage.TimeOutInMs != 0)
-                StartTimer();
-        }
-
         public CustomGame WithDistribution(Distribution distribution)
         {
             Distribution = distribution;
@@ -75,21 +59,6 @@ namespace Alexbox.Domain
             Tasks = tasks;
             return this;
         }
-
-        private void StartTimer()
-        {
-            var timer = new Timer();
-            timer.Interval = CurrentStage.TimeOutInMs;
-            timer.Start();
-            timer.Elapsed += (_, _) =>
-            {
-                timer.Stop();
-                if (Stages.Count == 0) StopProgram?.Invoke();
-                else
-                {
-                    StageEnded?.Invoke();
-                }
-            };
-        }
+        
     }
 }
