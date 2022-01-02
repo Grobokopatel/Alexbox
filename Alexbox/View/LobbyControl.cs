@@ -6,13 +6,13 @@ using System.Windows.Forms;
 
 namespace Alexbox.View
 {
-    public partial class Form : UserControl
+    public partial class LobbyControl : UserControl
     {
         private static readonly Label[] PlayerLabels = new Label[CurrentGame.MaxPlayers];
         private readonly Label _viewersLabel;
         public readonly Button Button;
 
-        public Form()
+        public LobbyControl()
         {
             Dock = DockStyle.Fill;
             Text = "Лобби";
