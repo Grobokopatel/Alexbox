@@ -23,10 +23,10 @@ namespace Alexbox.View
 
         public void Start()
         {
+            _currentGame.StopProgram += Close;
             var lobby = new LobbyControl();
             lobby.Button.Click += (_, _) =>
             {
-                _currentGame.StopProgram += Close;
                 _currentGame.Start();
                 ChangeStage(TerminationType.Timeout);
             };
@@ -36,7 +36,6 @@ namespace Alexbox.View
 
         private void ChangeStage(TerminationType type)
         {
-            if (_currentGame.Stages.Count == 0) Close();
             Panel.Controls.Clear();
             Panel.Controls.Add(new StagePresenter(_currentGame.CurrentStage));
             _currentGame.StageEnded += ChangeStage;

@@ -57,7 +57,8 @@ namespace Alexbox.Domain
         private void ChangeStage()
         {
             CurrentStage = Stages.Dequeue();
-            StartTimer();
+            if (CurrentStage.TimeOutInMs != 0) 
+                StartTimer();
             StageEnded += _ => ChangeStage();
         }
 
@@ -83,9 +84,8 @@ namespace Alexbox.Domain
             timer.Elapsed += (_, _) =>
             {
                 timer.Stop();
-                if (Stages.Count == 0)
-                    StopProgram?.Invoke();
-                else StageEnded(TerminationType.Timeout);
+                if (Stages.Count == 0) StopProgram?.Invoke();
+                StageEnded(TerminationType.Timeout);
             };
         }
     }
