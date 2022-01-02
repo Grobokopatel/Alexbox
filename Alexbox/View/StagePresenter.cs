@@ -38,11 +38,12 @@ namespace Alexbox.View
             };
             controlTable.Controls.Add(paragraph /*, 0, 0*/);
 
-            HandleCaptions(stage, stage.Captions);
+            HandleCaptions(stage);
         }
 
-        private void HandleCaptions(Stage stage, string[] captions)
+        private void HandleCaptions(Stage stage)
         {
+            var captions = stage.Captions;
             if (captions is null)
                 return;
             var answersTable = new TableLayoutPanel
