@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
+using Alexbox.Application.TelegramBot;
 using Alexbox.Domain;
 
 namespace Alexbox.View
@@ -12,19 +13,20 @@ namespace Alexbox.View
             return this;
         }
 
+        private TableLayoutPanel controlTable;
 
         public StagePresenter(Stage stage)
         {
             Dock = DockStyle.Fill;
-            var controlTable = new TableLayoutPanel
+            controlTable = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 AutoSize = true,
             };
             controlTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 1));
             controlTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 80));
+            Controls.Add(controlTable);
 
-            if (stage.Paragraph == null) return;
             var paragraph = new Label
             {
                 Text = stage.Paragraph,
@@ -35,41 +37,43 @@ namespace Alexbox.View
                 Font = new Font("Arial", 30),
             };
             controlTable.Controls.Add(paragraph /*, 0, 0*/);
-            //controlTable.Controls.Add(paragraph,0,0);
-            Controls.Add(controlTable);
-            /*if (_caption != null)
-            {
-                Controls.Add(controlTable);
-                var answersTable = new TableLayoutPanel
-                {
-                    Dock = DockStyle.Fill,
-                    AutoSize = true,
-                };
-                answersTable.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
-                answersTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5));
-                for (var i = 0; i < count; ++i)
-                {
-                    answersTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5));
-                    var label = new Label
-                    {
-                        Text = captions[i],
-                        Dock = DockStyle.Fill,
-                        TextAlign = ContentAlignment.MiddleCenter,
-                        Font = new Font("Arial", 30),
-                        BorderStyle = BorderStyle.FixedSingle
-                    };
-                    answersTable.Controls.Add(label, i, 0);
-                }
 
-                controlTable.Controls.Add(answersTable);
-                Load += (_, _) =>
+            HandleCaptions(stage, stage.Captions);
+        }
+
+        private void HandleCaptions(Stage stage, string[] captions)
+        {
+            var answersTable = new TableLayoutPanel
+            {
+                Dock = DockStyle.Fill,
+                AutoSize = true,
+            };
+
+            answersTable.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
+            //answersTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5));
+            for (var i = 0; i < captions.Length; ++i)
+            {
+                answersTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5));
+                var label = new Label
                 {
-                    foreach (var id in TelegramBot.CurrentGame.Players.Keys)
-                    {
-                        TelegramBot.SendMessageWithButtonsToUser(id, _paragraph.Text, captions);
-                    }
+                    Text = captions[i],
+                    Dock = DockStyle.Fill,
+                    TextAlign = ContentAlignment.MiddleCenter,
+                    Font = new Font("Arial", 30),
+                    BorderStyle = BorderStyle.FixedSingle
                 };
-            }*/
+                answersTable.Controls.Add(label, i, 0);
+            }
+
+            //controlTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 1));
+            controlTable.Controls.Add(answersTable);
+            Load += (_, _) =>
+            {
+                foreach (var id in TelegramBot.CurrentGame.Players.Keys)
+                {
+                    TelegramBot.SendMessageWithButtonsToUser(id, stage.Paragraph, captions);
+                }
+            };
         }
     }
 }
