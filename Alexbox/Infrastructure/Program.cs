@@ -23,6 +23,7 @@ namespace Alexbox.Infrastructure
             var distribution = new Distribution(2, 1, 2);
             var quiplash = new CustomGame(1, 0, "Quiplash").WithDistribution(distribution)
                 .WithTaskList(new List<Task> {new("TASK1"), new("TASK2")})
+                .AddStage(new Stage().WithCaptions(new[] { "Моргенштерн", "Влад а4"}).WaitForTimeout(1000))
                 .AddStage(new Stage().WithParagraph("Wait for answers").WaitForTimeout(1000))
                 .AddStage(new Stage().WithParagraph("YOUR ANSWER IS KEK").WaitForTimeout(1000));
             //.AddStage(new Stage().WithSubmition());

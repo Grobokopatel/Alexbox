@@ -43,7 +43,12 @@ namespace Alexbox.View
         private void ChangeStage()
         {
             Panel.Controls.Clear();
-            if (_currentGame.Stages.Count == 0) Close();
+            if (_currentGame.Stages.Count == 0)
+            {
+                Close();
+                return;
+            }
+
             _currentGame.CurrentStage = _currentGame.Stages.Dequeue();
             Panel.Controls.Add(new StagePresenter(_currentGame.CurrentStage));
             if (_currentGame.CurrentStage.TimeOutInMs != 0)
