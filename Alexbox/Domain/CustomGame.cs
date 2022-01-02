@@ -1,8 +1,6 @@
-﻿using Alexbox.View;
+﻿using System;
+using System.Timers;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using static System.Windows.Forms.Control;
-using Form = Alexbox.View.Form;
 
 namespace Alexbox.Domain
 {
@@ -11,10 +9,15 @@ namespace Alexbox.Domain
         public readonly Dictionary<long, Player> Players = new();
         public readonly Dictionary<long, Viewer> Viewers = new();
         public readonly GameStatus GameStatus;
-        private readonly int MinPlayers;
         public readonly int MaxPlayers;
         public readonly string Name;
-        private readonly Queue<Stage> _stages;
+        private readonly int MinPlayers;
+        public readonly Queue<Stage> Stages;
+        private List<Task> Tasks;
+        private Distribution Distribution;
+        public event Action<TerminationType> StageEnded;
+        public event Action StopProgram;
+        public Stage CurrentStage { get; private set; }
 
         public CustomGame(int minPlayers, int maxPlayers, string name)
         {
@@ -22,7 +25,7 @@ namespace Alexbox.Domain
             MinPlayers = minPlayers;
             MaxPlayers = maxPlayers;
             Name = name;
-            _stages = new Queue<Stage>();
+            Stages = new Queue<Stage>();
         }
 
         public Player GetBestPlayer()
@@ -32,7 +35,7 @@ namespace Alexbox.Domain
 
         public CustomGame AddStage(Stage stage)
         {
-            _stages.Enqueue(stage);
+            Stages.Enqueue(stage);
             return this;
         }
 
@@ -40,43 +43,50 @@ namespace Alexbox.Domain
         {
             foreach (var stage in stages)
             {
-                _stages.Enqueue(stage);
+                Stages.Enqueue(stage);
             }
 
             return this;
         }
 
-        private ControlCollection _controls;
-        private Stage _currentStage;
-
-        public void Start(Panel panel)
+        public void Start()
         {
-            _controls = panel.Controls;
+            ChangeStage();
+        }
 
-            var lobby = new Form();
-            lobby.Button.Click += (_, _) =>
+        private void ChangeStage()
+        {
+            CurrentStage = Stages.Dequeue();
+            StartTimer();
+            StageEnded += _ => ChangeStage();
+        }
+
+        public CustomGame WithDistribution(Distribution distribution)
+        {
+            Distribution = distribution;
+            return this;
+        }
+
+        public CustomGame WithTaskList(List<Task> tasks)
+        {
+            if (tasks.Count == 0)
+                throw new ArgumentException("List of task must not be empty");
+            Tasks = tasks;
+            return this;
+        }
+
+        private void StartTimer()
+        {
+            var timer = new Timer();
+            timer.Interval = CurrentStage.TimeOutInMs;
+            timer.Start();
+            timer.Elapsed += (_, _) =>
             {
-                _controls.Remove(lobby);
-                AddNextStageToControls();
+                timer.Stop();
+                if (Stages.Count == 0)
+                    StopProgram?.Invoke();
+                else StageEnded(TerminationType.Timeout);
             };
-            _controls.Add(lobby);
-        }
-
-        private void AddNextStageToControls()
-        {
-            _currentStage = _stages.Dequeue();
-            _controls.Add(_currentStage);
-            _currentStage.Ended += ChangeStage;
-        }
-
-        private void ChangeStage(TerminationType type)
-        {
-            _controls.Remove(_currentStage);
-            _currentStage.Ended -= ChangeStage;
-            if (_stages.Count != 0)
-            {
-                AddNextStageToControls();
-            }
         }
     }
 }

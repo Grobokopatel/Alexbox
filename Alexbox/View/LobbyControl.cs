@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace Alexbox.View
 {
-    public partial class LobbyControl : UserControl
+    public sealed class LobbyControl : UserControl
     {
         private static readonly Label[] PlayerLabels = new Label[CurrentGame.MaxPlayers];
         private readonly Label _viewersLabel;
@@ -15,13 +15,12 @@ namespace Alexbox.View
         public LobbyControl()
         {
             Dock = DockStyle.Fill;
-            Text = "Лобби";
-
-            var table = new TableLayoutPanel
+            var controlTable = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 AutoSize = true,
             };
+            controlTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
             var gameNameLabel = new Label
             {
@@ -31,9 +30,7 @@ namespace Alexbox.View
                 TextAlign = ContentAlignment.MiddleCenter,
                 Font = new Font("Arial", 22),
             };
-
-            table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-
+            
             var waitingLabel = new Label
             {
                 Text = "\nОжидание игроков\n\n",
@@ -43,13 +40,13 @@ namespace Alexbox.View
                 Font = new Font("Arial", 18),
             };
 
-            table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            controlTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
             for (var i = 0; i < CurrentGame.MaxPlayers; ++i)
-                table.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
+                controlTable.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
 
-            table.Controls.Add(waitingLabel, 0, 1);
-            table.Controls.Add(gameNameLabel, 0, 0);
+            controlTable.Controls.Add(waitingLabel, 0, 1);
+            controlTable.Controls.Add(gameNameLabel, 0, 0);
 
             for (var i = 0; i < CurrentGame.MaxPlayers; ++i)
             {
@@ -62,7 +59,7 @@ namespace Alexbox.View
                     Font = new Font("ComicSans", 16),
                 };
                 PlayerLabels[i] = playerLabel;
-                table.Controls.Add(playerLabel, 0, i + 2);
+                controlTable.Controls.Add(playerLabel, 0, i + 2);
             }
 
             _viewersLabel = new Label
@@ -81,10 +78,10 @@ namespace Alexbox.View
                 Font = new Font("ComicSans", 16),
                 Size = new Size(0, 50)
             };
-            table.Controls.Add(_viewersLabel, 0, 10);
-            table.Controls.Add(Button, 0, 11);
+            controlTable.Controls.Add(_viewersLabel, 0, 10);
+            controlTable.Controls.Add(Button, 0, 11);
 
-            Controls.Add(table);
+            Controls.Add(controlTable);
 
             var timer = new Timer
             {

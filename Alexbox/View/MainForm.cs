@@ -8,7 +8,6 @@ namespace Alexbox.View
     {
         private Panel Panel { get; }
         private readonly CustomGame _currentGame;
-        private Stage _currentStage;
 
         public MainForm(CustomGame currentGame)
         {
@@ -27,28 +26,20 @@ namespace Alexbox.View
             var lobby = new LobbyControl();
             lobby.Button.Click += (_, _) =>
             {
-                Panel.Controls.Remove(lobby);
-                AddNextStageToControls();
+                _currentGame.StopProgram += Close;
+                _currentGame.Start();
+                ChangeStage(TerminationType.Timeout);
             };
             Panel.Controls.Add(lobby);
         }
 
-        private void AddNextStageToControls()
-        {
-            _currentStage = _currentGame._stages.Dequeue();
-            Panel.Controls.Add(new StagePresenter(_currentStage));
-            _currentStage.Ended += ChangeStage;
-        }
 
         private void ChangeStage(TerminationType type)
         {
-            Panel.Controls.Remove(_currentStage);
-            _currentStage.Ended -= ChangeStage;
-            if (_currentGame._stages.Count != 0)
-            {
-                AddNextStageToControls();
-            }
-            else Close();
+            if (_currentGame.Stages.Count == 0) Close();
+            Panel.Controls.Clear();
+            Panel.Controls.Add(new StagePresenter(_currentGame.CurrentStage));
+            _currentGame.StageEnded += ChangeStage;
         }
     }
 }
