@@ -43,6 +43,8 @@ namespace Alexbox.View
 
         private void HandleCaptions(Stage stage, string[] captions)
         {
+            if (captions is null)
+                return;
             var answersTable = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
