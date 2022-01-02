@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using Alexbox.Domain;
 
@@ -6,6 +7,7 @@ namespace Alexbox.View
 {
     public partial class MainForm : Form
     {
+        private int k = 0;
         private Panel Panel { get; }
         private readonly CustomGame _currentGame;
 
@@ -28,17 +30,23 @@ namespace Alexbox.View
             lobby.Button.Click += (_, _) =>
             {
                 _currentGame.Start();
-                ChangeStage(TerminationType.Timeout);
+                _currentGame.StageEnded += ChangeStage;
+                ChangeStage();
             };
             Panel.Controls.Add(lobby);
         }
 
 
-        private void ChangeStage(TerminationType type)
+        private void ChangeStage()
         {
+            k += 1;
+            if (k == 2)
+            {
+                Console.WriteLine(1);
+            }
             Panel.Controls.Clear();
             Panel.Controls.Add(new StagePresenter(_currentGame.CurrentStage));
-            _currentGame.StageEnded += ChangeStage;
+            
         }
     }
 }

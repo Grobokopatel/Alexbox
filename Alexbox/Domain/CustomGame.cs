@@ -15,7 +15,7 @@ namespace Alexbox.Domain
         public readonly Queue<Stage> Stages;
         private List<Task> Tasks;
         private Distribution Distribution;
-        public event Action<TerminationType> StageEnded;
+        public event Action StageEnded;
         public event Action StopProgram;
         public Stage CurrentStage { get; private set; }
 
@@ -51,15 +51,15 @@ namespace Alexbox.Domain
 
         public void Start()
         {
+            StageEnded += ChangeStage;
             ChangeStage();
         }
 
         private void ChangeStage()
         {
             CurrentStage = Stages.Dequeue();
-            if (CurrentStage.TimeOutInMs != 0) 
+            if (CurrentStage.TimeOutInMs != 0)
                 StartTimer();
-            StageEnded += _ => ChangeStage();
         }
 
         public CustomGame WithDistribution(Distribution distribution)
@@ -85,7 +85,10 @@ namespace Alexbox.Domain
             {
                 timer.Stop();
                 if (Stages.Count == 0) StopProgram?.Invoke();
-                StageEnded(TerminationType.Timeout);
+                else
+                {
+                    StageEnded?.Invoke();
+                }
             };
         }
     }
