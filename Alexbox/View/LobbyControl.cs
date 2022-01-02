@@ -12,6 +12,7 @@ namespace Alexbox.View
         private readonly Label _viewersLabel;
         public readonly Button Button;
         private readonly CustomGame _currentGame;
+
         public LobbyControl(CustomGame currentGame)
         {
             _currentGame = currentGame;
@@ -32,7 +33,7 @@ namespace Alexbox.View
                 TextAlign = ContentAlignment.MiddleCenter,
                 Font = new Font("Arial", 22),
             };
-            
+
             var waitingLabel = new Label
             {
                 Text = "\nОжидание игроков\n\n",
@@ -106,9 +107,9 @@ namespace Alexbox.View
                 {
                     _playerLabels[i].Text = $"{i + 1} - Место свободно";
                 }
-
-                _viewersLabel.Text = $"Зрителей: {_currentGame.Viewers.Count}";
             }
+
+            _viewersLabel.Text = $"Зрителей: {_currentGame.Viewers.Count}";
         }
     }
 }

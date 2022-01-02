@@ -13,19 +13,19 @@ namespace Alexbox.View
             return this;
         }
 
-        private TableLayoutPanel controlTable;
+        private readonly TableLayoutPanel _controlTable;
 
         public StagePresenter(Stage stage)
         {
             Dock = DockStyle.Fill;
-            controlTable = new TableLayoutPanel
+            _controlTable = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 AutoSize = true,
             };
-            controlTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 1));
-            controlTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 80));
-            Controls.Add(controlTable);
+            _controlTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 1));
+            _controlTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 80));
+            Controls.Add(_controlTable);
 
             var paragraph = new Label
             {
@@ -36,13 +36,14 @@ namespace Alexbox.View
                 BorderStyle = BorderStyle.FixedSingle,
                 Font = new Font("Arial", 30),
             };
-            controlTable.Controls.Add(paragraph /*, 0, 0*/);
+            _controlTable.Controls.Add(paragraph /*, 0, 0*/);
 
             HandleCaptions(stage, stage.Captions);
         }
 
         private void HandleCaptions(Stage stage, string[] captions)
         {
+            if (captions == null) return;
             var answersTable = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
@@ -66,7 +67,7 @@ namespace Alexbox.View
             }
 
             //controlTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 1));
-            controlTable.Controls.Add(answersTable);
+            _controlTable.Controls.Add(answersTable);
             Load += (_, _) =>
             {
                 foreach (var id in TelegramBot.CurrentGame.Players.Keys)

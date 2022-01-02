@@ -24,10 +24,7 @@ namespace Alexbox.View
         public void Start()
         {
             var lobby = new LobbyControl(_currentGame);
-            lobby.Button.Click += (_, _) =>
-            {
-                ChangeStage();
-            };
+            lobby.Button.Click += (_, _) => { ChangeStage(); };
             Panel.Controls.Add(lobby);
         }
 
@@ -53,7 +50,6 @@ namespace Alexbox.View
             {
                 StartTimer();
             }
-            
         }
     }
 }
