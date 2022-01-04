@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Alexbox.Domain
 {
@@ -7,13 +8,15 @@ namespace Alexbox.Domain
     {
         public readonly Dictionary<long, Player> Players = new();
         public readonly Dictionary<long, Viewer> Viewers = new();
-        public readonly GameStatus GameStatus;
+        public GameStatus GameStatus;
         public readonly int MaxPlayers;
         public readonly string Name;
-        private readonly int MinPlayers;
+        public readonly int MinPlayers;
         public readonly Queue<Stage> Stages;
         private List<Task> Tasks;
-        private Distribution Distribution;
+        public Distribution<long, Task> Distribution;
+        private int _taskPerPlayer;
+        private int _groupSize;
         public Stage CurrentStage { get; set; }
 
         public CustomGame(int minPlayers, int maxPlayers, string name)
@@ -46,9 +49,10 @@ namespace Alexbox.Domain
             return this;
         }
 
-        public CustomGame WithDistribution(Distribution distribution)
+        public CustomGame WithDistribution(int taskPerPlayer,int groupSize)
         {
-            Distribution = distribution;
+            _taskPerPlayer = taskPerPlayer;
+            _groupSize = groupSize;
             return this;
         }
 
@@ -59,6 +63,10 @@ namespace Alexbox.Domain
             Tasks = tasks;
             return this;
         }
-        
+
+        public void Start()
+        {
+            Distribution = new Distribution<long, Task>(_taskPerPlayer, _groupSize, Players.Keys.ToArray(), Tasks);
+        }
     }
 }

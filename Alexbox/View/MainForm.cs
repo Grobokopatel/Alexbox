@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
+using Alexbox.Application.TelegramBot;
 using Alexbox.Domain;
 
 namespace Alexbox.View
@@ -23,8 +24,18 @@ namespace Alexbox.View
 
         public void Start()
         {
+            TelegramBot.AllPlayersAnswered += ChangeStage;
             var lobby = new LobbyControl(_currentGame);
-            lobby.Button.Click += (_, _) => { ChangeStage(); };
+            lobby.Button.Click += (_, _) =>
+            {
+                if (_currentGame.Players.Count < _currentGame.MinPlayers)
+                    MessageBox.Show("Не хвататает игроков для начала", "Ошибка");
+                else
+                {
+                    _currentGame.Start();
+                    ChangeStage();
+                }
+            };
             Panel.Controls.Add(lobby);
         }
 
@@ -45,16 +56,21 @@ namespace Alexbox.View
             Panel.Controls.Clear();
             if (_currentGame.Stages.Count == 0)
             {
+                TelegramBot.Finish();
                 Close();
                 return;
             }
 
             _currentGame.CurrentStage = _currentGame.Stages.Dequeue();
             Panel.Controls.Add(new StagePresenter(_currentGame.CurrentStage));
-            if (_currentGame.CurrentStage.TimeOutInMs != 0)
+            if (_currentGame.CurrentStage.SendingTasks)
             {
-                StartTimer();
+                TelegramBot.SendTasks();
+                _currentGame.GameStatus = GameStatus.WaitingForReplies;
             }
+
+            if (_currentGame.CurrentStage.TimeOutInMs != 0)
+                StartTimer();
         }
     }
 }

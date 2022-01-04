@@ -20,14 +20,10 @@ namespace Alexbox.Infrastructure
             App.SetHighDpiMode(HighDpiMode.SystemAware);
             App.EnableVisualStyles();
             App.SetCompatibleTextRenderingDefault(false);
-            var distribution = new Distribution(2, 1, 2);
-            var quiplash = new CustomGame(1, 0, "Quiplash").WithDistribution(distribution)
+            var quiplash = new CustomGame(1, 3, "Quiplash").WithDistribution(2, 1)
                 .WithTaskList(new List<Task> {new("TASK1"), new("TASK2")})
-                .AddStage(new Stage().WithCaptions(new[] { "Моргенштерн", "Влад а4"}).WaitForTimeout(1000))
-                .AddStage(new Stage().WithParagraph("Wait for answers").WaitForTimeout(1000))
-                .AddStage(new Stage().WithParagraph("YOUR ANSWER IS KEK").WaitForTimeout(1000));
-            //.AddStage(new Stage().WithSubmition());
-            new Thread(() => Run(quiplash)).Start();
+                .AddStage(new Stage().WithParagraph("Ответьте на вопросы").WithSendingTasks().WaitForTimeout(20000));
+            Run(quiplash);
             var form = new MainForm(quiplash);
             form.Start();
             App.Run(form);
