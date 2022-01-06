@@ -8,14 +8,17 @@ namespace Alexbox.Domain
         public bool ShowRoundResults { get; private set; }
         public int TaskPerPlayer { get; private set; }
         public int GroupSize { get; private set; }
-        public string Paragraph { get; private set; }
-        public int TimeOutInMs { get; private set; }
         public string[] Captions { get; private set; }
         public bool WaitForVotes { get; set; }
-        public bool SendingTasks { get; private set; }
+        public bool ShowScores { get; private set; }
+        public string Paragraph { get; private set; }
+        public int TimeOutInMs { get; private set; }
+        public int? ShowRoundSubmits { get; private set; }
+        public bool WaitForReplies { get; set; }
+        public bool SendingTasks { get; set; }
 
         public Distribution<long, Task> Distribution { get; set; }
-        
+
 
         public Stage WaitForTimeOutOrReplies(int milliseconds)
         {
@@ -23,15 +26,15 @@ namespace Alexbox.Domain
             return this;
         }
 
-        public Stage WithCaptions(string[] captions)
+        public Stage WithRoundSubmits(int roundNumber = -1)
         {
-            Captions = captions;
+            ShowRoundSubmits = roundNumber;
             return this;
         }
 
-        public Stage WithResults()
+        public Stage WithScores()
         {
-            ShowRoundResults = true;
+            ShowScores = true;
             return this;
         }
 
@@ -40,7 +43,7 @@ namespace Alexbox.Domain
             Paragraph = paragraph;
             return this;
         }
-        
+
 
         public Stage WithSendingTasks(int taskPerPlayer, int groupSize)
         {
@@ -50,11 +53,10 @@ namespace Alexbox.Domain
             return this;
         }
 
-        public Stage WithScoreCounting(Func<int,int,int,int> formula)
+        public Stage WithScoreCounting(Func<int, int, int, int> formula)
         {
             ScoreFormula = formula;
             return this;
         }
-        
     }
 }

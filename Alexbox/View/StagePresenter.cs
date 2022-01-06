@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Alexbox.Application.TelegramBot;
 using Alexbox.Domain;
@@ -18,9 +19,11 @@ namespace Alexbox.View
 
         private readonly TableLayoutPanel _controlTable;
         private readonly CustomGame _game;
+        private readonly Stage _stage;
 
         public StagePresenter(Stage stage, CustomGame game)
         {
+            _stage = stage;
             _game = game;
             Dock = DockStyle.Fill;
             _controlTable = new TableLayoutPanel
@@ -42,24 +45,22 @@ namespace Alexbox.View
                 Font = new Font("Arial", 30),
             };
             _controlTable.Controls.Add(paragraph /*, 0, 0*/);
-
-            HandleCaptions(stage);
-            HandleRoundResults(stage);
+            HandleRoundSubmits();
+            HandleScores();
         }
 
-        private void HandleRoundResults(Stage stage)
+        private void HandleScores()
         {
-            if (!stage.ShowRoundResults)
+            if (!_stage.ShowScores)
                 return;
-            var players = new Queue<Player>(_game.Players);
-
+            var players = new Queue<Player>(_game.Players.OrderByDescending(player => player.Score));
             var playerCount = players.Count;
             var tableSize = Math.Ceiling(Math.Sqrt(playerCount));
-            var table = new TableLayoutPanel()
+            var table = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill
             };
-            for(var i=0; i<tableSize; ++i)
+            for (var i = 0; i < tableSize; ++i)
             {
                 table.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
                 table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 1));
@@ -74,6 +75,7 @@ namespace Alexbox.View
                     if (players.Count == 0)
                         break;
                 }
+
                 if (players.Count == 0)
                     break;
             }
@@ -81,11 +83,17 @@ namespace Alexbox.View
             _controlTable.Controls.Add(table);
         }
 
-        private void HandleCaptions(Stage stage)
+        private void HandleRoundSubmits()
         {
-            var captions = stage.Captions;
-            if (captions is null)
+            if (_stage.ShowRoundSubmits is null)
                 return;
+
+            var showRoundSubmits = _stage.ShowRoundSubmits.Value;
+            Func<Player, IReadOnlyList<string>> selector = showRoundSubmits == -1
+                ? player => player.GetSubmission(_game.CurrentRound).Values.ToList()
+                : player => player.GetSubmission(showRoundSubmits).Values.ToList();
+
+            var submits = _game.Players.Select(player => selector(player)[0]).ToArray();
             var answersTable = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
@@ -94,12 +102,12 @@ namespace Alexbox.View
 
             answersTable.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
             //answersTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5));
-            for (var i = 0; i < captions.Length; ++i)
+            for (var i = 0; i < submits.Length; ++i)
             {
                 answersTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5));
                 var label = new Label
                 {
-                    Text = captions[i],
+                    Text = submits[i],
                     Dock = DockStyle.Fill,
                     TextAlign = ContentAlignment.MiddleCenter,
                     Font = new Font("Arial", 30),
@@ -109,6 +117,7 @@ namespace Alexbox.View
             }
 
             //controlTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 1));
+
             _controlTable.Controls.Add(answersTable);
         }
     }

@@ -27,7 +27,7 @@ namespace Alexbox.Infrastructure
                     .WaitForTimeOutOrReplies(20000))
                 .AddStage(new Stage()
                     .WithScoreCounting((voteFor, allVotes, coefficient) => voteFor / allVotes * coefficient)
-                    .WithCaptions(new[] {"ANSWER 1", "Answer2"})
+                    .WithRoundSubmits()
                     .WaitForTimeOutOrReplies(15000));
             new Thread(() => Run(quiplash)).Start();
             var form = new MainForm(quiplash);
