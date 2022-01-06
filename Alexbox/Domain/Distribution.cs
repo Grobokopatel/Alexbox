@@ -13,13 +13,13 @@ namespace Alexbox.Domain
         {
             get;
         }
-        //Ключ - индекс задания, значение - индексы игроков  
+        //Ключ - задание, значение - игроки  
         public Dictionary<TTask, List<TMember>> Groups
         {
             get;
         }
 
-        //Ключ - индекс игрока, значение - индексы заданий
+        //Ключ - игрок, значение - задания
         public Dictionary<TMember, List<TTask>> Tasks
         {
             get

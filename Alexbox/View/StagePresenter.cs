@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 using Alexbox.Application.TelegramBot;
 using Alexbox.Domain;
@@ -7,6 +9,7 @@ namespace Alexbox.View
 {
     public sealed class StagePresenter : UserControl
     {
+
         public StagePresenter WithBackground(Image image)
         {
             BackgroundImage = image;
@@ -14,9 +17,11 @@ namespace Alexbox.View
         }
 
         private readonly TableLayoutPanel _controlTable;
+        private readonly CustomGame _game;
 
-        public StagePresenter(Stage stage)
+        public StagePresenter(Stage stage, CustomGame game)
         {
+            _game = game;
             Dock = DockStyle.Fill;
             _controlTable = new TableLayoutPanel
             {
@@ -39,6 +44,41 @@ namespace Alexbox.View
             _controlTable.Controls.Add(paragraph /*, 0, 0*/);
 
             HandleCaptions(stage);
+            HanleRoundResults(stage);
+        }
+
+        private void HanleRoundResults(Stage stage)
+        {
+            if (!stage.ShowRoundResults)
+                return;
+            var players = new Queue<Player>(_game.Players.Values);
+
+            var playerCount = players.Count;
+            var tableSize = Math.Ceiling(Math.Sqrt(playerCount));
+            var table = new TableLayoutPanel()
+            {
+                Dock = DockStyle.Fill
+            };
+            for(var i=0; i<tableSize; ++i)
+            {
+                table.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
+                table.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 1));
+            }
+
+            for (var i = 0; i < tableSize; ++i)
+            {
+                for (var j = 0; j < tableSize; ++j)
+                {
+                    var player = players.Dequeue();
+                    table.Controls.Add(new PlayerScore(player.Name, player.Score), i, j);
+                    if (players.Count == 0)
+                        break;
+                }
+                if (players.Count == 0)
+                    break;
+            }
+
+            _controlTable.Controls.Add(table);
         }
 
         private void HandleCaptions(Stage stage)

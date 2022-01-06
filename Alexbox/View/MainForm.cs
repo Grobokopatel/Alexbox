@@ -62,7 +62,7 @@ namespace Alexbox.View
             }
 
             _currentGame.CurrentStage = _currentGame.Stages.Dequeue();
-            Panel.Controls.Add(new StagePresenter(_currentGame.CurrentStage));
+            Panel.Controls.Add(new StagePresenter(_currentGame.CurrentStage, _currentGame));
             if (_currentGame.CurrentStage.SendingTasks)
             {
                 TelegramBot.SendTasks();
