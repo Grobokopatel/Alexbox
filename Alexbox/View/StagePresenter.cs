@@ -111,7 +111,7 @@ namespace Alexbox.View
             for (var i = 0; i < groupSize; ++i)
             {
                 answersTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5));
-                var label = new Label
+                labels[i] = new Label
                 {
                     Text = submits.Dequeue()[i],
                     Dock = DockStyle.Fill,
@@ -119,8 +119,7 @@ namespace Alexbox.View
                     Font = new Font("Arial", 30),
                     BorderStyle = BorderStyle.FixedSingle
                 };
-                answersTable.Controls.Add(label, i, 0);
-                labels[i] = label;
+                answersTable.Controls.Add(labels[i], i, 0);
             }
             _controlTable.Controls.Add(answersTable);
 
