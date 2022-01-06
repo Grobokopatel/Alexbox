@@ -60,6 +60,7 @@ namespace Alexbox.View
                 Invoke((Action) ChangeStage);
                 return;
             }
+
             if (_currentGame.Stages.Count == 0)
             {
                 Close();
@@ -68,7 +69,10 @@ namespace Alexbox.View
 
             Panel.Controls.Clear();
             _currentGame.CurrentStage = _currentGame.Stages.Dequeue();
-            Panel.Controls.Add(new StagePresenter(_currentGame.CurrentStage, _currentGame));
+            var stagePresenter = new StagePresenter(_currentGame.CurrentStage, _currentGame);
+            stagePresenter.AllTaskShown += ChangeStage;
+            Panel.Controls.Add(stagePresenter);
+
             if (_currentGame.CurrentStage.SendingTasks)
             {
                 _currentGame.CurrentStage.Distribution = new Distribution<long, Task>(

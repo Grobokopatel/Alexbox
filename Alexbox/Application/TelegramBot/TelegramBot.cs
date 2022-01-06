@@ -85,6 +85,7 @@ namespace Alexbox.Application.TelegramBot
                         PlayersBySentTask[task].Add(player);
                     }
 
+                    player.CurrentTask = task;
                     await Client.SendTextMessageAsync(id, task.Description);
 
                 }

@@ -17,6 +17,7 @@ namespace Alexbox.View
             return this;
         }
 
+        public event Action AllTaskShown; 
         private readonly TableLayoutPanel _controlTable;
         private readonly CustomGame _game;
         private readonly Stage _stage;
@@ -119,6 +120,7 @@ namespace Alexbox.View
                     BorderStyle = BorderStyle.FixedSingle
                 };
                 answersTable.Controls.Add(label, i, 0);
+                labels[i] = label;
             }
             _controlTable.Controls.Add(answersTable);
 
@@ -130,7 +132,8 @@ namespace Alexbox.View
                 if (submits.Count == 0)
                 {
                     timer.Stop();
-                    return;
+                    AllTaskShown?.Invoke();
+                    
                 }
 
                 var group = submits.Dequeue();
