@@ -64,6 +64,5 @@ namespace Alexbox.Domain
             Tasks = tasks;
             return this;
         }
-
     }
 }

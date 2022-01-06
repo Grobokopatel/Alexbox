@@ -79,7 +79,7 @@ namespace Alexbox.Domain
                         group.Add(members[k]);
                     }
                 }
-                --j;
+                j = (j - 1 + playerAmount) % playerAmount;
                 Groups.Add(tasksArray[i], group);
             }
         }
@@ -87,14 +87,14 @@ namespace Alexbox.Domain
 
     public class Distribution : Distribution<int, int>
     {
-        public Distribution(int playerNumber, int tasksPerPlayer, int groupSize) 
+        public Distribution(int playerNumber, int tasksPerPlayer, int groupSize)
             : base(tasksPerPlayer,
                   groupSize,
                   Enumerable.Range(0, playerNumber).ToArray(),
                   For(0, 1, (i) => true))
         { }
 
-        private static IEnumerable<int> For(int start, int step, Func<int,bool> @while)
+        private static IEnumerable<int> For(int start, int step, Func<int, bool> @while)
         {
             for (var i = start; @while(i); i += step)
             {

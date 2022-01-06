@@ -88,26 +88,31 @@ namespace Alexbox.View
             if (_stage.ShowRoundSubmits is null)
                 return;
 
-            var showRoundSubmits = _stage.ShowRoundSubmits.Value;
-            Func<Player, IReadOnlyList<string>> selector = showRoundSubmits == -1
-                ? player => player.GetSubmission(_game.CurrentRound).Values.ToList()
-                : player => player.GetSubmission(showRoundSubmits).Values.ToList();
+            /*            var showRoundSubmits = _stage.ShowRoundSubmits.Value;
+                        Func<Player, IReadOnlyList<string>> selector = showRoundSubmits == -1
+                            ? player => player.GetSubmission(_game.CurrentRound).Values.ToList()
+                            : player => player.GetSubmission(showRoundSubmits).Values.ToList();
+            */
+            var submits = new Queue<string[]>(TelegramBot.PlayersBySentTask
+                .Select(kv => kv.Value.Select(player => player.Submissions
+                                      .Last()[kv.Key])
+                                      .ToArray()));
 
-            var submits = _game.Players.Select(player => selector(player)[0]).ToArray();
             var answersTable = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 AutoSize = true,
             };
 
+            var groupSize = submits.Peek().Length;
+            var labels = new Label[groupSize];
             answersTable.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
-            //answersTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5));
-            for (var i = 0; i < submits.Length; ++i)
+            for (var i = 0; i < groupSize; ++i)
             {
                 answersTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5));
                 var label = new Label
                 {
-                    Text = submits[i],
+                    Text = submits.Dequeue()[i],
                     Dock = DockStyle.Fill,
                     TextAlign = ContentAlignment.MiddleCenter,
                     Font = new Font("Arial", 30),
@@ -115,10 +120,23 @@ namespace Alexbox.View
                 };
                 answersTable.Controls.Add(label, i, 0);
             }
-
-            //controlTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 1));
-
             _controlTable.Controls.Add(answersTable);
+
+            var timer = new Timer();
+            timer.Interval = 6000;
+            timer.Start();
+            timer.Tick += (_, _) =>
+            {
+                if (submits.Count == 0)
+                {
+                    timer.Stop();
+                    return;
+                }
+
+                var group = submits.Dequeue();
+                for (var i = 0; i < groupSize; ++i)
+                    labels[i].Text = group[i];
+            };
         }
     }
 }

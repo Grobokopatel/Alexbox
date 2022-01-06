@@ -19,7 +19,7 @@ namespace Alexbox.Application.TelegramBot
         private static readonly string Token = new StreamReader("token.token").ReadLine();
         private static readonly TelegramBotClient Client = new(Token);
         private static Dictionary<Player, Queue<Task>> _tasksQueueByPlayer;
-        private static Dictionary<Task, List<Player>> _playersBySentTask;
+        public static Dictionary<Task, List<Player>> PlayersBySentTask;
         private static CustomGame _currentGame;
 
         public static void Run(CustomGame currentGame)
@@ -75,12 +75,23 @@ namespace Alexbox.Application.TelegramBot
                 if (_tasksQueueByPlayer[player].Count > 0)
                 {
                     var task = _tasksQueueByPlayer[player].Dequeue();
+                    if(PlayersBySentTask.TryGetValue(task, out var players))
+                    {
+                        players.Add(player);
+                    }
+                    else
+                    {
+                        PlayersBySentTask[task] = new List<Player>();
+                        PlayersBySentTask[task].Add(player);
+                    }
+
                     await Client.SendTextMessageAsync(id, task.Description);
+
                 }
                 else if (_tasksQueueByPlayer.All(keyValuePair => keyValuePair.Value.Count == 0))
                 {
                     _currentGame.GameStatus = GameStatus.Voting;
-                    _currentGame.SentTasks = _playersBySentTask.Keys.ToList();
+                    _currentGame.SentTasks = PlayersBySentTask.Keys.ToList();
                     AllPlayersAnswered?.Invoke();
                 }
             }
@@ -117,7 +128,7 @@ namespace Alexbox.Application.TelegramBot
 
         public static async void SendTasks()
         {
-            _playersBySentTask = new Dictionary<Task, List<Player>>();
+            PlayersBySentTask = new Dictionary<Task, List<Player>>();
             _tasksQueueByPlayer = new Dictionary<Player, Queue<Task>>();
             foreach (var (id, tasks) in _currentGame.CurrentStage.Distribution.Tasks)
             {
@@ -136,8 +147,8 @@ namespace Alexbox.Application.TelegramBot
             foreach (var (player, tasks) in _tasksQueueByPlayer)
             {
                 var task = tasks.Dequeue();
-                if (!_playersBySentTask.ContainsKey(task)) _playersBySentTask[task] = new List<Player>();
-                _playersBySentTask[task].Add(player);
+                if (!PlayersBySentTask.ContainsKey(task)) PlayersBySentTask[task] = new List<Player>();
+                PlayersBySentTask[task].Add(player);
                 player.CurrentTask = task;
                 await Client.SendTextMessageAsync(player.Id, task.Description);
             }

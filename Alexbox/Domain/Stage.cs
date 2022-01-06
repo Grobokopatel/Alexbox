@@ -26,7 +26,7 @@ namespace Alexbox.Domain
             return this;
         }
 
-        public Stage WithRoundSubmits(int roundNumber = -1)
+        public Stage WithRoundSubmits(int? roundNumber = null)
         {
             ShowRoundSubmits = roundNumber;
             return this;

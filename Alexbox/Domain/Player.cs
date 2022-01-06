@@ -24,7 +24,8 @@ namespace Alexbox.Domain
 
         public void AddSubmission(int round,Task task,string submission)
         {
-            if (Submissions.Count == round) Submissions.Add(new Dictionary<Task, string>());
+            if (Submissions.Count == round)
+                Submissions.Add(new Dictionary<Task, string>());
             Submissions[round][task] = submission;
         }
 
