@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using Alexbox.Application.TelegramBot;
 using Alexbox.Domain;
@@ -18,6 +19,7 @@ namespace Alexbox.View
 
         private readonly TableLayoutPanel _controlTable;
         private readonly CustomGame _game;
+        private readonly Stage _stage;
 
         public StagePresenter(Stage stage, CustomGame game)
         {
@@ -43,15 +45,15 @@ namespace Alexbox.View
             };
             _controlTable.Controls.Add(paragraph /*, 0, 0*/);
 
-            HandleCaptions(stage);
-            HanleRoundResults(stage);
+            HandleRoundSubmits();
+            HanleScores();
         }
 
-        private void HanleRoundResults(Stage stage)
+        private void HanleScores()
         {
-            if (!stage.ShowRoundResults)
+            if (!_stage.ShowScores)
                 return;
-            var players = new Queue<Player>(_game.Players.Values);
+            var players = new Queue<Player>(_game.Players.Values.OrderByDescending(player => player.Score));
 
             var playerCount = players.Count;
             var tableSize = Math.Ceiling(Math.Sqrt(playerCount));
@@ -81,11 +83,17 @@ namespace Alexbox.View
             _controlTable.Controls.Add(table);
         }
 
-        private void HandleCaptions(Stage stage)
+        private void HandleRoundSubmits()
         {
-            var captions = stage.Captions;
-            if (captions is null)
+            if (_stage.ShowRoundSubmits is null)
                 return;
+
+            var showRoundSubmits = _stage.ShowRoundSubmits.Value;
+            Func<Player, IReadOnlyList<string>> selector = showRoundSubmits == -1
+                ? player => player.GetLastSubmissions()
+                : player => player.GetSubmissions(showRoundSubmits);
+
+            var submits = _game.Players.Values.Select(player => selector(player).First()).ToArray();
             var answersTable = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
@@ -94,12 +102,12 @@ namespace Alexbox.View
 
             answersTable.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
             //answersTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5));
-            for (var i = 0; i < captions.Length; ++i)
+            for (var i = 0; i < submits.Length; ++i)
             {
                 answersTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5));
                 var label = new Label
                 {
-                    Text = captions[i],
+                    Text = submits[i],
                     Dock = DockStyle.Fill,
                     TextAlign = ContentAlignment.MiddleCenter,
                     Font = new Font("Arial", 30),
@@ -109,14 +117,14 @@ namespace Alexbox.View
             }
 
             //controlTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 1));
-            _controlTable.Controls.Add(answersTable);
+/*            _controlTable.Controls.Add(answersTable);
             Load += (_, _) =>
             {
                 foreach (var id in TelegramBot.CurrentGame.Players.Keys)
                 {
-                    TelegramBot.SendMessageWithButtonsToUser(id, stage.Paragraph, captions);
+                    TelegramBot.SendMessageWithButtonsToUser(id, stage.Paragraph, submits);
                 }
             };
-        }
+*/        }
     }
 }

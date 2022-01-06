@@ -5,10 +5,10 @@ namespace Alexbox.Domain
 {
     public class Stage
     {
-        public bool ShowRoundResults { get; private set; }
+        public bool ShowScores { get; private set; }
         public string Paragraph { get; private set; }
         public int TimeOutInMs { get; private set; }
-        public string[] Captions { get; private set; }
+        public int? ShowRoundSubmits { get; private set; }
         public bool WaitForReplies { get; set; }
         public bool SendingTasks { get; set; }
 
@@ -25,15 +25,15 @@ namespace Alexbox.Domain
             return this;
         }
 
-        public Stage WithCaptions(string[] captions)
+        public Stage WithRoundSubmits(int roundNumber = -1)
         {
-            Captions = captions;
+            ShowRoundSubmits = roundNumber;
             return this;
         }
 
-        public Stage WithResults()
+        public Stage WithScores()
         {
-            ShowRoundResults = true;
+            ShowScores = true;
             return this;
         }
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Alexbox.Domain
 {
@@ -16,9 +17,14 @@ namespace Alexbox.Domain
             Name = name;
         }
 
-        public IReadOnlyList<string> GetSubmissions(int round = 0)
+        public IReadOnlyList<string> GetSubmissions(int round)
         {
             return _submissions[round];
+        }
+
+        public IReadOnlyList<string> GetLastSubmissions()
+        {
+            return _submissions[_submissions.Keys.OrderByDescending(rn => rn).First()];
         }
 
         public void AddSubmission(string submission, int round = 0)
