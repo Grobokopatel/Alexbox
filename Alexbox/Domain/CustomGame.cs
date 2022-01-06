@@ -1,23 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Alexbox.Domain
 {
     public sealed class CustomGame
     {
-        public readonly Dictionary<long, Player> Players = new();
-        public readonly Dictionary<long, Viewer> Viewers = new();
-        public GameStatus GameStatus;
+        public readonly List<Player> Players = new();
+        public readonly List<Viewer> Viewers = new();
+        public GameStatus GameStatus { get; set; }
+        public Stage CurrentStage { get; set; }
         public readonly int MaxPlayers;
         public readonly string Name;
         public readonly int MinPlayers;
         public readonly Queue<Stage> Stages;
-        private List<Task> Tasks;
-        public Distribution<long, Task> Distribution;
-        private int _taskPerPlayer;
-        private int _groupSize;
-        public Stage CurrentStage { get; set; }
+        public List<Task> Tasks { get; private set; }
+        public List<Task> SentTasks { get; set; }
+        public int CurrentRound;
 
         public CustomGame(int minPlayers, int maxPlayers, string name)
         {
@@ -30,7 +28,7 @@ namespace Alexbox.Domain
 
         public Player GetBestPlayer()
         {
-            return Players.Max(item => item.Value.Score).Value;
+            return Players.Max(player => player.Score);
         }
 
         public CustomGame AddStage(Stage stage)
@@ -48,11 +46,14 @@ namespace Alexbox.Domain
 
             return this;
         }
-
-        public CustomGame WithDistribution(int taskPerPlayer,int groupSize)
+        
+        public CustomGame AddStages(Func<Task,Stage> func)
         {
-            _taskPerPlayer = taskPerPlayer;
-            _groupSize = groupSize;
+            foreach (var task in SentTasks)
+            {
+                AddStage(func(task));
+            }
+
             return this;
         }
 
@@ -64,9 +65,5 @@ namespace Alexbox.Domain
             return this;
         }
 
-        public void Start()
-        {
-            Distribution = new Distribution<long, Task>(_taskPerPlayer, _groupSize, Players.Keys.ToArray(), Tasks);
-        }
     }
 }

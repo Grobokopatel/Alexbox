@@ -21,10 +21,15 @@ namespace Alexbox.Infrastructure
             App.EnableVisualStyles();
             App.SetCompatibleTextRenderingDefault(false);
             var quiplash = new CustomGame(1, 3, "Quiplash")
-                .AddStage(new Stage().WithResults().WaitForTimeout(30000))
-                .WithTaskList(new List<Task> { new("TASK1"), new("TASK2") })
-                .AddStage(new Stage().WithParagraph("Ответьте на вопросы").WithSendingTasks().WaitForTimeout(20000));
-            Run(quiplash);
+                .WithTaskList(new List<Task> {new("TASK1"), new("TASK2")})
+                .AddStage(new Stage().WithParagraph("TEST").WaitForTimeOutOrReplies(5000))
+                .AddStage(new Stage().WithParagraph("Ответьте на вопросы").WithSendingTasks(2, 1)
+                    .WaitForTimeOutOrReplies(20000))
+                .AddStage(new Stage()
+                    .WithScoreCounting((voteFor, allVotes, coefficient) => voteFor / allVotes * coefficient)
+                    .WithCaptions(new[] {"ANSWER 1", "Answer2"})
+                    .WaitForTimeOutOrReplies(15000));
+            new Thread(() => Run(quiplash)).Start();
             var form = new MainForm(quiplash);
             form.Start();
             App.Run(form);

@@ -4,41 +4,35 @@ namespace Alexbox.Domain
 {
     public class Player : Entity
     {
-        //Ключ - номер раунда, значение - список сабмитов
-        private readonly Dictionary<int, List<string>> _submissions = new();
+        // Список ответов игроков на задание
+        private readonly List<Dictionary<Task, string>> _submissions = new();
 
         public double Score { get; private set; }
-
+        public Task CurrentTask { get; set; }
         public string Name { get; }
 
-        public Player(string name)
+        public Player(string name, long id)
         {
             Name = name;
+            Id = id;
         }
 
-        public IReadOnlyList<string> GetSubmissions(int round = 0)
+        public string GetSubmission(int round,Task task)
         {
-            return _submissions[round];
+            return _submissions[round][task];
         }
 
-        public void AddSubmission(string submission, int round = 0)
+        public void AddSubmission(int round,Task task,string submission)
         {
-            if (_submissions.TryGetValue(round, out var submissionList))
-            {
-                submissionList.Add(submission);
-            }
-            else
-            {
-                _submissions.Add(round, new List<string>());
-                _submissions[round].Add(submission);
-            }
+            if (_submissions.Count == round) _submissions.Add(new Dictionary<Task, string>());
+            _submissions[round][task] = submission;
         }
 
         public override bool Equals(object obj)
         {
             if (obj is Player player)
             {
-                return Name == player.Name;
+                return Id == player.Id;
             }
 
             return false;
@@ -46,7 +40,7 @@ namespace Alexbox.Domain
 
         public override int GetHashCode()
         {
-            return Name.GetHashCode();
+            return Id.GetHashCode();
         }
 
         private void AddDeltaPoints(double delta)

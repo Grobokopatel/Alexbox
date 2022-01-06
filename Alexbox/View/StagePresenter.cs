@@ -44,14 +44,14 @@ namespace Alexbox.View
             _controlTable.Controls.Add(paragraph /*, 0, 0*/);
 
             HandleCaptions(stage);
-            HanleRoundResults(stage);
+            HandleRoundResults(stage);
         }
 
-        private void HanleRoundResults(Stage stage)
+        private void HandleRoundResults(Stage stage)
         {
             if (!stage.ShowRoundResults)
                 return;
-            var players = new Queue<Player>(_game.Players.Values);
+            var players = new Queue<Player>(_game.Players);
 
             var playerCount = players.Count;
             var tableSize = Math.Ceiling(Math.Sqrt(playerCount));
@@ -110,13 +110,6 @@ namespace Alexbox.View
 
             //controlTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 1));
             _controlTable.Controls.Add(answersTable);
-            Load += (_, _) =>
-            {
-                foreach (var id in TelegramBot.CurrentGame.Players.Keys)
-                {
-                    TelegramBot.SendMessageWithButtonsToUser(id, stage.Paragraph, captions);
-                }
-            };
         }
     }
 }

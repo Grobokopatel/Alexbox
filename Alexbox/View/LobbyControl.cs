@@ -12,7 +12,7 @@ namespace Alexbox.View
         private readonly Label _viewersLabel;
         public readonly Button Button;
         private readonly CustomGame _currentGame;
-
+        public readonly Timer timer;
         public LobbyControl(CustomGame currentGame)
         {
             _currentGame = currentGame;
@@ -86,7 +86,7 @@ namespace Alexbox.View
 
             Controls.Add(controlTable);
 
-            var timer = new Timer
+            timer = new Timer
             {
                 Interval = 100
             };
@@ -101,7 +101,7 @@ namespace Alexbox.View
                 if (i < _currentGame.Players.Count)
                 {
                     _playerLabels[i].Text =
-                        $"{i + 1} - {_currentGame.Players.Values.Select(player => player.Name).ToList()[i]}";
+                        $"{i + 1} - {_currentGame.Players.Select(player => player.Name).ToList()[i]}";
                 }
                 else
                 {

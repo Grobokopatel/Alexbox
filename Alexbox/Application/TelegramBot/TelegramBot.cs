@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Sockets;
 using Alexbox.Domain;
 using Telegram.Bot;
 using Telegram.Bot.Args;
@@ -19,12 +18,13 @@ namespace Alexbox.Application.TelegramBot
         public static event Action AllPlayersAnswered;
         private static readonly string Token = new StreamReader("token.token").ReadLine();
         private static readonly TelegramBotClient Client = new(Token);
-        private static Dictionary<long, Queue<Task>> _taskByUser;
-        public static CustomGame CurrentGame { get; private set; }
+        private static Dictionary<Player, Queue<Task>> _tasksQueueByPlayer;
+        private static Dictionary<Task, List<Player>> _playersBySentTask;
+        private static CustomGame _currentGame;
 
         public static void Run(CustomGame currentGame)
         {
-            CurrentGame = currentGame;
+            _currentGame = currentGame;
             Client.StartReceiving();
             Client.OnMessage += BotClientOnMessage;
             Client.OnCallbackQuery += BotClientOnCallbackQuery;
@@ -33,7 +33,8 @@ namespace Alexbox.Application.TelegramBot
         private static void BotClientOnCallbackQuery(object sender, CallbackQueryEventArgs e)
         {
             var id = e.CallbackQuery.From.Id;
-            CurrentGame.Players[id].AddSubmission(e.CallbackQuery.Data);
+            var player = _currentGame.Players.First(player => player.Id == id);
+            //player.AddSubmission(.CallbackQuery.Data);
         }
 
         private static async void BotClientOnMessage(object sender, MessageEventArgs e)
@@ -46,48 +47,54 @@ namespace Alexbox.Application.TelegramBot
                 return;
             }
 
-            if (CurrentGame.GameStatus == GameStatus.WaitingForPlayers &&
-                (!CurrentGame.Players.ContainsKey(id) && !CurrentGame.Viewers.ContainsKey(id)))
+            if (_currentGame.GameStatus == GameStatus.WaitingForPlayers &&
+                _currentGame.Players.Select(player => player.Id).All(pId => pId != id) &&
+                _currentGame.Viewers.Select(viewer => viewer.Id).All(vId => vId != id))
             {
-                if (CurrentGame.Players.Count < CurrentGame.MaxPlayers)
+                if (_currentGame.Players.Count < _currentGame.MaxPlayers)
                 {
-                    CurrentGame.Players[id] = new Player(e.Message.From.FirstName);
+                    _currentGame.Players.Add(new Player(e.Message.From.FirstName, id));
                     await Client.SendTextMessageAsync(id, "Вы успешно были добавлены в игру");
                 }
                 else
                 {
-                    CurrentGame.Viewers[id] = new Viewer(e.Message.From.FirstName);
+                    _currentGame.Viewers.Add(new Viewer(e.Message.From.FirstName, id));
                     await Client.SendTextMessageAsync(id, "Вы были добавлены как зритель");
                 }
             }
-            else if (CurrentGame.GameStatus == GameStatus.WaitingForPlayers)
+            else if (_currentGame.GameStatus == GameStatus.WaitingForPlayers)
             {
                 await Client.SendTextMessageAsync(id, "Вы уже были добавлены!");
             }
-            else if (CurrentGame.GameStatus == GameStatus.WaitingForReplies && CurrentGame.Players.ContainsKey(id))
+            else if (_currentGame.GameStatus == GameStatus.WaitingForReplies &&
+                     _currentGame.Players.Select(player => player.Id).Any(pId => pId == id))
             {
-                CurrentGame.Players[id].AddSubmission(text);
+                var player = _currentGame.Players.First(player => player.Id == id);
+                player.AddSubmission(_currentGame.CurrentRound, player.CurrentTask, text);
                 await Client.SendTextMessageAsync(id, "Ваш ответ был записан");
-                if (_taskByUser[id].Count > 0)
+                if (_tasksQueueByPlayer[player].Count > 0)
                 {
-                    await Client.SendTextMessageAsync(id, _taskByUser[id].Dequeue().Description);
+                    var task = _tasksQueueByPlayer[player].Dequeue();
+                    await Client.SendTextMessageAsync(id, task.Description);
                 }
-                else if (_taskByUser.Select(keyValuePair => keyValuePair.Value.Count == 0).All(t => t))
+                else if (_tasksQueueByPlayer.All(keyValuePair => keyValuePair.Value.Count == 0))
                 {
-                    CurrentGame.GameStatus = GameStatus.Voting;
+                    _currentGame.GameStatus = GameStatus.Voting;
+                    _currentGame.SentTasks = _playersBySentTask.Keys.ToList();
                     AllPlayersAnswered?.Invoke();
                 }
             }
-            else if (CurrentGame.GameStatus == GameStatus.WaitingForReplies && CurrentGame.Viewers.ContainsKey(id))
+            else if (_currentGame.GameStatus == GameStatus.WaitingForReplies &&
+                     _currentGame.Viewers.Any(viewer => viewer.Id == id))
             {
                 await Client.SendTextMessageAsync(id, "Вы зритель, ждите голосования");
             }
-            else if (CurrentGame.GameStatus == GameStatus.WaitingForReplies)
+            else if (_currentGame.GameStatus == GameStatus.WaitingForReplies)
             {
-                CurrentGame.Viewers[id] = new Viewer(e.Message.From.FirstName);
+                _currentGame.Viewers.Add(new Viewer(e.Message.From.FirstName, id));
                 await Client.SendTextMessageAsync(id, "Вы были добавлены как зритель");
             }
-            else if (CurrentGame.GameStatus == GameStatus.Voting)
+            else if (_currentGame.GameStatus == GameStatus.Voting)
             {
             }
             else
@@ -102,35 +109,57 @@ namespace Alexbox.Application.TelegramBot
                 .Select(text => new InlineKeyboardButton {Text = text, CallbackData = text})
                 .Select(button => new[] {button}).ToArray());
         }
-        
 
-        public static async void SendMessageWithButtonsToUser(long id, string message, IEnumerable<string> textButtons) =>
+
+        public static async void
+            SendMessageWithButtonsToUser(long id, string message, IEnumerable<string> textButtons) =>
             await Client.SendTextMessageAsync(id, message, replyMarkup: CreateButtons(textButtons));
 
         public static async void SendTasks()
         {
-            _taskByUser = new Dictionary<long, Queue<Task>>();
-            foreach (var (id, tasks) in CurrentGame.Distribution.Tasks)
+            _playersBySentTask = new Dictionary<Task, List<Player>>();
+            _tasksQueueByPlayer = new Dictionary<Player, Queue<Task>>();
+            foreach (var (id, tasks) in _currentGame.CurrentStage.Distribution.Tasks)
             {
+                var player = _currentGame.Players.First(player => player.Id == id);
                 foreach (var task in tasks)
                 {
-                    if (!_taskByUser.ContainsKey(id))
+                    if (!_tasksQueueByPlayer.ContainsKey(player))
                     {
-                        _taskByUser[id] = new Queue<Task>();
+                        _tasksQueueByPlayer[player] = new Queue<Task>();
                     }
-                    _taskByUser[id].Enqueue(task);
+
+                    _tasksQueueByPlayer[player].Enqueue(task);
                 }
             }
 
-            foreach (var (id,tasks) in _taskByUser)
+            foreach (var (player, tasks) in _tasksQueueByPlayer)
             {
-                await Client.SendTextMessageAsync(id, tasks.Dequeue().Description);
+                var task = tasks.Dequeue();
+                if (!_playersBySentTask.ContainsKey(task)) _playersBySentTask[task] = new List<Player>();
+                _playersBySentTask[task].Add(player);
+                player.CurrentTask = task;
+                await Client.SendTextMessageAsync(player.Id, task.Description);
             }
         }
 
-        public static void Finish()
+        /*public static void SendPlayerAnswers()
         {
-            Client.StopReceiving();
-        }
+            foreach (var (task, usersId) in _playersBySentTask)
+            {
+                var answers = usersId.Select(id =>
+                    CurrentGame.Players.First(player => player.Id == id).GetSubmission(task, CurrentGame.CurrentRound));
+                foreach (var player in CurrentGame.Players.Where(player => usersId.All(id => player.Id != id)))
+                {
+                    SendMessageWithButtonsToUser(player.Id, task.Description, answers);
+                }
+
+                foreach (var viewer in CurrentGame.Viewers)
+                {
+                    SendMessageWithButtonsToUser(viewer.Id, task.Description, answers);
+                }
+                _currentGame.CurrentRound += 1;
+            }
+        }*/
     }
 }

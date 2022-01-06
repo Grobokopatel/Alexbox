@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -6,18 +7,18 @@ namespace Alexbox.Domain
 {
     public abstract class ValueObject<T>
     {
-        private readonly static PropertyInfo[] publicProperties;
+        public static readonly PropertyInfo[] PublicProperties;
 
         static ValueObject()
         {
-            publicProperties = typeof(T)
+            PublicProperties = typeof(T)
                 .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                 .ToArray();
         }
 
-        public object[] GetPropertiesValues()
+        public IEnumerable<object> GetPropertiesValues()
         {
-            return publicProperties
+            return PublicProperties
                 .Select(property => property.GetValue(this))
                 .ToArray();
         }
@@ -48,7 +49,7 @@ namespace Alexbox.Domain
         {
             var propertiesAsString =
                 string.Join("; ",
-                    publicProperties
+                    PublicProperties
                         .Select(property => $"{property.Name}: {property.GetValue(this)}")
                         .OrderBy(str => str, StringComparer.Ordinal));
 
