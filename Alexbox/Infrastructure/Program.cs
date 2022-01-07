@@ -23,11 +23,11 @@ namespace Alexbox.Infrastructure
             var quiplash = new CustomGame(1, 3, "Quiplash")
                 .WithTaskList(new List<Task> {new("TASK1"), new("TASK2")})
                 .AddStage(new Stage().WithParagraph("TEST").WaitForTimeOutOrReplies(5000))
-                .AddStage(new Stage().WithParagraph("Ответьте на вопросы").WithSendingTasks(2, 1)
+                .AddStage(new Stage().WithParagraph("Ответьте на вопросы").WithSendingTasks(2, 2)
                     .WaitForTimeOutOrReplies(200000))
                 .AddStage(new Stage()
                     .WithScoreCounting((voteFor, allVotes, coefficient) => voteFor / allVotes * coefficient)
-                    .WithRoundSubmits(1)
+                    .WithRoundSubmits()
                     .WaitForTimeOutOrReplies(30000));
             new Thread(() => Run(quiplash)).Start();
             var form = new MainForm(quiplash);

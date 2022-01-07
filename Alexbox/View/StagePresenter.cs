@@ -86,7 +86,7 @@ namespace Alexbox.View
 
         private void HandleRoundSubmits()
         {
-            if (_stage.ShowRoundSubmits is null)
+            if (_stage.ShowRoundSubmits)
                 return;
 
             /*            var showRoundSubmits = _stage.ShowRoundSubmits.Value;

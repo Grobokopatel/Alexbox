@@ -13,7 +13,7 @@ namespace Alexbox.Domain
         public bool ShowScores { get; private set; }
         public string Paragraph { get; private set; }
         public int TimeOutInMs { get; private set; }
-        public int? ShowRoundSubmits { get; private set; }
+        public bool ShowRoundSubmits { get; private set; }
         public bool WaitForReplies { get; set; }
         public bool SendingTasks { get; set; }
 
@@ -26,9 +26,9 @@ namespace Alexbox.Domain
             return this;
         }
 
-        public Stage WithRoundSubmits(int? roundNumber = null)
+        public Stage WithRoundSubmits()
         {
-            ShowRoundSubmits = roundNumber;
+            ShowRoundSubmits = true;
             return this;
         }
 
