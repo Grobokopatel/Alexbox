@@ -86,14 +86,8 @@ namespace Alexbox.View
 
         private void HandleRoundSubmits()
         {
-            if (_stage.ShowRoundSubmits)
+            if (!_stage.ShowRoundSubmits)
                 return;
-
-            /*            var showRoundSubmits = _stage.ShowRoundSubmits.Value;
-                        Func<Player, IReadOnlyList<string>> selector = showRoundSubmits == -1
-                            ? player => player.GetSubmission(_game.CurrentRound).Values.ToList()
-                            : player => player.GetSubmission(showRoundSubmits).Values.ToList();
-            */
             var submits = new Queue<string[]>(TelegramBot.PlayersBySentTask
                 .Select(kv => kv.Value.Select(player => player.Submissions
                                       .Last()[kv.Key])
@@ -104,16 +98,16 @@ namespace Alexbox.View
                 Dock = DockStyle.Fill,
                 AutoSize = true,
             };
-
             var groupSize = submits.Peek().Length;
             var labels = new Label[groupSize];
             answersTable.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
+            var temp = submits.Dequeue();
             for (var i = 0; i < groupSize; ++i)
             {
                 answersTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5));
                 labels[i] = new Label
                 {
-                    Text = submits.Dequeue()[i],
+                    Text = temp[i],
                     Dock = DockStyle.Fill,
                     TextAlign = ContentAlignment.MiddleCenter,
                     Font = new Font("Arial", 30),
