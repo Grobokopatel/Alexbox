@@ -17,10 +17,11 @@ namespace Alexbox.View
             return this;
         }
 
-        public event Action AllTaskShown; 
+        public event Action AllTaskShown;
         private readonly TableLayoutPanel _controlTable;
         private readonly CustomGame _game;
         private readonly Stage _stage;
+        private readonly Label _paragraph;
 
         public StagePresenter(Stage stage, CustomGame game)
         {
@@ -36,7 +37,7 @@ namespace Alexbox.View
             _controlTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 80));
             Controls.Add(_controlTable);
 
-            var paragraph = new Label
+            _paragraph = new Label
             {
                 Text = stage.Paragraph,
                 Dock = DockStyle.Fill,
@@ -45,7 +46,7 @@ namespace Alexbox.View
                 BorderStyle = BorderStyle.FixedSingle,
                 Font = new Font("Arial", 30),
             };
-            _controlTable.Controls.Add(paragraph /*, 0, 0*/);
+            _controlTable.Controls.Add(_paragraph /*, 0, 0*/);
             HandleRoundSubmits();
             HandleScores();
         }
@@ -88,26 +89,29 @@ namespace Alexbox.View
         {
             if (!_stage.ShowRoundSubmits)
                 return;
-            var submits = new Queue<string[]>(TelegramBot.PlayersBySentTask
-                .Select(kv => kv.Value.Select(player => player.Submissions
+            
+            var submits = new Queue<(string, string[])>(TelegramBot.PlayersBySentTask
+                .Select(kv => (Task: kv.Key.Description, Submits: kv.Value.Select(player => player.Submissions
                                       .Last()[kv.Key])
-                                      .ToArray()));
-
+                                      .ToArray())));
+            
             var answersTable = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 AutoSize = true,
             };
-            var groupSize = submits.Peek().Length;
+            var groupSize = submits.Peek().Item2.Length;
             var labels = new Label[groupSize];
             answersTable.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
             var temp = submits.Dequeue();
+            _paragraph.Text = temp.Item1;
+
             for (var i = 0; i < groupSize; ++i)
             {
                 answersTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5));
                 labels[i] = new Label
                 {
-                    Text = temp[i],
+                    Text = temp.Item2[i],
                     Dock = DockStyle.Fill,
                     TextAlign = ContentAlignment.MiddleCenter,
                     Font = new Font("Arial", 30),
@@ -130,8 +134,9 @@ namespace Alexbox.View
                 }
 
                 var group = submits.Dequeue();
+                _paragraph.Text = group.Item1;
                 for (var i = 0; i < groupSize; ++i)
-                    labels[i].Text = group[i];
+                    labels[i].Text = group.Item2[i];
             };
         }
     }

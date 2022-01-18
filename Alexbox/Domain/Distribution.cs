@@ -10,7 +10,7 @@ namespace Alexbox.Domain
             get;
         }
         //Ключ - задание, значение - игроки  
-        private Dictionary<TTask, List<TMember>> Groups
+        public Dictionary<TTask, List<TMember>> Groups
         {
             get;
         }
