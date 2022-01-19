@@ -8,6 +8,8 @@ namespace Alexbox.Domain
         public readonly List<Player> Players = new();
         public readonly List<Viewer> Viewers = new();
         public GameStatus GameStatus { get; set; }
+        public List<long> LastVoteId { get; set; }
+        public Dictionary<Task,List<Player>> PlayersToVote { get; set; }
         public Stage CurrentStage { get; set; }
         public readonly int MaxPlayers;
         public readonly string Name;
@@ -26,12 +28,7 @@ namespace Alexbox.Domain
             Name = name;
             Stages = new Queue<Stage>();
         }
-
-        public Player GetBestPlayer()
-        {
-            return Players.Max(player => player.Score);
-        }
-
+        
         public CustomGame AddStage(Stage stage)
         {
             Stages.Enqueue(stage);

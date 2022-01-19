@@ -29,11 +29,20 @@ namespace Alexbox.Application.TelegramBot
             Client.OnCallbackQuery += BotClientOnCallbackQuery;
         }
 
-        private static void BotClientOnCallbackQuery(object sender, CallbackQueryEventArgs e)
+        private static async void BotClientOnCallbackQuery(object sender, CallbackQueryEventArgs e)
         {
             var id = e.CallbackQuery.From.Id;
-            var player = _currentGame.Players.First(player => player.Id == id);
-            //player.AddSubmission(.CallbackQuery.Data);
+            if (_currentGame.PlayersBySentTask == null || _currentGame.LastVoteId.Contains(id)) return;
+            foreach (var player in _currentGame.PlayersToVote.Values.First())
+            {
+                if (player.GetSubmission(_currentGame.CurrentRound, _currentGame.PlayersToVote.Keys.First()) ==
+                    e.CallbackQuery.Data)
+                {
+                    player.LastRoundVotes += 1;
+                    _currentGame.LastVoteId.Add(id);
+                    await Client.SendTextMessageAsync(id, "Вы успешно проголосовали");
+                }
+            }
         }
 
         private static async void BotClientOnMessage(object sender, MessageEventArgs e)
@@ -74,7 +83,7 @@ namespace Alexbox.Application.TelegramBot
                 if (_tasksQueueByPlayer[player].Count > 0)
                 {
                     var task = _tasksQueueByPlayer[player].Dequeue();
-                    if(_currentGame.PlayersBySentTask.TryGetValue(task, out var players))
+                    if (_currentGame.PlayersBySentTask.TryGetValue(task, out var players))
                     {
                         players.Add(player);
                     }
@@ -85,7 +94,6 @@ namespace Alexbox.Application.TelegramBot
 
                     player.CurrentTask = task;
                     await Client.SendTextMessageAsync(id, task.Description);
-
                 }
                 else if (_tasksQueueByPlayer.All(keyValuePair => keyValuePair.Value.Count == 0))
                 {
@@ -140,14 +148,15 @@ namespace Alexbox.Application.TelegramBot
                     }
 
                     _tasksQueueByPlayer[player].Enqueue(task);
-                    player.AddSubmission(_currentGame.CurrentRound,task,"Нет ответа");
+                    player.AddSubmission(_currentGame.CurrentRound, task, "Нет ответа");
                 }
             }
 
             foreach (var (player, tasks) in _tasksQueueByPlayer)
             {
                 var task = tasks.Dequeue();
-                if (!_currentGame.PlayersBySentTask.ContainsKey(task)) _currentGame.PlayersBySentTask[task] = new List<Player>();
+                if (!_currentGame.PlayersBySentTask.ContainsKey(task))
+                    _currentGame.PlayersBySentTask[task] = new List<Player>();
                 _currentGame.PlayersBySentTask[task].Add(player);
                 player.CurrentTask = task;
                 await Client.SendTextMessageAsync(player.Id, task.Description);

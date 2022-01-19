@@ -7,9 +7,10 @@ namespace Alexbox.Domain
         // Список ответов игроков на задание
         public readonly List<Dictionary<Task, string>> Submissions = new();
 
-        public double Score { get; private set; }
+        public double Score { get; set; }
         public Task CurrentTask { get; set; }
         public string Name { get; }
+        public int LastRoundVotes;
 
         public Player(string name, long id)
         {
@@ -42,11 +43,6 @@ namespace Alexbox.Domain
         public override int GetHashCode()
         {
             return Id.GetHashCode();
-        }
-
-        private void AddDeltaPoints(double delta)
-        {
-            Score += delta;
         }
     }
 }

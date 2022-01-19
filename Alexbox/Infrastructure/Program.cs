@@ -21,7 +21,7 @@ namespace Alexbox.Infrastructure
             App.EnableVisualStyles();
             App.SetCompatibleTextRenderingDefault(false);
             var tasks = System.IO.File.ReadAllText("quiplash.txt").Split("\n").Select(line => new Task(line));
-            var quiplash = new CustomGame(1, 3, "Quiplash")
+            var quiplash = new CustomGame(1, 1, "Quiplash")
                 .WithTaskList(tasks.ToList())
                 .AddStage(new Stage().WithParagraph("TEST").WaitForTimeOutOrReplies(1000))
                 .AddStage(new Stage().WithParagraph("Ответьте на вопросы").WithSendingTasks(2, 1)
@@ -29,7 +29,8 @@ namespace Alexbox.Infrastructure
                 .AddStage(new Stage()
                     .WithScoreCounting((voteFor, allVotes, coefficient) => voteFor / allVotes * coefficient)
                     .WithRoundSubmits()
-                    .WaitForTimeOutOrReplies(300000));
+                    .WaitForTimeOutOrReplies(300000))
+                .AddStage(new Stage().ShowPlayersScores());
             new Thread(() => Run(quiplash)).Start();
             var form = new MainForm(quiplash);
             form.Start();
