@@ -33,7 +33,7 @@ namespace Alexbox.View
                 AutoSize = true,
             };
             _controlTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 1));
-            _controlTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 80));
+            _controlTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             Controls.Add(_controlTable);
 
             _paragraph = new Label
