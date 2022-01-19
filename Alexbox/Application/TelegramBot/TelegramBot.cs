@@ -17,7 +17,7 @@ namespace Alexbox.Application.TelegramBot
     {
         public static event Action AllPlayersAnswered;
         private static readonly string Token = new StreamReader("token.token").ReadLine();
-        private static readonly TelegramBotClient Client = new(Token);
+        public static readonly TelegramBotClient Client = new(Token);
         private static Dictionary<Player, Queue<Task>> _tasksQueueByPlayer;
         private static CustomGame _currentGame;
 
@@ -32,7 +32,8 @@ namespace Alexbox.Application.TelegramBot
         private static async void BotClientOnCallbackQuery(object sender, CallbackQueryEventArgs e)
         {
             var id = e.CallbackQuery.From.Id;
-            if (_currentGame.PlayersBySentTask == null || _currentGame.LastVoteId.Contains(id)) return;
+            if (_currentGame.GameStatus != GameStatus.Voting || _currentGame.PlayersBySentTask == null ||
+                _currentGame.LastVoteId.Contains(id) || e.CallbackQuery.Data == "Нет ответа") return;
             foreach (var player in _currentGame.PlayersToVote.Values.First())
             {
                 if (player.GetSubmission(_currentGame.CurrentRound, _currentGame.PlayersToVote.Keys.First()) ==
@@ -80,6 +81,19 @@ namespace Alexbox.Application.TelegramBot
                 var player = _currentGame.Players.First(player => player.Id == id);
                 player.AddSubmission(_currentGame.CurrentRound, player.CurrentTask, text);
                 await Client.SendTextMessageAsync(id, "Ваш ответ был записан");
+                var isFinished = true;
+                foreach (var p in _currentGame.Players)
+                {
+                    foreach (var submission in p.Submissions)
+                    {
+                        if (submission.Any(s => s.Value == "Нет ответа")) isFinished = false;
+                    }
+                }
+                if (isFinished)
+                {
+                    _currentGame.GameStatus = GameStatus.Voting;
+                    AllPlayersAnswered?.Invoke();
+                }
                 if (_tasksQueueByPlayer[player].Count > 0)
                 {
                     var task = _tasksQueueByPlayer[player].Dequeue();
@@ -95,12 +109,7 @@ namespace Alexbox.Application.TelegramBot
                     player.CurrentTask = task;
                     await Client.SendTextMessageAsync(id, task.Description);
                 }
-                else if (_tasksQueueByPlayer.All(keyValuePair => keyValuePair.Value.Count == 0))
-                {
-                    _currentGame.GameStatus = GameStatus.Voting;
-                    _currentGame.SentTasks = _currentGame.PlayersBySentTask.Keys.ToList();
-                    AllPlayersAnswered?.Invoke();
-                }
+                
             }
             else if (_currentGame.GameStatus == GameStatus.WaitingForReplies &&
                      _currentGame.Viewers.Any(viewer => viewer.Id == id))
@@ -162,24 +171,5 @@ namespace Alexbox.Application.TelegramBot
                 await Client.SendTextMessageAsync(player.Id, task.Description);
             }
         }
-
-        /*public static void SendPlayerAnswers()
-        {
-            foreach (var (task, usersId) in _playersBySentTask)
-            {
-                var answers = usersId.Select(id =>
-                    CurrentGame.Players.First(player => player.Id == id).GetSubmission(task, CurrentGame.CurrentRound));
-                foreach (var player in CurrentGame.Players.Where(player => usersId.All(id => player.Id != id)))
-                {
-                    SendMessageWithButtonsToUser(player.Id, task.Description, answers);
-                }
-
-                foreach (var viewer in CurrentGame.Viewers)
-                {
-                    SendMessageWithButtonsToUser(viewer.Id, task.Description, answers);
-                }
-                _currentGame.CurrentRound += 1;
-            }
-        }*/
     }
 }

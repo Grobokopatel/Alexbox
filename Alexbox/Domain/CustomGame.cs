@@ -17,8 +17,7 @@ namespace Alexbox.Domain
         public readonly Queue<Stage> Stages;
         public List<Task> Tasks { get; private set; }
         public Dictionary<Task, List<Player>> PlayersBySentTask { get; set; }
-        public List<Task> SentTasks { get; set; }
-        public readonly int CurrentRound = 0;
+        public int CurrentRound = 0;
 
         public CustomGame(int minPlayers, int maxPlayers, string name)
         {
@@ -34,26 +33,7 @@ namespace Alexbox.Domain
             Stages.Enqueue(stage);
             return this;
         }
-
-        public CustomGame AddStages(IEnumerable<Stage> stages)
-        {
-            foreach (var stage in stages)
-            {
-                Stages.Enqueue(stage);
-            }
-
-            return this;
-        }
-
-        public CustomGame AddStages(Func<Task, Stage> func)
-        {
-            foreach (var task in SentTasks)
-            {
-                AddStage(func(task));
-            }
-
-            return this;
-        }
+        
 
         public CustomGame WithTaskList(List<Task> tasks)
         {

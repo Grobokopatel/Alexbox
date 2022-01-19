@@ -11,13 +11,18 @@ namespace Alexbox.Domain
         public string Paragraph { get; private set; }
         public int TimeOutInMs { get; private set; }
         public bool ShowRoundSubmits { get; private set; }
-        public bool WaitForReplies { get; set; }
         public bool SendingTasks { get; set; }
 
         public Distribution<long, Task> Distribution { get; set; }
 
 
         public Stage WaitForTimeOutOrReplies(int milliseconds)
+        {
+            TimeOutInMs = milliseconds;
+            return this;
+        }
+
+        public Stage WaitForTimeOut(int milliseconds)
         {
             TimeOutInMs = milliseconds;
             return this;

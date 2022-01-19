@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -15,22 +16,27 @@ namespace Alexbox.Infrastructure
         ///  The main entry point for the application.
         /// </summary>
         [STAThread]
+        [SuppressMessage("ReSharper.DPA", "DPA0001: Memory allocation issues")]
         public static void Main()
         {
             App.SetHighDpiMode(HighDpiMode.SystemAware);
             App.EnableVisualStyles();
             App.SetCompatibleTextRenderingDefault(false);
             var tasks = System.IO.File.ReadAllText("quiplash.txt").Split("\n").Select(line => new Task(line));
-            var quiplash = new CustomGame(1, 1, "Quiplash")
+            var quiplash = new CustomGame(1, 8, "Quiplash")
                 .WithTaskList(tasks.ToList())
-                .AddStage(new Stage().WithParagraph("TEST").WaitForTimeOutOrReplies(1000))
-                .AddStage(new Stage().WithParagraph("Ответьте на вопросы").WithSendingTasks(2, 1)
-                    .WaitForTimeOutOrReplies(2000000))
+                .AddStage(new Stage().WithParagraph("Раунд 1. Ответьте на вопросы").WithSendingTasks(2, 2)
+                    .WaitForTimeOutOrReplies(90000))
                 .AddStage(new Stage()
                     .WithScoreCounting((voteFor, allVotes, coefficient) => voteFor / allVotes * coefficient)
-                    .WithRoundSubmits()
-                    .WaitForTimeOutOrReplies(300000))
-                .AddStage(new Stage().ShowPlayersScores());
+                    .WithRoundSubmits())
+                .AddStage(new Stage().ShowPlayersScores().WaitForTimeOut(10000))
+                .AddStage(new Stage().WithParagraph("Раунд 2. Ответьте на вопросы").WithSendingTasks(2, 2)
+                    .WaitForTimeOutOrReplies(90000))
+                .AddStage(new Stage()
+                    .WithScoreCounting((voteFor, allVotes, coefficient) => voteFor / allVotes * coefficient * 2)
+                    .WithRoundSubmits())
+                .AddStage(new Stage().ShowPlayersScores().WaitForTimeOut(10000));
             new Thread(() => Run(quiplash)).Start();
             var form = new MainForm(quiplash);
             form.Start();

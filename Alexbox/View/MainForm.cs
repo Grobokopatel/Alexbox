@@ -11,7 +11,7 @@ namespace Alexbox.View
     {
         private Panel Panel { get; }
         private readonly CustomGame _currentGame;
-
+        private Timer _timer;
         public MainForm(CustomGame currentGame)
         {
             _currentGame = currentGame;
@@ -26,7 +26,11 @@ namespace Alexbox.View
 
         public void Start()
         {
-            TelegramBot.AllPlayersAnswered += ChangeStage;
+            TelegramBot.AllPlayersAnswered += () =>
+            {
+                _timer?.Stop();
+                ChangeStage();
+            };
             var lobby = new LobbyControl(_currentGame);
             lobby.Button.Click += (_, _) =>
             {
@@ -43,12 +47,12 @@ namespace Alexbox.View
 
         private void StartTimer()
         {
-            var timer = new Timer();
-            timer.Interval = _currentGame.CurrentStage.TimeOutInMs;
-            timer.Start();
-            timer.Tick += (_, _) =>
+            _timer = new Timer();
+            _timer.Interval = _currentGame.CurrentStage.TimeOutInMs;
+            _timer.Start();
+            _timer.Tick += (_, _) =>
             {
-                timer.Stop();
+                _timer.Stop();
                 ChangeStage();
             };
         }
@@ -66,11 +70,17 @@ namespace Alexbox.View
                 Close();
                 return;
             }
-
+            TelegramBot.Client.SendTextMessageAsync(454489305, "CHANGE STAGE");
+            if (_currentGame.CurrentStage is {ShowScores: true})
+            {
+                _currentGame.GameStatus = GameStatus.WaitingForReplies;
+                _currentGame.CurrentRound += 1;
+            }
             Panel.Controls.Clear();
             _currentGame.CurrentStage = _currentGame.Stages.Dequeue();
             var stagePresenter = new StagePresenter(_currentGame.CurrentStage, _currentGame);
             stagePresenter.AllTaskShown += ChangeStage;
+            
             Panel.Controls.Add(stagePresenter);
 
             if (_currentGame.CurrentStage.SendingTasks)

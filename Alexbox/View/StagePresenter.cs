@@ -10,12 +10,6 @@ namespace Alexbox.View
 {
     public sealed class StagePresenter : UserControl
     {
-        public StagePresenter WithBackground(Image image)
-        {
-            BackgroundImage = image;
-            return this;
-        }
-
         public event Action AllTaskShown;
         private readonly TableLayoutPanel _controlTable;
         private readonly CustomGame _game;
@@ -37,7 +31,7 @@ namespace Alexbox.View
             _controlTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             Controls.Add(_controlTable);
 
-            var timerAndParagraph = new TableLayoutPanel()
+            var timerAndParagraph = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 AutoSize = true,
@@ -180,7 +174,7 @@ namespace Alexbox.View
             ShowNextAnswers(labels, groupSize);
             _controlTable.Controls.Add(answersTable);
             var timer = new Timer();
-            timer.Interval = 6000;
+            timer.Interval = 5000;
             timer.Start();
             timer.Tick += (_, _) =>
             {
