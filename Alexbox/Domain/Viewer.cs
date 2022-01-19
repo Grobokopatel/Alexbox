@@ -4,6 +4,7 @@
     {
         public readonly long Id;
         private readonly string Name;
+
         public Viewer(string name, long id)
         {
             Name = name;

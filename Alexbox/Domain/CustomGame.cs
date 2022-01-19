@@ -14,8 +14,9 @@ namespace Alexbox.Domain
         public readonly int MinPlayers;
         public readonly Queue<Stage> Stages;
         public List<Task> Tasks { get; private set; }
+        public Dictionary<Task, List<Player>> PlayersBySentTask { get; set; }
         public List<Task> SentTasks { get; set; }
-        public int CurrentRound;
+        public readonly int CurrentRound = 0;
 
         public CustomGame(int minPlayers, int maxPlayers, string name)
         {
@@ -46,8 +47,8 @@ namespace Alexbox.Domain
 
             return this;
         }
-        
-        public CustomGame AddStages(Func<Task,Stage> func)
+
+        public CustomGame AddStages(Func<Task, Stage> func)
         {
             foreach (var task in SentTasks)
             {

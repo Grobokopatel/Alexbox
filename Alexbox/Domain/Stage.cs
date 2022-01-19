@@ -28,7 +28,7 @@ namespace Alexbox.Domain
             ShowRoundSubmits = true;
             return this;
         }
-        
+
         public Stage WithParagraph(string paragraph)
         {
             Paragraph = paragraph;

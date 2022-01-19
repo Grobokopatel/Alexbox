@@ -17,12 +17,12 @@ namespace Alexbox.Domain
             Id = id;
         }
 
-        public Dictionary<Task, string> GetSubmission(int round)
+        public string GetSubmission(int round, Task task)
         {
-            return Submissions[round];
+            return Submissions[round][task];
         }
 
-        public void AddSubmission(int round,Task task,string submission)
+        public void AddSubmission(int round, Task task, string submission)
         {
             if (Submissions.Count == round)
                 Submissions.Add(new Dictionary<Task, string>());

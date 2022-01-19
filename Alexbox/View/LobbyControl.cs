@@ -13,6 +13,7 @@ namespace Alexbox.View
         public readonly Button Button;
         private readonly CustomGame _currentGame;
         public readonly Timer timer;
+
         public LobbyControl(CustomGame currentGame)
         {
             _currentGame = currentGame;

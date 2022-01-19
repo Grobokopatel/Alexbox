@@ -3,24 +3,17 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Alexbox.Application.TelegramBot;
 using Alexbox.Domain;
 
 namespace Alexbox.View
 {
     public sealed class StagePresenter : UserControl
     {
-
-        public StagePresenter WithBackground(Image image)
-        {
-            BackgroundImage = image;
-            return this;
-        }
-
-        public event Action AllTaskShown; 
+        public event Action AllTaskShown;
         private readonly TableLayoutPanel _controlTable;
         private readonly CustomGame _game;
         private readonly Stage _stage;
+        private Label _paragraph;
 
         public StagePresenter(Stage stage, CustomGame game)
         {
@@ -36,7 +29,7 @@ namespace Alexbox.View
             _controlTable.RowStyles.Add(new RowStyle(SizeType.Absolute, 80));
             Controls.Add(_controlTable);
 
-            var paragraph = new Label
+            _paragraph = new Label
             {
                 Text = stage.Paragraph,
                 Dock = DockStyle.Fill,
@@ -45,7 +38,7 @@ namespace Alexbox.View
                 BorderStyle = BorderStyle.FixedSingle,
                 Font = new Font("Arial", 30),
             };
-            _controlTable.Controls.Add(paragraph /*, 0, 0*/);
+            _controlTable.Controls.Add(_paragraph /*, 0, 0*/);
             HandleRoundSubmits();
             HandleScores();
         }
@@ -88,20 +81,29 @@ namespace Alexbox.View
         {
             if (!_stage.ShowRoundSubmits)
                 return;
-            var submits = new Queue<string[]>(TelegramBot.PlayersBySentTask
+            /*var submits = new Queue<string[]>(_game.PlayersBySentTask
                 .Select(kv => kv.Value.Select(player => player.Submissions
-                                      .Last()[kv.Key])
-                                      .ToArray()));
-
+                        .Last()[kv.Key])
+                    .ToArray()));
+            */
+            var submits = new Queue<string[]>();
+            var taskTextQueue = new Queue<string>();
+            foreach (var (task,players) in _game.PlayersBySentTask)
+            {
+                var currentSubmissions = new List<string>();
+                taskTextQueue.Enqueue(task.Description);
+                currentSubmissions.AddRange(players.Select(player => player.GetSubmission(_game.CurrentRound, task)));
+                submits.Enqueue(currentSubmissions.ToArray());
+            }
             var answersTable = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 AutoSize = true,
             };
             var groupSize = submits.Peek().Length;
+            var temp = submits.Dequeue();
             var labels = new Label[groupSize];
             answersTable.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
-            var temp = submits.Dequeue();
             for (var i = 0; i < groupSize; ++i)
             {
                 answersTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5));
@@ -109,12 +111,15 @@ namespace Alexbox.View
                 {
                     Text = temp[i],
                     Dock = DockStyle.Fill,
+                    AutoSize = true,
                     TextAlign = ContentAlignment.MiddleCenter,
-                    Font = new Font("Arial", 30),
-                    BorderStyle = BorderStyle.FixedSingle
+                    BorderStyle = BorderStyle.FixedSingle,
+                    Font = new Font("Arial", 30)
                 };
                 answersTable.Controls.Add(labels[i], i, 0);
             }
+
+            _paragraph.Text = taskTextQueue.Dequeue();
             _controlTable.Controls.Add(answersTable);
 
             var timer = new Timer();
@@ -126,9 +131,9 @@ namespace Alexbox.View
                 {
                     timer.Stop();
                     AllTaskShown?.Invoke();
-                    
                 }
 
+                _paragraph.Text = taskTextQueue.Dequeue();
                 var group = submits.Dequeue();
                 for (var i = 0; i < groupSize; ++i)
                     labels[i].Text = group[i];
