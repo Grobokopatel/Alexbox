@@ -4,7 +4,7 @@ namespace Alexbox.Domain
 {
     public class Stage
     {
-        private Func<int, int, int, int> ScoreFormula { get; set; }
+        public Func<int, int, int, int> ScoreFormula { get; set; }
         public int TaskPerPlayer { get; private set; }
         public int GroupSize { get; private set; }
         public bool ShowScores { get; private set; }
@@ -47,6 +47,12 @@ namespace Alexbox.Domain
         public Stage WithScoreCounting(Func<int, int, int, int> formula)
         {
             ScoreFormula = formula;
+            return this;
+        }
+
+        public Stage ShowPlayersScores()
+        {
+            ShowScores = true;
             return this;
         }
     }

@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Alexbox.Application.TelegramBot;
 using Alexbox.Domain;
 
 namespace Alexbox.View
 {
     public sealed class StagePresenter : UserControl
     {
-
         public StagePresenter WithBackground(Image image)
         {
             BackgroundImage = image;
@@ -84,33 +84,58 @@ namespace Alexbox.View
             _controlTable.Controls.Add(table);
         }
 
+        private void ShowNextAnswers(IReadOnlyList<Label> labels, int groupSize)
+        {
+            _game.LastVoteId = new List<long>();
+            foreach (var player in _game.Players)
+            {
+                player.LastRoundVotes = 0;
+            }
+
+            var task = _game.PlayersBySentTask.First().Key;
+            var group = _game.Players.Where(player => player.Submissions[_game.CurrentRound].ContainsKey(task))
+                .Select(player => player.GetSubmission(_game.CurrentRound, task)).ToList();
+            for (var i = 0; i < groupSize; ++i)
+                labels[i].Text = group[i];
+            _paragraph.Text = task.Description;
+            _game.PlayersToVote = new Dictionary<Task, List<Player>>
+            {
+                [task] = _game.PlayersBySentTask[task]
+            };
+            foreach (var player in _game.Players.Where(player =>
+                !player.Submissions[_game.CurrentRound].ContainsKey(task)))
+            {
+                TelegramBot.SendMessageWithButtonsToUser(player.Id, task.Description,
+                    _game.PlayersBySentTask[task].Select(p => p.GetSubmission(_game.CurrentRound, task)));
+            }
+
+            foreach (var viewer in _game.Viewers)
+            {
+                TelegramBot.SendMessageWithButtonsToUser(viewer.Id, task.Description,
+                    _game.PlayersBySentTask[task].Select(p => p.GetSubmission(_game.CurrentRound, task)));
+            }
+
+            _game.PlayersBySentTask.Remove(task);
+        }
+
         private void HandleRoundSubmits()
         {
             if (!_stage.ShowRoundSubmits)
                 return;
-            
-            var submits = new Queue<(string, string[])>(_game.PlayersBySentTask
-                .Select(kv => (Task: kv.Key.Description, Submits: kv.Value.Select(player => player.Submissions
-                                      .Last()[kv.Key])
-                                      .ToArray())));
-            
+
             var answersTable = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 AutoSize = true,
             };
-            var groupSize = submits.Peek().Item2.Length;
+            var groupSize = _game.PlayersBySentTask.First().Value.Count;
             var labels = new Label[groupSize];
             answersTable.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
-            var temp = submits.Dequeue();
-            _paragraph.Text = temp.Item1;
-
             for (var i = 0; i < groupSize; ++i)
             {
                 answersTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5));
                 labels[i] = new Label
                 {
-                    Text = temp.Item2[i],
                     Dock = DockStyle.Fill,
                     TextAlign = ContentAlignment.MiddleCenter,
                     Font = new Font("Arial", 30),
@@ -118,24 +143,31 @@ namespace Alexbox.View
                 };
                 answersTable.Controls.Add(labels[i], i, 0);
             }
+            ShowNextAnswers(labels, groupSize);
             _controlTable.Controls.Add(answersTable);
-
             var timer = new Timer();
             timer.Interval = 6000;
             timer.Start();
             timer.Tick += (_, _) =>
             {
-                if (submits.Count == 0)
+                foreach (var player in _game.Players)
+                {
+                    try
+                    {
+                        player.Score +=
+                            _game.CurrentStage.ScoreFormula(player.LastRoundVotes, _game.LastVoteId.Count, 100);
+                    }
+                    catch (DivideByZeroException)
+                    {
+                        
+                    }
+                }
+                if (_game.PlayersBySentTask.Keys.Count == 0)
                 {
                     timer.Stop();
                     AllTaskShown?.Invoke();
-                    
                 }
-
-                var group = submits.Dequeue();
-                _paragraph.Text = group.Item1;
-                for (var i = 0; i < groupSize; ++i)
-                    labels[i].Text = group.Item2[i];
+                else ShowNextAnswers(labels, groupSize);
             };
         }
     }
