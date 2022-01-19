@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Alexbox.Application.TelegramBot;
 using Alexbox.Domain;
 
 namespace Alexbox.View
@@ -90,7 +89,7 @@ namespace Alexbox.View
             if (!_stage.ShowRoundSubmits)
                 return;
             
-            var submits = new Queue<(string, string[])>(TelegramBot.PlayersBySentTask
+            var submits = new Queue<(string, string[])>(_game.PlayersBySentTask
                 .Select(kv => (Task: kv.Key.Description, Submits: kv.Value.Select(player => player.Submissions
                                       .Last()[kv.Key])
                                       .ToArray())));
