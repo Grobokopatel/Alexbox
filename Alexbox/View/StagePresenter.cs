@@ -21,6 +21,7 @@ namespace Alexbox.View
         private readonly CustomGame _game;
         private readonly Stage _stage;
         private readonly Label _paragraph;
+        private readonly Label _timer;
 
         public StagePresenter(Stage stage, CustomGame game)
         {
@@ -36,8 +37,40 @@ namespace Alexbox.View
             _controlTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
             Controls.Add(_controlTable);
 
+            var timerAndParagraph = new TableLayoutPanel()
+            {
+                Dock = DockStyle.Fill,
+                AutoSize = true,
+            };
+            timerAndParagraph.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 1));
+            timerAndParagraph.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 10));
+            timerAndParagraph.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            _timer = new Label
+            {
+                Padding = new Padding() { Left = 2, Right = 2, Top = 5, Bottom = 5 },
+                Text = (_stage.TimeOutInMs/1000).ToString(),
+                Dock = DockStyle.Top,
+                AutoSize = true,
+                TextAlign = ContentAlignment.MiddleCenter,
+                BorderStyle = BorderStyle.FixedSingle,
+                Font = new Font("Arial", 30),
+            };
+            if (_stage.TimeOutInMs != 0)
+            {
+                var timer = new Timer();
+                timer.Interval = 1000;
+                timer.Tick += (_, _) =>
+                {
+                    var next = int.Parse(_timer.Text) - 1;
+                    _timer.Text = next.ToString();
+                    if (next == 0)
+                        timer.Stop();
+                };
+                timer.Start();
+            }
             _paragraph = new Label
             {
+                Padding = new Padding() { Left = 5, Right = 5, Top = 2, Bottom = 2 },
                 Text = stage.Paragraph,
                 Dock = DockStyle.Fill,
                 AutoSize = true,
@@ -45,11 +78,12 @@ namespace Alexbox.View
                 BorderStyle = BorderStyle.FixedSingle,
                 Font = new Font("Arial", 30),
             };
-            _controlTable.Controls.Add(_paragraph /*, 0, 0*/);
+            timerAndParagraph.Controls.Add(_timer, 0, 0);
+            timerAndParagraph.Controls.Add(_paragraph, 1, 0);
+            _controlTable.Controls.Add(timerAndParagraph /*, 0, 0*/);
             HandleRoundSubmits();
             HandleScores();
         }
-
         private void HandleScores()
         {
             if (!_stage.ShowScores)
@@ -159,7 +193,7 @@ namespace Alexbox.View
                     }
                     catch (DivideByZeroException)
                     {
-                        
+
                     }
                 }
                 if (_game.PlayersBySentTask.Keys.Count == 0)
