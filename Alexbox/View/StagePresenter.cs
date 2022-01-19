@@ -3,17 +3,25 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Alexbox.Application.TelegramBot;
 using Alexbox.Domain;
 
 namespace Alexbox.View
 {
     public sealed class StagePresenter : UserControl
     {
+
+        public StagePresenter WithBackground(Image image)
+        {
+            BackgroundImage = image;
+            return this;
+        }
+
         public event Action AllTaskShown;
         private readonly TableLayoutPanel _controlTable;
         private readonly CustomGame _game;
         private readonly Stage _stage;
-        private Label _paragraph;
+        private readonly Label _paragraph;
 
         public StagePresenter(Stage stage, CustomGame game)
         {
@@ -81,45 +89,36 @@ namespace Alexbox.View
         {
             if (!_stage.ShowRoundSubmits)
                 return;
-            /*var submits = new Queue<string[]>(_game.PlayersBySentTask
-                .Select(kv => kv.Value.Select(player => player.Submissions
-                        .Last()[kv.Key])
-                    .ToArray()));
-            */
-            var submits = new Queue<string[]>();
-            var taskTextQueue = new Queue<string>();
-            foreach (var (task,players) in _game.PlayersBySentTask)
-            {
-                var currentSubmissions = new List<string>();
-                taskTextQueue.Enqueue(task.Description);
-                currentSubmissions.AddRange(players.Select(player => player.GetSubmission(_game.CurrentRound, task)));
-                submits.Enqueue(currentSubmissions.ToArray());
-            }
+            
+            var submits = new Queue<(string, string[])>(TelegramBot.PlayersBySentTask
+                .Select(kv => (Task: kv.Key.Description, Submits: kv.Value.Select(player => player.Submissions
+                                      .Last()[kv.Key])
+                                      .ToArray())));
+            
             var answersTable = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 AutoSize = true,
             };
-            var groupSize = submits.Peek().Length;
-            var temp = submits.Dequeue();
+            var groupSize = submits.Peek().Item2.Length;
             var labels = new Label[groupSize];
             answersTable.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
+            var temp = submits.Dequeue();
+            _paragraph.Text = temp.Item1;
+
             for (var i = 0; i < groupSize; ++i)
             {
                 answersTable.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 5));
                 labels[i] = new Label
                 {
-                    Text = temp[i],
+                    Text = temp.Item2[i],
                     Dock = DockStyle.Fill,
-                    AutoSize = true,
                     TextAlign = ContentAlignment.MiddleCenter,
-                    BorderStyle = BorderStyle.FixedSingle,
-                    Font = new Font("Arial", 30)
+                    Font = new Font("Arial", 30),
+                    BorderStyle = BorderStyle.FixedSingle
                 };
                 answersTable.Controls.Add(labels[i], i, 0);
             }
-
-            _paragraph.Text = taskTextQueue.Dequeue();
             _controlTable.Controls.Add(answersTable);
 
             var timer = new Timer();
@@ -131,12 +130,13 @@ namespace Alexbox.View
                 {
                     timer.Stop();
                     AllTaskShown?.Invoke();
+                    
                 }
 
-                _paragraph.Text = taskTextQueue.Dequeue();
                 var group = submits.Dequeue();
+                _paragraph.Text = group.Item1;
                 for (var i = 0; i < groupSize; ++i)
-                    labels[i].Text = group[i];
+                    labels[i].Text = group.Item2[i];
             };
         }
     }
