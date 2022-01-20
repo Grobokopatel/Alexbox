@@ -174,7 +174,7 @@ namespace Alexbox.View
             ShowNextAnswers(labels, groupSize);
             _controlTable.Controls.Add(answersTable);
             var timer = new Timer();
-            timer.Interval = 5000;
+            timer.Interval = 15000;
             timer.Start();
             timer.Tick += (_, _) =>
             {
