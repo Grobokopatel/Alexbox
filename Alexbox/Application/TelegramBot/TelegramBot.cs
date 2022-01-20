@@ -15,70 +15,118 @@ namespace Alexbox.Application.TelegramBot
 {
     public static class TelegramBot
     {
+        public static event Action AllPlayersAnswered;
         private static readonly string Token = new StreamReader("token.token").ReadLine();
-        private static readonly TelegramBotClient Client = new(Token);
-        public static CustomGame CurrentGame { get; private set; }
+        public static readonly TelegramBotClient Client = new(Token);
+        private static Dictionary<Player, Queue<Task>> _tasksQueueByPlayer;
+        private static CustomGame _currentGame;
 
         public static void Run(CustomGame currentGame)
         {
-            CurrentGame = currentGame;
+            _currentGame = currentGame;
             Client.StartReceiving();
             Client.OnMessage += BotClientOnMessage;
             Client.OnCallbackQuery += BotClientOnCallbackQuery;
         }
 
-        private static void BotClientOnCallbackQuery(object sender, CallbackQueryEventArgs e)
+        private static async void BotClientOnCallbackQuery(object sender, CallbackQueryEventArgs e)
         {
             var id = e.CallbackQuery.From.Id;
-            CurrentGame.Players[id].AddSubmission(e.CallbackQuery.Data);
+            if (_currentGame.GameStatus != GameStatus.Voting || _currentGame.PlayersBySentTask == null ||
+                _currentGame.LastVoteId.Contains(id) || e.CallbackQuery.Data == "Нет ответа") return;
+            foreach (var player in _currentGame.PlayersToVote.Values.First())
+            {
+                if (player.GetSubmission(_currentGame.CurrentRound, _currentGame.PlayersToVote.Keys.First()) ==
+                    e.CallbackQuery.Data)
+                {
+                    player.LastRoundVotes += 1;
+                    _currentGame.LastVoteId.Add(id);
+                    await Client.SendTextMessageAsync(id, "Вы успешно проголосовали");
+                }
+            }
         }
 
-        private static void BotClientOnMessage(object sender, MessageEventArgs e)
+        private static async void BotClientOnMessage(object sender, MessageEventArgs e)
         {
             var id = e.Message.Chat.Id;
             var text = e.Message.Text;
             if (e.Message.Type != MessageType.Text)
             {
-                Client.SendTextMessageAsync(id, "Бот распознает только текст");
+                await Client.SendTextMessageAsync(id, "Бот распознает только текст");
                 return;
             }
 
-            switch (CurrentGame.GameStatus)
+            if (_currentGame.GameStatus == GameStatus.WaitingForPlayers &&
+                _currentGame.Players.Select(player => player.Id).All(pId => pId != id) &&
+                _currentGame.Viewers.Select(viewer => viewer.Id).All(vId => vId != id))
             {
-                case GameStatus.WaitingForPlayers
-                    when !CurrentGame.Players.ContainsKey(id) && !CurrentGame.Viewers.ContainsKey(id):
+                if (_currentGame.Players.Count < _currentGame.MaxPlayers)
                 {
-                    if (CurrentGame.Players.Count < CurrentGame.MaxPlayers)
+                    _currentGame.Players.Add(new Player(e.Message.From.FirstName, id));
+                    await Client.SendTextMessageAsync(id, "Вы успешно были добавлены в игру");
+                }
+                else
+                {
+                    _currentGame.Viewers.Add(new Viewer(e.Message.From.FirstName, id));
+                    await Client.SendTextMessageAsync(id, "Вы были добавлены как зритель");
+                }
+            }
+            else if (_currentGame.GameStatus == GameStatus.WaitingForPlayers)
+            {
+                await Client.SendTextMessageAsync(id, "Вы уже были добавлены!");
+            }
+            else if (_currentGame.GameStatus == GameStatus.WaitingForReplies &&
+                     _currentGame.Players.Select(player => player.Id).Any(pId => pId == id))
+            {
+                var player = _currentGame.Players.First(player => player.Id == id);
+                player.AddSubmission(_currentGame.CurrentRound, player.CurrentTask, text);
+                await Client.SendTextMessageAsync(id, "Ваш ответ был записан");
+                var isFinished = true;
+                foreach (var p in _currentGame.Players)
+                {
+                    foreach (var submission in p.Submissions)
                     {
-                        CurrentGame.Players[id] = new Player(e.Message.From.FirstName);
-                        SendMessageToUser(id, "Вы успешно были добавлены в игру");
+                        if (submission.Any(s => s.Value == "Нет ответа")) isFinished = false;
+                    }
+                }
+                if (isFinished)
+                {
+                    _currentGame.GameStatus = GameStatus.Voting;
+                    AllPlayersAnswered?.Invoke();
+                }
+                if (_tasksQueueByPlayer[player].Count > 0)
+                {
+                    var task = _tasksQueueByPlayer[player].Dequeue();
+                    if (_currentGame.PlayersBySentTask.TryGetValue(task, out var players))
+                    {
+                        players.Add(player);
                     }
                     else
                     {
-                        CurrentGame.Viewers[id] = new Viewer(e.Message.From.FirstName);
-                        SendMessageToUser(id, "Вы были добавлены как зритель");
+                        _currentGame.PlayersBySentTask[task] = new List<Player> {player};
                     }
 
-                    break;
+                    player.CurrentTask = task;
+                    await Client.SendTextMessageAsync(id, task.Description);
                 }
-                case GameStatus.WaitingForPlayers:
-                    SendMessageToUser(id, "Вы уже были добавлены!");
-                    break;
-                case GameStatus.WaitingForReplies when !CurrentGame.Players.ContainsKey(id):
-                    CurrentGame.Players[id].AddSubmission(text);
-                    SendMessageToUser(id, "Ваш ответ был записан");
-                    break;
-                case GameStatus.WaitingForReplies when !CurrentGame.Viewers.ContainsKey(id):
-                    SendMessageToUser(id, "Вы зритель, ждите голосования");
-                    break;
-                case GameStatus.WaitingForReplies:
-                    CurrentGame.Viewers[id] = new Viewer(e.Message.From.FirstName);
-                    SendMessageToUser(id, "Вы были добавлены как зритель");
-                    break;
-                case GameStatus.Voting:
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException();
+                
+            }
+            else if (_currentGame.GameStatus == GameStatus.WaitingForReplies &&
+                     _currentGame.Viewers.Any(viewer => viewer.Id == id))
+            {
+                await Client.SendTextMessageAsync(id, "Вы зритель, ждите голосования");
+            }
+            else if (_currentGame.GameStatus == GameStatus.WaitingForReplies)
+            {
+                _currentGame.Viewers.Add(new Viewer(e.Message.From.FirstName, id));
+                await Client.SendTextMessageAsync(id, "Вы были добавлены как зритель");
+            }
+            else if (_currentGame.GameStatus == GameStatus.Voting)
+            {
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -89,9 +137,39 @@ namespace Alexbox.Application.TelegramBot
                 .Select(button => new[] {button}).ToArray());
         }
 
-        public static void SendMessageToUser(long id, string message) => Client.SendTextMessageAsync(id, message);
 
-        public static void SendMessageWithButtonsToUser(long id, string message, IEnumerable<string> textButtons) =>
-            Client.SendTextMessageAsync(id, message, replyMarkup: CreateButtons(textButtons));
+        public static async void
+            SendMessageWithButtonsToUser(long id, string message, IEnumerable<string> textButtons) =>
+            await Client.SendTextMessageAsync(id, message, replyMarkup: CreateButtons(textButtons));
+
+        public static async void SendTasks()
+        {
+            _currentGame.PlayersBySentTask = new Dictionary<Task, List<Player>>();
+            _tasksQueueByPlayer = new Dictionary<Player, Queue<Task>>();
+            foreach (var (id, tasks) in _currentGame.CurrentStage.Distribution.Tasks)
+            {
+                var player = _currentGame.Players.First(player => player.Id == id);
+                foreach (var task in tasks)
+                {
+                    if (!_tasksQueueByPlayer.ContainsKey(player))
+                    {
+                        _tasksQueueByPlayer[player] = new Queue<Task>();
+                    }
+
+                    _tasksQueueByPlayer[player].Enqueue(task);
+                    player.AddSubmission(_currentGame.CurrentRound, task, "Нет ответа");
+                }
+            }
+
+            foreach (var (player, tasks) in _tasksQueueByPlayer)
+            {
+                var task = tasks.Dequeue();
+                if (!_currentGame.PlayersBySentTask.ContainsKey(task))
+                    _currentGame.PlayersBySentTask[task] = new List<Player>();
+                _currentGame.PlayersBySentTask[task].Add(player);
+                player.CurrentTask = task;
+                await Client.SendTextMessageAsync(player.Id, task.Description);
+            }
+        }
     }
 }

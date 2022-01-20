@@ -1,20 +1,23 @@
-﻿using Alexbox.View;
+﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using static System.Windows.Forms.Control;
-using Form = Alexbox.View.Form;
 
 namespace Alexbox.Domain
 {
     public sealed class CustomGame
     {
-        public readonly Dictionary<long, Player> Players = new();
-        public readonly Dictionary<long, Viewer> Viewers = new();
-        public readonly GameStatus GameStatus;
-        private readonly int MinPlayers;
+        public readonly List<Player> Players = new();
+        public readonly List<Viewer> Viewers = new();
+        public GameStatus GameStatus { get; set; }
+        public List<long> LastVoteId { get; set; }
+        public Dictionary<Task,List<Player>> PlayersToVote { get; set; }
+        public Stage CurrentStage { get; set; }
         public readonly int MaxPlayers;
         public readonly string Name;
-        private readonly Queue<Stage> _stages;
+        public readonly int MinPlayers;
+        public readonly Queue<Stage> Stages;
+        public List<Task> Tasks { get; private set; }
+        public Dictionary<Task, List<Player>> PlayersBySentTask { get; set; }
+        public int CurrentRound = 0;
 
         public CustomGame(int minPlayers, int maxPlayers, string name)
         {
@@ -22,61 +25,22 @@ namespace Alexbox.Domain
             MinPlayers = minPlayers;
             MaxPlayers = maxPlayers;
             Name = name;
-            _stages = new Queue<Stage>();
+            Stages = new Queue<Stage>();
         }
-
-        public Player GetBestPlayer()
-        {
-            return Players.Max(item => item.Value.Score).Value;
-        }
-
+        
         public CustomGame AddStage(Stage stage)
         {
-            _stages.Enqueue(stage);
+            Stages.Enqueue(stage);
             return this;
         }
+        
 
-        public CustomGame AddStages(IEnumerable<Stage> stages)
+        public CustomGame WithTaskList(List<Task> tasks)
         {
-            foreach (var stage in stages)
-            {
-                _stages.Enqueue(stage);
-            }
-
+            if (tasks.Count == 0)
+                throw new ArgumentException("List of task must not be empty");
+            Tasks = tasks;
             return this;
-        }
-
-        private ControlCollection _controls;
-        private Stage _currentStage;
-
-        public void Start(Panel panel)
-        {
-            _controls = panel.Controls;
-
-            var lobby = new Form();
-            lobby.Button.Click += (_, _) =>
-            {
-                _controls.Remove(lobby);
-                AddNextStageToControls();
-            };
-            _controls.Add(lobby);
-        }
-
-        private void AddNextStageToControls()
-        {
-            _currentStage = _stages.Dequeue();
-            _controls.Add(_currentStage);
-            _currentStage.Ended += ChangeStage;
-        }
-
-        private void ChangeStage(TerminationType type)
-        {
-            _controls.Remove(_currentStage);
-            _currentStage.Ended -= ChangeStage;
-            if (_stages.Count != 0)
-            {
-                AddNextStageToControls();
-            }
         }
     }
 }

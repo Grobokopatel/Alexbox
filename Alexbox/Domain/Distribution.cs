@@ -1,25 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 namespace Alexbox.Domain
 {
     public class Distribution<TMember, TTask>
     {
-        private int playerAmount;
-        private int tasksPerPlayer;
-        private int[] players;
+        private int TasksRequired { get; }
 
-        public int TasksRequired
-        {
-            get;
-        }
-        //Ключ - индекс задания, значение - индексы игроков  
-        public Dictionary<TTask, List<TMember>> Groups
-        {
-            get;
-        }
+        //Ключ - задание, значение - игроки  
+        private Dictionary<TTask, List<TMember>> Groups { get; }
 
-        //Ключ - индекс игрока, значение - индексы заданий
+        //Ключ - игрок, значение - задания
         public Dictionary<TMember, List<TTask>> Tasks
         {
             get
@@ -36,7 +28,7 @@ namespace Alexbox.Domain
                         }
                         else
                         {
-                            tasks.Add(member, new List<TTask> { task });
+                            tasks.Add(member, new List<TTask> {task});
                         }
                     }
                 }
@@ -45,22 +37,21 @@ namespace Alexbox.Domain
             }
         }
 
-        public static int GetNumberOfTasksRequired(int playerAmount, int tasksPerPlayer, int groupSize)
+        private static int GetNumberOfTasksRequired(int playerAmount, int tasksPerPlayer, int groupSize)
         {
             if (groupSize > playerAmount || tasksPerPlayer * playerAmount % groupSize != 0)
                 throw new ArgumentException("Невозможно сделать такое разбиение");
             return tasksPerPlayer * playerAmount / groupSize;
         }
 
-        public Distribution(int tasksPerPlayer, int groupSize, TMember[] members, IEnumerable<TTask> tasks)
+        public Distribution(int tasksPerPlayer, int groupSize, IReadOnlyList<TMember> members, IEnumerable<TTask> tasks)
         {
-            playerAmount = members.Length;
-            this.tasksPerPlayer = tasksPerPlayer;
+            var playerAmount = members.Count;
             TasksRequired = GetNumberOfTasksRequired(playerAmount, tasksPerPlayer, groupSize);
-            var tasksArray = tasks.Take(TasksRequired).ToArray();
+            var tasksArray = tasks.Shuffle().Take(TasksRequired).ToArray();
             if (tasksArray.Length < TasksRequired)
                 throw new ArgumentException("Заданий меньше, чем нужно");
-            players = Enumerable.Repeat(tasksPerPlayer, playerAmount).ToArray();
+            var players = Enumerable.Repeat(tasksPerPlayer, playerAmount).ToArray();
 
             Groups = new Dictionary<TTask, List<TMember>>();
 
@@ -79,7 +70,8 @@ namespace Alexbox.Domain
                         group.Add(members[k]);
                     }
                 }
-                --j;
+
+                j = (j - 1 + playerAmount) % playerAmount;
                 Groups.Add(tasksArray[i], group);
             }
         }
@@ -87,14 +79,15 @@ namespace Alexbox.Domain
 
     public class Distribution : Distribution<int, int>
     {
-        public Distribution(int playerNumber, int tasksPerPlayer, int groupSize) 
+        public Distribution(int playerNumber, int tasksPerPlayer, int groupSize)
             : base(tasksPerPlayer,
-                  groupSize,
-                  Enumerable.Range(0, playerNumber).ToArray(),
-                  For(0, 1, (i) => true))
-        { }
+                groupSize,
+                Enumerable.Range(0, playerNumber).ToArray(),
+                For(0, 1, _ => true))
+        {
+        }
 
-        private static IEnumerable<int> For(int start, int step, Func<int,bool> @while)
+        private static IEnumerable<int> For(int start, int step, Func<int, bool> @while)
         {
             for (var i = start; @while(i); i += step)
             {

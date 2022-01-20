@@ -2,11 +2,13 @@
 {
     public class Viewer : Entity
     {
-        public readonly string Name;
+        public readonly long Id;
+        private readonly string Name;
 
-        public Viewer(string name)
+        public Viewer(string name, long id)
         {
             Name = name;
+            Id = id;
         }
 
         public override int GetHashCode()

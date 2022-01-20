@@ -1,7 +1,7 @@
 ﻿
 namespace Alexbox.View
 {
-    partial class StartPanel
+    partial class MainForm
     {
         /// <summary>
         /// Required designer variable.
@@ -32,7 +32,7 @@ namespace Alexbox.View
             this.components = new System.ComponentModel.Container();
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Text = "Form3";
+            this.Text = "Main Form";
         }
 
         #endregion

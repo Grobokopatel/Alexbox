@@ -1,38 +1,39 @@
 ﻿using System;
 using System.Drawing;
 using System.Linq;
-using static Alexbox.Application.TelegramBot.TelegramBot;
 using System.Windows.Forms;
+using Alexbox.Domain;
 
 namespace Alexbox.View
 {
-    public partial class Form : UserControl
+    public sealed class LobbyControl : UserControl
     {
-        private static readonly Label[] PlayerLabels = new Label[CurrentGame.MaxPlayers];
+        private readonly Label[] _playerLabels;
         private readonly Label _viewersLabel;
         public readonly Button Button;
+        private readonly CustomGame _currentGame;
+        public readonly Timer timer;
 
-        public Form()
+        public LobbyControl(CustomGame currentGame)
         {
+            _currentGame = currentGame;
+            _playerLabels = new Label[_currentGame.MaxPlayers];
             Dock = DockStyle.Fill;
-            Text = "Лобби";
-
-            var table = new TableLayoutPanel
+            var controlTable = new TableLayoutPanel
             {
                 Dock = DockStyle.Fill,
                 AutoSize = true,
             };
+            controlTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
             var gameNameLabel = new Label
             {
-                Text = $"\n{CurrentGame.Name}\n",
+                Text = $"\n{_currentGame.Name}\n",
                 Dock = DockStyle.Fill,
                 AutoSize = true,
                 TextAlign = ContentAlignment.MiddleCenter,
                 Font = new Font("Arial", 22),
             };
-
-            table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
             var waitingLabel = new Label
             {
@@ -43,15 +44,15 @@ namespace Alexbox.View
                 Font = new Font("Arial", 18),
             };
 
-            table.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            controlTable.RowStyles.Add(new RowStyle(SizeType.AutoSize));
 
-            for (var i = 0; i < CurrentGame.MaxPlayers; ++i)
-                table.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
+            for (var i = 0; i < _currentGame.MaxPlayers; ++i)
+                controlTable.RowStyles.Add(new RowStyle(SizeType.Percent, 1));
 
-            table.Controls.Add(waitingLabel, 0, 1);
-            table.Controls.Add(gameNameLabel, 0, 0);
+            controlTable.Controls.Add(waitingLabel, 0, 1);
+            controlTable.Controls.Add(gameNameLabel, 0, 0);
 
-            for (var i = 0; i < CurrentGame.MaxPlayers; ++i)
+            for (var i = 0; i < _currentGame.MaxPlayers; ++i)
             {
                 var playerLabel = new Label
                 {
@@ -61,13 +62,13 @@ namespace Alexbox.View
                     TextAlign = ContentAlignment.MiddleCenter,
                     Font = new Font("ComicSans", 16),
                 };
-                PlayerLabels[i] = playerLabel;
-                table.Controls.Add(playerLabel, 0, i + 2);
+                _playerLabels[i] = playerLabel;
+                controlTable.Controls.Add(playerLabel, 0, i + 2);
             }
 
             _viewersLabel = new Label
             {
-                Text = $"Зрителей: {CurrentGame.Viewers.Count}",
+                Text = $"Зрителей: {_currentGame.Viewers.Count}",
                 Dock = DockStyle.Fill,
                 Size = new Size(0, 100),
                 TextAlign = ContentAlignment.MiddleCenter,
@@ -81,12 +82,12 @@ namespace Alexbox.View
                 Font = new Font("ComicSans", 16),
                 Size = new Size(0, 50)
             };
-            table.Controls.Add(_viewersLabel, 0, 10);
-            table.Controls.Add(Button, 0, 11);
+            controlTable.Controls.Add(_viewersLabel, 0, 10);
+            controlTable.Controls.Add(Button, 0, 11);
 
-            Controls.Add(table);
+            Controls.Add(controlTable);
 
-            var timer = new Timer
+            timer = new Timer
             {
                 Interval = 100
             };
@@ -96,20 +97,20 @@ namespace Alexbox.View
 
         private void TimerTickHandle(object sender, EventArgs e)
         {
-            for (var i = 0; i < CurrentGame.MaxPlayers; ++i)
+            for (var i = 0; i < _currentGame.MaxPlayers; ++i)
             {
-                if (i < CurrentGame.Players.Count)
+                if (i < _currentGame.Players.Count)
                 {
-                    PlayerLabels[i].Text =
-                        $"{i + 1} - {CurrentGame.Players.Values.Select(player => player.Name).ToList()[i]}";
+                    _playerLabels[i].Text =
+                        $"{i + 1} - {_currentGame.Players.Select(player => player.Name).ToList()[i]}";
                 }
                 else
                 {
-                    PlayerLabels[i].Text = $"{i + 1} - Место свободно";
+                    _playerLabels[i].Text = $"{i + 1} - Место свободно";
                 }
-
-                _viewersLabel.Text = $"Зрителей: {CurrentGame.Viewers.Count}";
             }
+
+            _viewersLabel.Text = $"Зрителей: {_currentGame.Viewers.Count}";
         }
     }
 }

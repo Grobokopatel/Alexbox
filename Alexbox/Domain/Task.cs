@@ -2,15 +2,13 @@
 {
     public class Task
     {
-        private readonly string _description;
-        private readonly string[] _possibleAnswers;
-        private readonly string _rightAnswer;
+        public readonly string Description;
+        public string FalseAnswer { get; set; }
 
-        public Task(string description, string[] possibleAnswers = null, string rightAnswer = null)
+        public Task(string description,string falseAnswer = null)
         {
-            _description = description;
-            _possibleAnswers = possibleAnswers;
-            _rightAnswer = rightAnswer;
+            Description = description;
+            FalseAnswer = falseAnswer;
         }
     }
 }
